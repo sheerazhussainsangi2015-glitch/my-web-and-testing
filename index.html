@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Authentication System</title>
+    <title>LearnHub - Online Learning Platform</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -13,6 +13,7 @@
             --success: #4cc9f0;
             --danger: #f72585;
             --warning: #f8961e;
+            --info: #560bad;
             --light: #f8f9fa;
             --dark: #212529;
             --gray: #6c757d;
@@ -64,7 +65,6 @@
             box-shadow: var(--box-shadow);
             padding: 40px;
             width: 100%;
-            max-width: 450px;
             transition: var(--transition);
         }
         
@@ -107,7 +107,7 @@
             color: var(--dark);
         }
         
-        input {
+        input, select, textarea {
             width: 100%;
             padding: 14px 16px;
             border: 1px solid #e1e5ee;
@@ -117,7 +117,7 @@
             background-color: #f8f9fa;
         }
         
-        input:focus {
+        input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: var(--primary-light);
             box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
@@ -138,7 +138,6 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            width: 100%;
         }
         
         button:hover {
@@ -178,6 +177,22 @@
         
         .btn-danger:hover {
             background: #e11572;
+        }
+        
+        .btn-warning {
+            background: var(--warning);
+        }
+        
+        .btn-warning:hover {
+            background: #e6890e;
+        }
+        
+        .btn-info {
+            background: var(--info);
+        }
+        
+        .btn-info:hover {
+            background: #450788;
         }
         
         .response-message {
@@ -253,34 +268,123 @@
             font-size: 1.2rem;
         }
         
-        .layout {
+        .dashboard {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 30px;
         }
         
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
             margin-top: 20px;
         }
         
-        th, td {
-            padding: 14px 16px;
-            text-align: left;
-            border-bottom: 1px solid #e1e5ee;
+        .course-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+            transition: var(--transition);
+            cursor: pointer;
+            border-left: 4px solid var(--primary);
         }
         
-        th {
-            background-color: #f8f9fa;
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .course-icon {
+            font-size: 2.5rem;
             color: var(--primary);
-            font-weight: 600;
-            position: sticky;
-            top: 0;
+            margin-bottom: 15px;
         }
         
-        tr:hover {
-            background-color: rgba(67, 97, 238, 0.03);
+        .course-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        
+        .course-description {
+            color: var(--gray);
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+        
+        .progress-container {
+            margin-top: 15px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: var(--success);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            font-size: 0.85rem;
+            color: var(--gray);
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .lesson-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            margin-top: 20px;
+        }
+        
+        .lesson-title {
+            font-size: 1.6rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .lesson-content {
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+        
+        .lesson-content p {
+            margin-bottom: 15px;
+        }
+        
+        .lesson-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .lesson-nav-btn {
+            width: 48%;
+        }
+        
+        .completion-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(76, 201, 240, 0.15);
+            color: #0c5460;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-top: 10px;
         }
         
         .loading-container {
@@ -300,15 +404,6 @@
             border-top-color: var(--primary);
             animation: spin 1s linear infinite;
             margin-bottom: 15px;
-        }
-        
-        .timestamp {
-            font-size: 0.9rem;
-            color: var(--gray);
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
         }
         
         .empty-state {
@@ -334,8 +429,12 @@
         }
         
         @media (max-width: 992px) {
-            .layout {
+            .dashboard {
                 grid-template-columns: 1fr;
+            }
+            
+            .course-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             }
         }
         
@@ -348,9 +447,17 @@
                 font-size: 1.8rem;
             }
             
-            th, td {
-                padding: 10px 12px;
-                font-size: 14px;
+            .course-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .lesson-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .lesson-nav-btn {
+                width: 100%;
             }
         }
     </style>
@@ -362,10 +469,10 @@
         <div class="card" id="login-card">
             <div class="card-header">
                 <div class="logo">
-                    <i class="fas fa-lock"></i>
+                    <i class="fas fa-graduation-cap"></i>
                 </div>
-                <h2 class="card-title">Welcome Back</h2>
-                <p class="card-subtitle">Sign in to your account</p>
+                <h2 class="card-title">Welcome to LearnHub</h2>
+                <p class="card-subtitle">Sign in to continue your learning journey</p>
             </div>
             
             <form id="login-form">
@@ -398,8 +505,8 @@
                 <div class="logo">
                     <i class="fas fa-user-plus"></i>
                 </div>
-                <h2 class="card-title">Create Account</h2>
-                <p class="card-subtitle">Sign up for a new account</p>
+                <h2 class="card-title">Join LearnHub</h2>
+                <p class="card-subtitle">Create your account to start learning</p>
             </div>
             
             <form id="signup-form">
@@ -440,7 +547,7 @@
     <!-- Main Application Section -->
     <div class="container app-container" id="app-container">
         <header>
-            <h1>Dashboard</h1>
+            <h1><i class="fas fa-graduation-cap"></i> LearnHub</h1>
             <div class="user-info">
                 <div class="user-avatar" id="user-avatar">U</div>
                 <div>
@@ -453,81 +560,83 @@
             </div>
         </header>
         
-        <div class="layout">
-            <!-- Form Section -->
+        <!-- Dashboard View -->
+        <div id="dashboard-view">
             <div class="card">
                 <div class="card-header">
-                    <h2 class="card-title">Submit Your Information</h2>
-                    <i class="fas fa-pen-to-square" style="color: var(--primary); font-size: 1.5rem;"></i>
+                    <h2 class="card-title">Your Learning Dashboard</h2>
+                    <p class="card-subtitle">Continue your learning journey or explore new courses</p>
                 </div>
                 
-                <form id="data-form">
-                    <div class="form-group">
-                        <label for="Name">Full Name</label>
-                        <input type="text" id="Name" name="Name" placeholder="Enter your full name" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="Email">Email Address</label>
-                        <input type="email" id="Email" name="Email" placeholder="Enter your email" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="Message">Your Message</label>
-                        <textarea id="Message" name="Message" rows="4" placeholder="Type your message here..." required></textarea>
-                    </div>
-                    
-                    <button type="submit" id="submit-button">
-                        <i class="fas fa-paper-plane"></i>
-                        Submit Data
-                    </button>
-                </form>
+                <h3 style="margin-bottom: 20px; color: var(--primary);">My Courses</h3>
                 
-                <div id="response" class="response-message"></div>
+                <div class="course-grid" id="course-grid">
+                    <!-- Courses will be populated here -->
+                </div>
             </div>
-            
-            <!-- Data Display Section -->
+        </div>
+        
+        <!-- Course View -->
+        <div id="course-view" style="display: none;">
             <div class="card">
                 <div class="card-header">
-                    <h2 class="card-title">Submitted Data</h2>
-                    <div>
-                        <button class="btn-success" id="refresh-button">
-                            <i class="fas fa-sync-alt"></i>
-                            Refresh
+                    <button class="btn-secondary" id="back-to-dashboard">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to Dashboard
+                    </button>
+                    <h2 class="card-title" id="course-view-title">Course Title</h2>
+                    <p class="card-subtitle" id="course-view-subtitle">Course Description</p>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="course-progress-bar" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-text">
+                        <span>Course Progress</span>
+                        <span id="course-progress-text">0%</span>
+                    </div>
+                </div>
+                
+                <h3 style="margin: 30px 0 20px; color: var(--primary);">Lessons</h3>
+                
+                <div id="lessons-list">
+                    <!-- Lessons will be populated here -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Lesson View -->
+        <div id="lesson-view" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <button class="btn-secondary" id="back-to-course">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to Course
+                    </button>
+                    <h2 class="card-title" id="lesson-title">Lesson Title</h2>
+                    <p class="card-subtitle" id="lesson-subtitle">Course: <span id="lesson-course-name"></span></p>
+                </div>
+                
+                <div class="lesson-container">
+                    <div class="lesson-content" id="lesson-content">
+                        <!-- Lesson content will be populated here -->
+                    </div>
+                    
+                    <div class="lesson-actions">
+                        <button class="btn-secondary" id="prev-lesson">
+                            <i class="fas fa-chevron-left"></i>
+                            Previous Lesson
+                        </button>
+                        <button class="btn-success" id="complete-lesson">
+                            <i class="fas fa-check-circle"></i>
+                            Mark as Complete
+                        </button>
+                        <button class="btn-primary" id="next-lesson">
+                            Next Lesson
+                            <i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
-                </div>
-                
-                <div class="timestamp">
-                    <i class="far fa-clock"></i>
-                    Last updated: <span id="last-updated">Never</span>
-                </div>
-                
-                <div id="loading-status" class="loading-container">
-                    <div class="spinner"></div>
-                    <p>Loading data from Google Sheets...</p>
-                </div>
-                
-                <div id="empty-state" class="empty-state" style="display: none;">
-                    <i class="fas fa-inbox"></i>
-                    <h3>No Data Yet</h3>
-                    <p>Submit the form to see your data here</p>
-                </div>
-                
-                <div id="table-container" style="display: none;">
-                    <table id="dataTable">
-                        <thead>
-                            <tr>
-                                <th>Timestamp</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Message</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Data will be populated here -->
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
@@ -540,6 +649,11 @@
         // DOM Elements
         const authContainer = document.getElementById('auth-container');
         const appContainer = document.getElementById('app-container');
+        
+        // View elements
+        const dashboardView = document.getElementById('dashboard-view');
+        const courseView = document.getElementById('course-view');
+        const lessonView = document.getElementById('lesson-view');
         
         // Login elements
         const loginCard = document.getElementById('login-card');
@@ -557,18 +671,119 @@
         const userAvatar = document.getElementById('user-avatar');
         const userName = document.getElementById('user-name');
         const logoutButton = document.getElementById('logout-button');
+        const courseGrid = document.getElementById('course-grid');
         
-        const dataForm = document.getElementById('data-form');
-        const responseDiv = document.getElementById('response');
-        const submitButton = document.getElementById('submit-button');
-        const refreshButton = document.getElementById('refresh-button');
-        const lastUpdatedSpan = document.getElementById('last-updated');
+        // Course view elements
+        const backToDashboard = document.getElementById('back-to-dashboard');
+        const courseViewTitle = document.getElementById('course-view-title');
+        const courseViewSubtitle = document.getElementById('course-view-subtitle');
+        const courseProgressBar = document.getElementById('course-progress-bar');
+        const courseProgressText = document.getElementById('course-progress-text');
+        const lessonsList = document.getElementById('lessons-list');
         
-        const loadingStatus = document.getElementById('loading-status');
-        const emptyState = document.getElementById('empty-state');
-        const tableContainer = document.getElementById('table-container');
-        const dataTable = document.getElementById('dataTable');
-        const dataTableBody = dataTable.querySelector('tbody');
+        // Lesson view elements
+        const backToCourse = document.getElementById('back-to-course');
+        const lessonTitle = document.getElementById('lesson-title');
+        const lessonSubtitle = document.getElementById('lesson-subtitle');
+        const lessonCourseName = document.getElementById('lesson-course-name');
+        const lessonContent = document.getElementById('lesson-content');
+        const prevLessonBtn = document.getElementById('prev-lesson');
+        const completeLessonBtn = document.getElementById('complete-lesson');
+        const nextLessonBtn = document.getElementById('next-lesson');
+
+        // Current state
+        let currentUser = null;
+        let currentCourse = null;
+        let currentLessonIndex = 0;
+        let userProgress = {};
+
+        // Sample courses data
+        const courses = {
+            'web-dev': {
+                id: 'web-dev',
+                title: 'Web Development Fundamentals',
+                description: 'Learn the basics of HTML, CSS, and JavaScript to build modern websites',
+                icon: 'fas fa-code',
+                lessons: [
+                    {
+                        title: 'Introduction to HTML',
+                        content: '<p>HTML (HyperText Markup Language) is the standard markup language for creating web pages.</p><p>It describes the structure of a web page and consists of a series of elements that tell the browser how to display the content.</p><p>In this lesson, you will learn the basic structure of an HTML document and commonly used tags.</p>',
+                        duration: '15 min'
+                    },
+                    {
+                        title: 'CSS Styling Basics',
+                        content: '<p>CSS (Cascading Style Sheets) is used to style and layout web pages.</p><p>With CSS, you can control the color, font, size, spacing, and many other aspects of HTML elements.</p><p>This lesson covers CSS selectors, properties, and how to apply styles to your HTML documents.</p>',
+                        duration: '20 min'
+                    },
+                    {
+                        title: 'JavaScript Fundamentals',
+                        content: '<p>JavaScript is a programming language that enables interactive web pages.</p><p>It is a core technology of the web, alongside HTML and CSS.</p><p>In this lesson, you will learn about variables, data types, functions, and basic DOM manipulation.</p>',
+                        duration: '25 min'
+                    },
+                    {
+                        title: 'Building a Simple Website',
+                        content: '<p>Now that you have learned HTML, CSS, and JavaScript basics, it\'s time to put it all together.</p><p>In this final lesson, you will build a simple personal website using all the concepts covered in this course.</p><p>We will create a multi-page website with styling and basic interactivity.</p>',
+                        duration: '30 min'
+                    }
+                ]
+            },
+            'data-science': {
+                id: 'data-science',
+                title: 'Data Science Essentials',
+                description: 'Introduction to data analysis, visualization, and machine learning concepts',
+                icon: 'fas fa-chart-bar',
+                lessons: [
+                    {
+                        title: 'Introduction to Data Science',
+                        content: '<p>Data science is an interdisciplinary field that uses scientific methods, processes, algorithms, and systems to extract knowledge and insights from structured and unstructured data.</p><p>This lesson provides an overview of the data science workflow and common applications.</p>',
+                        duration: '15 min'
+                    },
+                    {
+                        title: 'Data Cleaning and Preparation',
+                        content: '<p>Data cleaning is the process of detecting and correcting (or removing) corrupt or inaccurate records from a dataset.</p><p>This lesson covers common data quality issues and techniques for preparing data for analysis.</p>',
+                        duration: '20 min'
+                    },
+                    {
+                        title: 'Exploratory Data Analysis',
+                        content: '<p>Exploratory Data Analysis (EDA) is an approach to analyzing datasets to summarize their main characteristics, often with visual methods.</p><p>In this lesson, you will learn how to use statistical summaries and visualization to understand your data.</p>',
+                        duration: '25 min'
+                    },
+                    {
+                        title: 'Introduction to Machine Learning',
+                        content: '<p>Machine learning is a method of data analysis that automates analytical model building.</p><p>This lesson provides an introduction to basic machine learning concepts, including supervised and unsupervised learning.</p>',
+                        duration: '30 min'
+                    }
+                ]
+            },
+            'digital-marketing': {
+                id: 'digital-marketing',
+                title: 'Digital Marketing Strategy',
+                description: 'Learn to create effective digital marketing campaigns across multiple channels',
+                icon: 'fas fa-bullhorn',
+                lessons: [
+                    {
+                        title: 'Digital Marketing Landscape',
+                        content: '<p>Digital marketing encompasses all marketing efforts that use an electronic device or the internet.</p><p>This lesson provides an overview of the digital marketing landscape and key channels including SEO, social media, email, and more.</p>',
+                        duration: '15 min'
+                    },
+                    {
+                        title: 'Content Marketing Strategy',
+                        content: '<p>Content marketing is a strategic marketing approach focused on creating and distributing valuable, relevant, and consistent content.</p><p>This lesson covers how to develop a content strategy that attracts and retains a clearly defined audience.</p>',
+                        duration: '20 min'
+                    },
+                    {
+                        title: 'Social Media Marketing',
+                        content: '<p>Social media marketing is the use of social media platforms to connect with your audience to build your brand, increase sales, and drive website traffic.</p><p>This lesson explores different social media platforms and how to create effective campaigns.</p>',
+                        duration: '25 min'
+                    },
+                    {
+                        title: 'Measuring Marketing Performance',
+                        content: '<p>Measuring the performance of your digital marketing efforts is crucial for understanding what works and optimizing your strategy.</p><p>This lesson covers key performance indicators (KPIs) and tools for tracking marketing success.</p>',
+                        duration: '30 min'
+                    }
+                ]
+            }
+        };
 
         // Show login form
         document.getElementById('show-login').addEventListener('click', function() {
@@ -615,10 +830,11 @@
                     
                     // Store user data
                     localStorage.setItem('user', JSON.stringify(data.user));
+                    localStorage.setItem('userProgress', JSON.stringify(data.progress || {}));
                     
                     // Switch to app view after a short delay
                     setTimeout(() => {
-                        showAppView(data.user);
+                        showAppView(data.user, data.progress);
                     }, 1000);
                 } else {
                     throw new Error(data.error || 'Login failed. Please check your credentials.');
@@ -700,11 +916,19 @@
         // Logout handler
         logoutButton.addEventListener('click', function() {
             localStorage.removeItem('user');
+            localStorage.removeItem('userProgress');
             showAuthView();
         });
 
+        // Navigation handlers
+        backToDashboard.addEventListener('click', showDashboardView);
+        backToCourse.addEventListener('click', showCourseView);
+
         // Show app view
-        function showAppView(user) {
+        function showAppView(user, progress) {
+            currentUser = user;
+            userProgress = progress || {};
+            
             authContainer.style.display = 'none';
             appContainer.style.display = 'block';
             
@@ -712,8 +936,8 @@
             userName.textContent = user.name;
             userAvatar.textContent = user.name.charAt(0).toUpperCase();
             
-            // Load data
-            fetchData();
+            // Show dashboard
+            showDashboardView();
         }
 
         // Show auth view
@@ -726,163 +950,240 @@
             signupForm.reset();
             loginResponse.style.display = 'none';
             signupResponse.style.display = 'none';
+            
+            currentUser = null;
+            userProgress = {};
         }
 
-        // Format timestamp for display
-        function formatTimestamp(timestamp) {
-            const now = new Date();
-            return now.toLocaleString();
+        // Show dashboard view
+        function showDashboardView() {
+            dashboardView.style.display = 'block';
+            courseView.style.display = 'none';
+            lessonView.style.display = 'none';
+            
+            renderCourses();
         }
 
-        // Update the last updated timestamp
-        function updateTimestamp() {
-            lastUpdatedSpan.textContent = formatTimestamp();
-        }
-
-        // Function to render the data into the HTML table
-        function renderTable(data) {
-            dataTableBody.innerHTML = ''; // Clear existing data
-
-            if (data.length === 0) {
-                loadingStatus.style.display = 'none';
-                emptyState.style.display = 'block';
-                tableContainer.style.display = 'none';
-                return;
+        // Show course view
+        function showCourseView(courseId = null) {
+            if (courseId) {
+                currentCourse = courses[courseId];
             }
-
-            // Loop through the data array and create table rows
-            data.forEach(item => {
-                const row = dataTableBody.insertRow();
-                
-                // Format the timestamp if it exists
-                const timestamp = item.Timestamp || 'N/A';
-                
-                // Create cells and add content
-                row.insertCell().textContent = timestamp;
-                row.insertCell().textContent = item.Name || 'N/A';
-                row.insertCell().textContent = item.Email || 'N/A';
-                
-                // Truncate long messages
-                const message = item.Message || 'N/A';
-                const truncatedMessage = message.length > 50 ? message.substring(0, 50) + '...' : message;
-                const messageCell = row.insertCell();
-                messageCell.textContent = truncatedMessage;
-                
-                // Add title attribute for full message on hover
-                if (message.length > 50) {
-                    messageCell.title = message;
-                }
-            });
-
-            loadingStatus.style.display = 'none';
-            emptyState.style.display = 'none';
-            tableContainer.style.display = 'block';
+            
+            dashboardView.style.display = 'none';
+            courseView.style.display = 'block';
+            lessonView.style.display = 'none';
+            
+            renderCourseView();
         }
 
-        // Function to fetch the data from the Apps Script (using doGet)
-        function fetchData() {
-            loadingStatus.style.display = 'flex';
-            emptyState.style.display = 'none';
-            tableContainer.style.display = 'none';
+        // Show lesson view
+        function showLessonView(lessonIndex = 0) {
+            currentLessonIndex = lessonIndex;
+            
+            dashboardView.style.display = 'none';
+            courseView.style.display = 'none';
+            lessonView.style.display = 'block';
+            
+            renderLessonView();
+        }
 
-            // Send a GET request to the same script URL
-            fetch(scriptURL, {
-                method: 'GET'
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok: ' + response.statusText);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data && data.data) {
-                    renderTable(data.data);
-                    updateTimestamp();
-                } else {
-                    throw new Error('Invalid data structure received from Apps Script.');
-                }
-            })
-            .catch(error => {
-                console.error('Fetch Error:', error);
-                loadingStatus.innerHTML = `
-                    <i class="fas fa-exclamation-triangle" style="font-size: 2rem; color: var(--danger); margin-bottom: 15px;"></i>
-                    <p>Error loading data: ${error.message}</p>
+        // Render courses on dashboard
+        function renderCourses() {
+            courseGrid.innerHTML = '';
+            
+            Object.values(courses).forEach(course => {
+                const progress = getUserProgressForCourse(course.id);
+                const completedLessons = progress ? progress.completedLessons.length : 0;
+                const totalLessons = course.lessons.length;
+                const progressPercent = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+                
+                const courseCard = document.createElement('div');
+                courseCard.className = 'course-card';
+                courseCard.innerHTML = `
+                    <div class="course-icon">
+                        <i class="${course.icon}"></i>
+                    </div>
+                    <h3 class="course-title">${course.title}</h3>
+                    <p class="course-description">${course.description}</p>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${progressPercent}%"></div>
+                        </div>
+                        <div class="progress-text">
+                            <span>${completedLessons}/${totalLessons} lessons</span>
+                            <span>${progressPercent}%</span>
+                        </div>
+                    </div>
+                    ${completedLessons > 0 ? '<div class="completion-badge"><i class="fas fa-check"></i> In Progress</div>' : ''}
                 `;
+                
+                courseCard.addEventListener('click', () => showCourseView(course.id));
+                courseGrid.appendChild(courseCard);
             });
         }
 
-        // Data form submission handler
-        dataForm.addEventListener('submit', function(e) {
-            e.preventDefault();
+        // Render course view
+        function renderCourseView() {
+            if (!currentCourse) return;
             
-            submitButton.disabled = true;
-            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-            responseDiv.style.display = 'none';
-            responseDiv.classList.remove('success', 'error');
-
-            const formData = new FormData(dataForm);
-            formData.append('action', 'submitData');
+            courseViewTitle.textContent = currentCourse.title;
+            courseViewSubtitle.textContent = currentCourse.description;
             
-            fetch(scriptURL, { 
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok: ' + response.statusText);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.result === 'success') {
-                    responseDiv.textContent = '✅ Success! Your data has been submitted to Google Sheet.';
-                    responseDiv.classList.add('success');
-                    dataForm.reset(); 
-                    // Refresh the table with the latest data
-                    fetchData(); 
-                } else {
-                    throw new Error(data.error || 'Unknown error occurred in Apps Script.');
-                }
-            })
-            .catch(error => {
-                console.error('Submission Error:', error);
-                responseDiv.textContent = `❌ Error: ${error.message}`;
-                responseDiv.classList.add('error');
-            })
-            .finally(() => {
-                submitButton.disabled = false;
-                submitButton.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Data';
-                responseDiv.style.display = 'block';
+            // Calculate course progress
+            const progress = getUserProgressForCourse(currentCourse.id);
+            const completedLessons = progress ? progress.completedLessons.length : 0;
+            const totalLessons = currentCourse.lessons.length;
+            const progressPercent = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+            
+            courseProgressBar.style.width = `${progressPercent}%`;
+            courseProgressText.textContent = `${progressPercent}%`;
+            
+            // Render lessons list
+            lessonsList.innerHTML = '';
+            
+            currentCourse.lessons.forEach((lesson, index) => {
+                const isCompleted = progress && progress.completedLessons.includes(index);
                 
-                // Auto-hide success message after 5 seconds
-                if (responseDiv.classList.contains('success')) {
-                    setTimeout(() => {
-                        responseDiv.style.display = 'none';
-                    }, 5000);
+                const lessonItem = document.createElement('div');
+                lessonItem.className = 'course-card';
+                lessonItem.style.cursor = 'pointer';
+                lessonItem.style.marginBottom = '15px';
+                lessonItem.style.padding = '20px';
+                lessonItem.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h4 style="margin: 0 0 5px; color: var(--dark);">${lesson.title}</h4>
+                            <p style="margin: 0; color: var(--gray); font-size: 0.9rem;">${lesson.duration}</p>
+                        </div>
+                        <div>
+                            ${isCompleted ? 
+                                '<span class="completion-badge"><i class="fas fa-check"></i> Completed</span>' : 
+                                '<button class="btn-primary" style="padding: 8px 16px; font-size: 0.9rem;">Start</button>'
+                            }
+                        </div>
+                    </div>
+                `;
+                
+                const startButton = lessonItem.querySelector('button');
+                if (startButton) {
+                    startButton.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        showLessonView(index);
+                    });
+                } else {
+                    lessonItem.addEventListener('click', () => showLessonView(index));
                 }
+                
+                lessonsList.appendChild(lessonItem);
             });
-        });
+        }
 
-        // Refresh button handler
-        refreshButton.addEventListener('click', function() {
-            refreshButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
-            refreshButton.disabled = true;
+        // Render lesson view
+        function renderLessonView() {
+            if (!currentCourse || currentLessonIndex >= currentCourse.lessons.length) return;
             
-            fetchData();
+            const lesson = currentCourse.lessons[currentLessonIndex];
             
-            // Re-enable the button after a short delay
-            setTimeout(() => {
-                refreshButton.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
-                refreshButton.disabled = false;
-            }, 1000);
-        });
+            lessonTitle.textContent = lesson.title;
+            lessonCourseName.textContent = currentCourse.title;
+            lessonSubtitle.textContent = `Course: ${currentCourse.title}`;
+            lessonContent.innerHTML = lesson.content;
+            
+            // Update navigation buttons
+            prevLessonBtn.style.display = currentLessonIndex > 0 ? 'flex' : 'none';
+            nextLessonBtn.style.display = currentLessonIndex < currentCourse.lessons.length - 1 ? 'flex' : 'none';
+            
+            // Check if lesson is already completed
+            const progress = getUserProgressForCourse(currentCourse.id);
+            const isCompleted = progress && progress.completedLessons.includes(currentLessonIndex);
+            
+            if (isCompleted) {
+                completeLessonBtn.innerHTML = '<i class="fas fa-check-circle"></i> Completed';
+                completeLessonBtn.classList.remove('btn-success');
+                completeLessonBtn.classList.add('btn-secondary');
+                completeLessonBtn.disabled = true;
+            } else {
+                completeLessonBtn.innerHTML = '<i class="fas fa-check-circle"></i> Mark as Complete';
+                completeLessonBtn.classList.remove('btn-secondary');
+                completeLessonBtn.classList.add('btn-success');
+                completeLessonBtn.disabled = false;
+            }
+            
+            // Add event listeners for navigation
+            prevLessonBtn.onclick = () => showLessonView(currentLessonIndex - 1);
+            nextLessonBtn.onclick = () => showLessonView(currentLessonIndex + 1);
+            
+            // Mark lesson as complete
+            completeLessonBtn.onclick = markLessonComplete;
+        }
+
+        // Get user progress for a course
+        function getUserProgressForCourse(courseId) {
+            return userProgress[courseId] || { completedLessons: [] };
+        }
+
+        // Mark lesson as complete
+        function markLessonComplete() {
+            if (!currentCourse || !currentUser) return;
+            
+            // Update local progress
+            if (!userProgress[currentCourse.id]) {
+                userProgress[currentCourse.id] = { completedLessons: [] };
+            }
+            
+            if (!userProgress[currentCourse.id].completedLessons.includes(currentLessonIndex)) {
+                userProgress[currentCourse.id].completedLessons.push(currentLessonIndex);
+                
+                // Save to localStorage
+                localStorage.setItem('userProgress', JSON.stringify(userProgress));
+                
+                // Send to Google Sheets
+                const formData = new FormData();
+                formData.append('action', 'updateProgress');
+                formData.append('userId', currentUser.email);
+                formData.append('courseId', currentCourse.id);
+                formData.append('lessonIndex', currentLessonIndex);
+                
+                fetch(scriptURL, { 
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result === 'success') {
+                        // Update UI
+                        completeLessonBtn.innerHTML = '<i class="fas fa-check-circle"></i> Completed';
+                        completeLessonBtn.classList.remove('btn-success');
+                        completeLessonBtn.classList.add('btn-secondary');
+                        completeLessonBtn.disabled = true;
+                        
+                        // Show success message
+                        const responseDiv = document.createElement('div');
+                        responseDiv.className = 'response-message success';
+                        responseDiv.textContent = '✅ Lesson marked as complete!';
+                        responseDiv.style.display = 'block';
+                        lessonContent.parentNode.insertBefore(responseDiv, lessonContent.nextSibling);
+                        
+                        // Auto-hide message
+                        setTimeout(() => {
+                            responseDiv.style.display = 'none';
+                        }, 3000);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating progress:', error);
+                });
+            }
+        }
 
         // Check if user is already logged in
         function checkAuthStatus() {
             const user = localStorage.getItem('user');
+            const progress = localStorage.getItem('userProgress');
+            
             if (user) {
-                showAppView(JSON.parse(user));
+                showAppView(JSON.parse(user), progress ? JSON.parse(progress) : {});
             } else {
                 showAuthView();
             }
