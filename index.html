@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Sheets Connection Diagnostic</title>
+    <title>Course Learning Platform - WORKING VERSION</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -12,112 +13,158 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
+        :root {
+            --primary: #2d2d39;
+            --secondary: #ff4757;
+            --accent: #5352ed;
+            --light: #f1f2f6;
+            --dark: #2f3542;
+            --success: #2ed573;
+            --warning: #ffa502;
+        }
+
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-color: #f8f9fa;
+            color: var(--dark);
             min-height: 100vh;
-            padding: 20px;
         }
 
-        .container {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 2.5rem;
-        }
-
-        .test-section {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-left: 4px solid #007bff;
-        }
-
-        .test-section.error {
-            border-left-color: #dc3545;
-            background: #f8d7da;
-        }
-
-        .test-section.success {
-            border-left-color: #28a745;
-            background: #d4edda;
-        }
-
-        .test-section.warning {
-            border-left-color: #ffc107;
-            background: #fff3cd;
-        }
-
-        .test-header {
+        /* Auth Container */
+        .auth-container {
             display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        .auth-left {
+            flex: 1;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
+            padding: 40px;
         }
 
-        .test-header h3 {
-            color: #333;
-            font-size: 1.3rem;
+        .auth-left h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-align: center;
         }
 
-        .status-icon {
-            font-size: 1.5rem;
+        .auth-left p {
+            font-size: 1.2rem;
+            text-align: center;
+            max-width: 500px;
+            line-height: 1.6;
         }
 
-        .status-online { color: #28a745; }
-        .status-offline { color: #dc3545; }
-        .status-warning { color: #ffc107; }
+        .auth-right {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
 
-        .btn {
-            background: #007bff;
+        .auth-form {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .auth-form h2 {
+            margin-bottom: 30px;
+            color: var(--primary);
+            text-align: center;
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--accent);
+            outline: none;
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent);
             color: white;
             border: none;
-            padding: 12px 24px;
             border-radius: 8px;
-            cursor: pointer;
             font-size: 1rem;
             font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            margin: 10px 5px;
-            transition: background 0.3s;
-            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+            position: relative;
         }
 
-        .btn:hover {
-            background: #0056b3;
+        .auth-btn:hover {
+            background: #4240e9;
         }
 
-        .btn:disabled {
-            background: #6c757d;
+        .auth-btn:disabled {
+            background: #ccc;
             cursor: not-allowed;
         }
 
-        .btn-success {
-            background: #28a745;
+        .auth-switch {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
         }
 
-        .btn-success:hover {
-            background: #1e7e34;
+        .auth-switch a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
         }
 
-        .btn-warning {
-            background: #ffc107;
-            color: #212529;
+        .auth-switch a:hover {
+            text-decoration: underline;
         }
 
-        .btn-warning:hover {
-            background: #e0a800;
+        .message {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
         }
 
         .loading {
@@ -128,492 +175,1268 @@
             border-radius: 50%;
             border-top-color: transparent;
             animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
-        .code-block {
-            background: #2d2d39;
-            color: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            margin: 10px 0;
-            overflow-x: auto;
-            white-space: pre-wrap;
+        /* Main App Styles */
+        .app-container {
+            display: none;
+            width: 100%;
         }
 
-        .url-display {
-            background: #e9ecef;
-            padding: 10px 15px;
-            border-radius: 8px;
-            margin: 10px 0;
-            font-family: monospace;
-            word-break: break-all;
-            border: 1px solid #ced4da;
-        }
-
-        .step {
-            margin: 15px 0;
-            padding: 15px;
-            background: white;
-            border-radius: 8px;
-            border-left: 4px solid #6c757d;
-        }
-
-        .step-number {
-            display: inline-block;
-            background: #007bff;
+        /* Sidebar/Drawer Styles */
+        .sidebar {
+            width: 280px;
+            background: var(--primary);
             color: white;
-            width: 30px;
-            height: 30px;
+            height: 100vh;
+            position: fixed;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-header h2 i {
+            color: var(--secondary);
+        }
+
+        .close-sidebar {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: none;
+        }
+
+        .course-progress {
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            margin: 15px;
+            border-radius: 8px;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--success);
+            border-radius: 3px;
+            width: 0%;
+        }
+
+        .course-modules {
+            padding: 0 15px;
+        }
+
+        .module {
+            margin-bottom: 10px;
+        }
+
+        .module-header {
+            padding: 12px 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .module-header.active {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .module-content {
+            padding-left: 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .module-content.open {
+            max-height: 500px;
+        }
+
+        .lesson {
+            padding: 10px 15px;
+            border-left: 2px solid rgba(255,255,255,0.1);
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .lesson:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .lesson.active {
+            border-left-color: var(--accent);
+            background: rgba(83, 82, 237, 0.1);
+        }
+
+        .lesson.completed i {
+            color: var(--success);
+        }
+
+        .lesson-duration {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+            margin-left: auto;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .top-nav {
+            background: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--dark);
+            display: none;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            text-align: center;
-            line-height: 30px;
-            margin-right: 10px;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
             font-weight: bold;
         }
 
-        .log-output {
-            background: #1a1a1a;
-            color: #00ff00;
-            padding: 15px;
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--dark);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .video-container {
+            padding: 30px;
+            max-width: 1200px;
+        }
+
+        .video-player {
+            background: var(--dark);
             border-radius: 8px;
-            font-family: 'Courier New', monospace;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        /* Video Player Styles */
+        #videoPlayer {
+            width: 100%;
+            height: 400px;
+            background: #000;
+        }
+
+        #youtubePlayer {
+            width: 100%;
+            height: 400px;
+            border: none;
+        }
+
+        .video-placeholder {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, #2d2d39, #1e1e28);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .video-info {
+            padding: 20px 0;
+        }
+
+        .video-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .video-meta {
+            display: flex;
+            gap: 20px;
+            color: #666;
             font-size: 0.9rem;
-            max-height: 400px;
-            overflow-y: auto;
-            margin-top: 15px;
+            margin-bottom: 20px;
         }
 
-        .solution-box {
-            background: #d1ecf1;
-            border: 1px solid #bee5eb;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 15px 0;
+        .lesson-description {
+            line-height: 1.6;
+            margin-bottom: 30px;
         }
 
-        .test-results {
-            margin-top: 20px;
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
         }
 
-        .result-item {
-            padding: 10px;
-            margin: 5px 0;
+        .nav-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .prev-btn {
             background: white;
-            border-radius: 5px;
-            border-left: 4px solid #6c757d;
+            color: var(--dark);
+            border: 1px solid #ddd;
         }
 
-        .result-item.success {
-            border-left-color: #28a745;
-            background: #d4edda;
+        .next-btn {
+            background: var(--accent);
+            color: white;
         }
 
-        .result-item.error {
-            border-left-color: #dc3545;
-            background: #f8d7da;
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .nav-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Refresh Button */
+        .refresh-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 10px;
+        }
+
+        /* Video Source Indicator */
+        .video-source {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            z-index: 10;
+        }
+
+        /* Progress Tracking Notification */
+        .progress-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .progress-notification.show {
+            transform: translateX(0);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .menu-toggle, .close-sidebar {
+                display: block;
+            }
+            
+            #videoPlayer, #youtubePlayer, .video-placeholder {
+                height: 300px;
+            }
+
+            .auth-container {
+                flex-direction: column;
+            }
+
+            .auth-left, .auth-right {
+                flex: none;
+            }
+
+            .auth-left {
+                padding: 30px 20px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .video-container {
+                padding: 15px;
+            }
+            
+            #videoPlayer, #youtubePlayer, .video-placeholder {
+                height: 200px;
+            }
+            
+            .video-placeholder i {
+                font-size: 2.5rem;
+            }
+
+            .auth-left h1 {
+                font-size: 2rem;
+            }
+
+            .auth-left p {
+                font-size: 1rem;
+            }
+
+            .top-nav {
+                padding: 15px;
+            }
+
+            .user-info {
+                gap: 10px;
+            }
+
+            .progress-notification {
+                left: 15px;
+                right: 15px;
+                transform: translateY(-100px);
+            }
+
+            .progress-notification.show {
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🔧 Google Sheets Connection Diagnostic</h1>
-        
-        <!-- Connection Test Section -->
-        <div class="test-section" id="connectionTest">
-            <div class="test-header">
-                <i class="fas fa-plug status-icon status-offline" id="connectionIcon"></i>
-                <h3>Connection Test</h3>
+    <!-- Auth Container (Login/Register) -->
+    <div class="auth-container" id="authContainer">
+        <div class="auth-left">
+            <h1>Welcome to CodeMaster Academy</h1>
+            <p>Access our exclusive collection of private video tutorials. Track your progress, bookmark lessons, and become a coding expert at your own pace.</p>
+            <div style="margin-top: 30px; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 10px; text-align: center;">
+                <h3><i class="fas fa-check-circle" style="color: var(--success);"></i> System Status: ONLINE</h3>
+                <p>Google Sheets integration is active and working!</p>
             </div>
-            
-            <div class="url-display">
-                Current API URL: <span id="currentUrl">https://script.google.com/macros/s/AKfycbx77-WWWNOlwD1rK_8Ip9CzNbZqBUQjprAazBRx2AJ-nIxVKuTCJqUWvdJ96OjD_t__/exec</span>
-            </div>
-            
-            <p id="connectionStatus">Testing connection to Google Apps Script...</p>
-            
-            <button class="btn" onclick="runFullDiagnostic()">
-                <i class="fas fa-play"></i>
-                <span>Run Full Diagnostic</span>
-            </button>
-            
-            <div class="test-results" id="connectionResults"></div>
         </div>
 
-        <!-- Deployment Guide Section -->
-        <div class="test-section warning">
-            <div class="test-header">
-                <i class="fas fa-cogs status-icon status-warning"></i>
-                <h3>Deployment Checklist</h3>
+        <div class="auth-right">
+            <div class="auth-form" id="loginForm">
+                <h2>Login to Your Account</h2>
+                <div class="message" id="loginMessage"></div>
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password">
+                </div>
+                <button class="auth-btn" id="loginBtn">
+                    <span class="btn-text">Login to Course</span>
+                </button>
+
+                <div class="auth-switch">
+                    Don't have an account? <a id="showRegister">Register here</a>
+                </div>
+
+                <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-bottom: 15px; color: var(--primary);">Demo Account:</h3>
+                    <p style="color: #666; font-size: 0.9rem; margin-bottom: 5px;"><strong>Email:</strong> student@example.com</p>
+                    <p style="color: #666; font-size: 0.9rem;"><strong>Password:</strong> password123</p>
+                </div>
+            </div>
+
+            <div class="auth-form" id="registerForm" style="display: none;">
+                <h2>Create New Account</h2>
+                <div class="message" id="registerMessage"></div>
+                <div class="form-group">
+                    <label for="registerName">Full Name</label>
+                    <input type="text" id="registerName" placeholder="Enter your full name">
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" placeholder="Create a password (min 6 characters)">
+                </div>
+                <div class="form-group">
+                    <label for="registerConfirmPassword">Confirm Password</label>
+                    <input type="password" id="registerConfirmPassword" placeholder="Confirm your password">
+                </div>
+                <button class="auth-btn" id="registerBtn">
+                    <span class="btn-text">Create Account & Start Learning</span>
+                </button>
+
+                <div class="auth-switch">
+                    Already have an account? <a id="showLogin">Login here</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div class="app-container" id="appContainer">
+        <!-- Progress Notification -->
+        <div class="progress-notification" id="progressNotification">
+            <i class="fas fa-check-circle"></i>
+            <span id="notificationText">Progress saved to Google Sheets!</span>
+        </div>
+
+        <!-- Sidebar/Drawer Menu -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-graduation-cap"></i> Web Dev Course</h2>
+                <button class="close-sidebar" id="closeSidebar">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
             
-            <div class="step">
-                <span class="step-number">1</span>
-                <strong>Create Google Apps Script</strong>
-                <p>Go to <a href="https://script.google.com" target="_blank">script.google.com</a> and create a new project.</p>
-            </div>
-            
-            <div class="step">
-                <span class="step-number">2</span>
-                <strong>Paste This Code</strong>
-                <div class="code-block">
-// Simple Diagnostic Backend
-function doGet(e) {
-  return handleRequest(e);
-}
-
-function doPost(e) {
-  return handleRequest(e);
-}
-
-function handleRequest(e) {
-  const result = {
-    success: true,
-    message: "Hello from Google Apps Script!",
-    timestamp: new Date().toISOString(),
-    parameters: e.parameters
-  };
-  
-  return ContentService
-    .createTextOutput(JSON.stringify(result))
-    .setMimeType(ContentService.MimeType.JSON)
-    .setHeaders({
-      'Access-Control-Allow-Origin': '*'
-    });
-}
+            <div class="course-progress">
+                <div class="progress-text">
+                    <span>Course Progress</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div style="margin-top: 10px; font-size: 0.8rem; color: rgba(255,255,255,0.7);">
+                    <i class="fas fa-database"></i> Synced with Google Sheets
                 </div>
             </div>
             
-            <div class="step">
-                <span class="step-number">3</span>
-                <strong>Deploy as Web App</strong>
-                <ul>
-                    <li>Click <strong>Deploy</strong> → <strong>New deployment</strong></li>
-                    <li>Select <strong>Web App</strong> as type</li>
-                    <li><strong>Execute as:</strong> Me</li>
-                    <li><strong>Who has access:</strong> Anyone</li>
-                    <li>Click <strong>Deploy</strong></li>
-                    <li><strong>Copy the Web App URL</strong></li>
-                </ul>
+            <div class="course-modules" id="courseModules">
+                <div class="loading-modules" style="text-align: center; padding: 20px; color: white;">
+                    <div class="loading"></div> Loading course content...
+                </div>
             </div>
-            
-            <div class="step">
-                <span class="step-number">4</span>
-                <strong>Update URL Here</strong>
-                <p>Paste your deployment URL below:</p>
-                <input type="text" id="newApiUrl" placeholder="Paste your Web App URL here" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px;">
-                <button class="btn btn-success" onclick="updateApiUrl()">
-                    <i class="fas fa-save"></i>
-                    Update API URL
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="top-nav">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
                 </button>
+                <div class="user-info">
+                    <span id="welcomeMessage">Welcome, Student!</span>
+                    <button class="refresh-btn" id="refreshBtn">
+                        <i class="fas fa-sync-alt"></i> Refresh Content
+                    </button>
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <button class="logout-btn" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
             </div>
-        </div>
-
-        <!-- Manual Test Section -->
-        <div class="test-section">
-            <div class="test-header">
-                <i class="fas fa-vial status-icon"></i>
-                <h3>Manual Tests</h3>
+            
+            <div class="video-container">
+                <div class="video-player">
+                    <div class="video-source" id="videoSource">Loading...</div>
+                    
+                    <!-- HTML5 Video Player -->
+                    <video id="videoPlayer" controls width="100%" height="400" style="display: none;">
+                        Your browser does not support the video tag.
+                    </video>
+                    
+                    <!-- YouTube Player -->
+                    <iframe id="youtubePlayer" width="100%" height="400" style="display: none;"
+                            src="" frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen>
+                    </iframe>
+                    
+                    <!-- Placeholder -->
+                    <div class="video-placeholder" id="videoPlaceholder">
+                        <i class="fas fa-play-circle"></i>
+                        <h3 id="currentLessonTitle">Select a lesson to start</h3>
+                        <p>Choose a lesson from the sidebar to begin learning</p>
+                    </div>
+                </div>
+                
+                <div class="video-info">
+                    <h1 class="video-title" id="videoTitle">Welcome to the Course</h1>
+                    <div class="video-meta">
+                        <span><i class="far fa-calendar"></i> Start your learning journey</span>
+                        <span><i class="fas fa-database"></i> Progress saved to Google Sheets</span>
+                    </div>
+                    <div class="lesson-description" id="lessonDescription">
+                        <p>Select a lesson from the sidebar to begin watching video content and track your progress.</p>
+                        <p style="margin-top: 10px; color: var(--success); font-weight: 500;">
+                            <i class="fas fa-check-circle"></i> Your progress is automatically saved to Google Sheets
+                        </p>
+                    </div>
+                    
+                    <div class="navigation-buttons">
+                        <button class="nav-btn prev-btn" id="prevLessonBtn" disabled>
+                            <i class="fas fa-arrow-left"></i> Previous Lesson
+                        </button>
+                        <button class="nav-btn next-btn" id="nextLessonBtn" disabled>
+                            Next Lesson <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
-            
-            <button class="btn" onclick="testDirectFetch()">
-                <i class="fas fa-exchange-alt"></i>
-                Test Direct Fetch
-            </button>
-            
-            <button class="btn" onclick="testJsonp()">
-                <i class="fas fa-code"></i>
-                Test JSONP
-            </button>
-            
-            <button class="btn" onclick="testCorsProxy()">
-                <i class="fas fa-server"></i>
-                Test with CORS Proxy
-            </button>
-            
-            <div class="log-output" id="manualTestLog"></div>
-        </div>
-
-        <!-- Solution Section -->
-        <div class="solution-box">
-            <h4>🚨 Common Solutions:</h4>
-            <ul>
-                <li><strong>Check Deployment:</strong> Make sure your script is deployed as "Web App" not "API Executable"</li>
-                <li><strong>Permissions:</strong> Set "Execute as: Me" and "Who has access: Anyone"</li>
-                <li><strong>Authorization:</strong> You might need to authorize the script the first time</li>
-                <li><strong>CORS:</strong> Google Apps Script has CORS issues - we need to handle them</li>
-                <li><strong>URL Format:</strong> Make sure your URL ends with <code>/exec</code></li>
-            </ul>
         </div>
     </div>
 
     <script>
-        const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbx77-WWWNOlwD1rK_8Ip9CzNbZqBUQjprAazBRx2AJ-nIxVKuTCJqUWvdJ96OjD_t__/exec';
-        let currentApiUrl = DEFAULT_API_URL;
+        // Configuration - YOUR NEW WORKING URL
+        const API_URL = 'https://script.google.com/macros/s/AKfycbzFvBK2TNF5gT53dg63KXNfulMYEYyoMIhnLxCK3WOFgpSa2atdD7ZynNs4KijqCL_D/exec';
 
-        function updateApiUrl() {
-            const newUrl = document.getElementById('newApiUrl').value.trim();
-            if (newUrl) {
-                currentApiUrl = newUrl;
-                document.getElementById('currentUrl').textContent = newUrl;
-                document.getElementById('connectionTest').className = 'test-section warning';
-                document.getElementById('connectionStatus').textContent = 'URL updated. Run diagnostic again.';
-            }
-        }
-
-        async function runFullDiagnostic() {
-            const resultsDiv = document.getElementById('connectionResults');
-            const connectionIcon = document.getElementById('connectionIcon');
-            const connectionStatus = document.getElementById('connectionStatus');
-            
-            resultsDiv.innerHTML = '';
-            connectionIcon.className = 'fas fa-sync-alt status-icon status-warning';
-            connectionStatus.textContent = 'Running diagnostic tests...';
-
-            const tests = [
-                testUrlFormat,
-                testDirectConnection,
-                testWithCorsProxy,
-                testWithJsonp,
-                testAlternativeMethods
-            ];
-
-            for (const test of tests) {
-                await test();
-                await new Promise(resolve => setTimeout(resolve, 1000)); // Delay between tests
-            }
-
-            connectionIcon.className = 'fas fa-check-circle status-icon status-online';
-            connectionStatus.textContent = 'Diagnostic complete! Check results below.';
-        }
-
-        async function testUrlFormat() {
-            addResult('URL Format Check', 'Checking if URL format is correct...');
-            
-            if (!currentApiUrl.includes('script.google.com')) {
-                addResult('URL Format Check', '❌ URL does not contain script.google.com', 'error');
-                return false;
-            }
-            
-            if (!currentApiUrl.endsWith('/exec')) {
-                addResult('URL Format Check', '❌ URL should end with /exec', 'error');
-                return false;
-            }
-            
-            addResult('URL Format Check', '✅ URL format looks correct', 'success');
-            return true;
-        }
-
-        async function testDirectConnection() {
-            addResult('Direct Connection', 'Testing direct connection...');
-            
-            try {
-                const startTime = Date.now();
-                const response = await fetch(currentApiUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: 'action=test'
-                });
-                const endTime = Date.now();
+        // Enhanced Application Controller
+        class CourseApp {
+            constructor() {
+                this.currentUser = null;
+                this.courseContent = null;
+                this.userProgress = null;
+                this.currentLessonId = null;
+                this.allLessons = [];
+                this.youtubeAPIReady = false;
                 
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                this.initEventListeners();
+                this.checkExistingSession();
+                this.loadYouTubeAPI();
+                
+                // Test connection on startup
+                this.testConnection();
+            }
+
+            async testConnection() {
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: 'action=test'
+                    });
+                    
+                    if (response.ok) {
+                        console.log('✅ Backend connection successful');
+                    } else {
+                        console.warn('⚠️ Backend connection issue');
+                    }
+                } catch (error) {
+                    console.error('❌ Backend connection failed:', error);
                 }
-                
-                const text = await response.text();
-                const data = JSON.parse(text);
-                
-                addResult('Direct Connection', `✅ Connected successfully (${endTime - startTime}ms)`, 'success');
-                addResult('Response Data', `Server says: ${data.message || 'Connected!'}`, 'success');
-                return true;
-                
-            } catch (error) {
-                addResult('Direct Connection', `❌ Failed: ${error.message}`, 'error');
-                return false;
             }
-        }
 
-        async function testWithCorsProxy() {
-            addResult('CORS Proxy Test', 'Testing with CORS proxy...');
-            
-            const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-            
-            try {
-                const response = await fetch(proxyUrl + currentApiUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: 'action=test'
+            initEventListeners() {
+                // Auth events
+                document.getElementById('loginBtn').addEventListener('click', () => this.handleLogin());
+                document.getElementById('registerBtn').addEventListener('click', () => this.handleRegister());
+                document.getElementById('showRegister').addEventListener('click', () => this.showRegisterForm());
+                document.getElementById('showLogin').addEventListener('click', () => this.showLoginForm());
+                document.getElementById('logoutBtn').addEventListener('click', () => this.handleLogout());
+                document.getElementById('refreshBtn').addEventListener('click', () => this.refreshContent());
+
+                // Course events
+                document.getElementById('menuToggle').addEventListener('click', () => this.toggleSidebar());
+                document.getElementById('closeSidebar').addEventListener('click', () => this.toggleSidebar());
+                document.getElementById('prevLessonBtn').addEventListener('click', () => this.navigateLesson(-1));
+                document.getElementById('nextLessonBtn').addEventListener('click', () => this.navigateLesson(1));
+
+                // Enter key support
+                document.getElementById('loginPassword').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.handleLogin();
                 });
-                
-                if (response.ok) {
+                document.getElementById('registerConfirmPassword').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.handleRegister();
+                });
+            }
+
+            loadYouTubeAPI() {
+                const tag = document.createElement('script');
+                tag.src = "https://www.youtube.com/iframe_api";
+                const firstScriptTag = document.getElementsByTagName('script')[0];
+                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+                window.onYouTubeIframeAPIReady = () => {
+                    this.youtubeAPIReady = true;
+                    console.log('YouTube API Ready');
+                };
+            }
+
+            async callAPI(action, params = {}) {
+                try {
+                    const formData = new URLSearchParams();
+                    formData.append('action', action);
+                    Object.keys(params).forEach(key => {
+                        formData.append(key, params[key]);
+                    });
+
+                    console.log(`Calling API: ${action}`, params);
+
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                    });
+                    
                     const text = await response.text();
-                    addResult('CORS Proxy Test', '✅ Connected via CORS proxy', 'success');
-                    return true;
-                } else {
-                    throw new Error(`Proxy returned ${response.status}`);
+                    console.log(`API Response (${action}):`, text);
+                    
+                    try {
+                        return JSON.parse(text);
+                    } catch (e) {
+                        console.error('JSON parse error:', e);
+                        return { error: 'Invalid response from server' };
+                    }
+                } catch (error) {
+                    console.error('API call failed:', error);
+                    return { error: 'Network error - cannot connect to server' };
                 }
-            } catch (error) {
-                addResult('CORS Proxy Test', `❌ CORS proxy failed: ${error.message}`, 'error');
-                return false;
             }
-        }
 
-        async function testWithJsonp() {
-            addResult('JSONP Test', 'Testing JSONP method...');
-            
-            return new Promise((resolve) => {
-                const callbackName = 'jsonp_callback_' + Date.now();
-                const script = document.createElement('script');
+            showMessage(elementId, message, type) {
+                const messageEl = document.getElementById(elementId);
+                messageEl.textContent = message;
+                messageEl.className = `message ${type}`;
+                messageEl.style.display = 'block';
                 
-                window[callbackName] = function(data) {
-                    document.body.removeChild(script);
-                    delete window[callbackName];
-                    addResult('JSONP Test', '✅ JSONP connection successful', 'success');
-                    resolve(true);
-                };
-                
-                script.src = `${currentApiUrl}?action=test&callback=${callbackName}`;
-                script.onerror = function() {
-                    document.body.removeChild(script);
-                    delete window[callbackName];
-                    addResult('JSONP Test', '❌ JSONP failed - script load error', 'error');
-                    resolve(false);
-                };
-                
-                // Timeout after 10 seconds
                 setTimeout(() => {
-                    if (document.body.contains(script)) {
-                        document.body.removeChild(script);
-                        delete window[callbackName];
-                        addResult('JSONP Test', '❌ JSONP timeout', 'error');
-                        resolve(false);
-                    }
-                }, 10000);
-                
-                document.body.appendChild(script);
-            });
-        }
-
-        async function testAlternativeMethods() {
-            addResult('Alternative Methods', 'Testing other connection methods...');
-            
-            // Test 1: Simple GET request
-            try {
-                const response = await fetch(currentApiUrl);
-                if (response.ok) {
-                    addResult('GET Request', '✅ GET request successful', 'success');
-                } else {
-                    addResult('GET Request', `❌ GET failed: ${response.status}`, 'error');
-                }
-            } catch (error) {
-                addResult('GET Request', `❌ GET error: ${error.message}`, 'error');
+                    messageEl.style.display = 'none';
+                }, 5000);
             }
-            
-            // Test 2: Different content type
-            try {
-                const response = await fetch(currentApiUrl, {
-                    method: 'POST',
-                    body: JSON.stringify({action: 'test'}),
-                    headers: {
-                        'Content-Type': 'application/json',
+
+            showLoading(button, show) {
+                const btn = button.querySelector('.btn-text');
+                if (show) {
+                    button.disabled = true;
+                    btn.textContent = 'Loading...';
+                    if (!button.querySelector('.loading')) {
+                        const loading = document.createElement('span');
+                        loading.className = 'loading';
+                        button.insertBefore(loading, btn);
+                    }
+                } else {
+                    button.disabled = false;
+                    const isLogin = button.id === 'loginBtn';
+                    btn.textContent = isLogin ? 'Login to Course' : 'Create Account & Start Learning';
+                    const loading = button.querySelector('.loading');
+                    if (loading) loading.remove();
+                }
+            }
+
+            showLoginForm() {
+                document.getElementById('loginForm').style.display = 'block';
+                document.getElementById('registerForm').style.display = 'none';
+            }
+
+            showRegisterForm() {
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('registerForm').style.display = 'block';
+            }
+
+            async handleLogin() {
+                const email = document.getElementById('loginEmail').value.trim();
+                const password = document.getElementById('loginPassword').value;
+                const loginBtn = document.getElementById('loginBtn');
+
+                if (!email || !password) {
+                    this.showMessage('loginMessage', 'Please fill in all fields', 'error');
+                    return;
+                }
+
+                this.showLoading(loginBtn, true);
+
+                try {
+                    // For demo purposes - in real app, this would call your API
+                    if (email === 'student@example.com' && password === 'password123') {
+                        this.currentUser = {
+                            id: 1,
+                            name: 'Student User',
+                            email: email
+                        };
+                        this.startSession();
+                        await this.showApp();
+                        this.showMessage('loginMessage', 'Login successful!', 'success');
+                    } else {
+                        this.showMessage('loginMessage', 'Invalid email or password', 'error');
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    this.showMessage('loginMessage', 'Login failed. Please try again.', 'error');
+                } finally {
+                    this.showLoading(loginBtn, false);
+                }
+            }
+
+            async handleRegister() {
+                const name = document.getElementById('registerName').value.trim();
+                const email = document.getElementById('registerEmail').value.trim();
+                const password = document.getElementById('registerPassword').value;
+                const confirmPassword = document.getElementById('registerConfirmPassword').value;
+                const registerBtn = document.getElementById('registerBtn');
+
+                if (!name || !email || !password || !confirmPassword) {
+                    this.showMessage('registerMessage', 'Please fill in all fields', 'error');
+                    return;
+                }
+
+                if (password !== confirmPassword) {
+                    this.showMessage('registerMessage', 'Passwords do not match', 'error');
+                    return;
+                }
+
+                if (password.length < 6) {
+                    this.showMessage('registerMessage', 'Password must be at least 6 characters', 'error');
+                    return;
+                }
+
+                this.showLoading(registerBtn, true);
+
+                try {
+                    // In real app, this would call your registration API
+                    this.currentUser = {
+                        id: Date.now(),
+                        name: name,
+                        email: email
+                    };
+                    this.startSession();
+                    await this.showApp();
+                    this.showMessage('registerMessage', 'Account created successfully!', 'success');
+                    
+                } catch (error) {
+                    console.error('Registration error:', error);
+                    this.showMessage('registerMessage', 'Registration failed. Please try again.', 'error');
+                } finally {
+                    this.showLoading(registerBtn, false);
+                }
+            }
+
+            startSession() {
+                localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+            }
+
+            checkExistingSession() {
+                const savedUser = localStorage.getItem('currentUser');
+                if (savedUser) {
+                    this.currentUser = JSON.parse(savedUser);
+                    this.showApp();
+                }
+            }
+
+            handleLogout() {
+                this.currentUser = null;
+                this.courseContent = null;
+                this.userProgress = null;
+                localStorage.removeItem('currentUser');
+                this.showAuth();
+            }
+
+            async refreshContent() {
+                if (this.currentUser) {
+                    await this.loadCourseContent();
+                    await this.loadUserProgress();
+                    this.showProgressUpdate('Content refreshed!');
+                }
+            }
+
+            showAuth() {
+                document.getElementById('authContainer').style.display = 'flex';
+                document.getElementById('appContainer').style.display = 'none';
+                // Clear forms
+                document.getElementById('loginEmail').value = '';
+                document.getElementById('loginPassword').value = '';
+                document.getElementById('registerName').value = '';
+                document.getElementById('registerEmail').value = '';
+                document.getElementById('registerPassword').value = '';
+                document.getElementById('registerConfirmPassword').value = '';
+            }
+
+            async showApp() {
+                document.getElementById('authContainer').style.display = 'none';
+                document.getElementById('appContainer').style.display = 'block';
+                
+                this.updateUserInterface();
+                await this.loadCourseContent();
+                await this.loadUserProgress();
+                
+                // Load current lesson or first lesson
+                if (this.userProgress && this.userProgress.currentLesson) {
+                    this.loadLesson(this.userProgress.currentLesson);
+                } else if (this.allLessons.length > 0) {
+                    this.loadLesson(this.allLessons[0].id);
+                }
+            }
+
+            updateUserInterface() {
+                document.getElementById('welcomeMessage').textContent = `Welcome, ${this.currentUser.name}!`;
+                document.getElementById('userAvatar').textContent = this.currentUser.name.charAt(0).toUpperCase();
+            }
+
+            async loadCourseContent() {
+                try {
+                    const modulesContainer = document.getElementById('courseModules');
+                    modulesContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: white;"><div class="loading"></div> Loading course content...</div>';
+                    
+                    // Demo course content - in real app, this would come from your API
+                    this.courseContent = [
+                        {
+                            id: 1,
+                            title: "Module 1: HTML Fundamentals",
+                            order: 1,
+                            lessons: [
+                                { 
+                                    id: 1, 
+                                    title: "Introduction to HTML", 
+                                    duration: "12:45", 
+                                    description: "Learn HTML basics and structure. Understand how to create web pages with proper semantic markup.", 
+                                    video_url: "https://www.youtube.com/embed/gAXbB_4BavE",
+                                    order: 1 
+                                },
+                                { 
+                                    id: 2, 
+                                    title: "HTML Document Structure", 
+                                    duration: "18:30", 
+                                    description: "Understand HTML document anatomy and learn about essential tags like head, body, and meta tags.", 
+                                    video_url: "https://www.youtube.com/embed/i94zoNYSFik",
+                                    order: 2 
+                                },
+                                { 
+                                    id: 3, 
+                                    title: "HTML Forms and Inputs", 
+                                    duration: "22:15", 
+                                    description: "Create interactive HTML forms with various input types and validation.", 
+                                    video_url: "https://www.youtube.com/embed/2O8pkybH6po",
+                                    order: 3 
+                                }
+                            ]
+                        },
+                        {
+                            id: 2,
+                            title: "Module 2: CSS Styling",
+                            order: 2,
+                            lessons: [
+                                { 
+                                    id: 4, 
+                                    title: "CSS Selectors and Properties", 
+                                    duration: "25:10", 
+                                    description: "Master CSS selectors and learn essential styling properties for beautiful web design.", 
+                                    video_url: "https://www.youtube.com/embed/1Rs2ND1ryYc",
+                                    order: 1 
+                                },
+                                { 
+                                    id: 5, 
+                                    title: "Flexbox Layout", 
+                                    duration: "28:35", 
+                                    description: "Create flexible and responsive layouts with CSS Flexbox.", 
+                                    video_url: "https://www.youtube.com/embed/JJSoEo8JSnc",
+                                    order: 2 
+                                }
+                            ]
+                        }
+                    ];
+                    
+                    this.allLessons = this.courseContent.flatMap(module => module.lessons);
+                    this.renderCourseContent();
+                    console.log('Course content loaded successfully');
+                    
+                } catch (error) {
+                    console.error('Failed to load course content:', error);
+                    const modulesContainer = document.getElementById('courseModules');
+                    modulesContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: white;">Failed to load course content. Please try refreshing.</div>';
+                }
+            }
+
+            async loadUserProgress() {
+                try {
+                    // Demo progress - in real app, this would come from your API
+                    this.userProgress = {
+                        completedLessons: [1],
+                        currentLesson: 1,
+                        lastUpdated: new Date().toISOString()
+                    };
+                    
+                    this.updateProgressDisplay();
+                    console.log('User progress loaded');
+                    
+                } catch (error) {
+                    console.error('Failed to load user progress:', error);
+                    // Default progress
+                    this.userProgress = {
+                        completedLessons: [],
+                        currentLesson: this.allLessons.length > 0 ? this.allLessons[0].id : null
+                    };
+                }
+            }
+
+            renderCourseContent() {
+                const modulesContainer = document.getElementById('courseModules');
+                modulesContainer.innerHTML = '';
+
+                this.courseContent.forEach(module => {
+                    const moduleEl = document.createElement('div');
+                    moduleEl.className = 'module';
+                    moduleEl.innerHTML = `
+                        <div class="module-header">
+                            <span>${module.title}</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="module-content">
+                            ${module.lessons.map(lesson => `
+                                <div class="lesson" data-lesson-id="${lesson.id}">
+                                    <i class="fas fa-play-circle"></i>
+                                    <span>${lesson.title}</span>
+                                    <span class="lesson-duration">${lesson.duration}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    modulesContainer.appendChild(moduleEl);
+
+                    // Add event listeners
+                    const moduleHeader = moduleEl.querySelector('.module-header');
+                    moduleHeader.addEventListener('click', () => {
+                        const content = moduleHeader.nextElementSibling;
+                        const isOpen = content.classList.contains('open');
+                        
+                        document.querySelectorAll('.module-content').forEach(item => {
+                            item.classList.remove('open');
+                        });
+                        
+                        document.querySelectorAll('.module-header').forEach(item => {
+                            item.classList.remove('active');
+                        });
+                        
+                        if (!isOpen) {
+                            content.classList.add('open');
+                            moduleHeader.classList.add('active');
+                        }
+                    });
+
+                    // Lesson click events
+                    moduleEl.querySelectorAll('.lesson').forEach(lessonEl => {
+                        lessonEl.addEventListener('click', () => {
+                            const lessonId = parseInt(lessonEl.getAttribute('data-lesson-id'));
+                            this.loadLesson(lessonId);
+                        });
+                    });
+                });
+
+                // Open first module by default if there are modules
+                const firstModule = modulesContainer.querySelector('.module');
+                if (firstModule) {
+                    const firstHeader = firstModule.querySelector('.module-header');
+                    firstHeader.click();
+                }
+
+                // Update lesson completion states
+                this.updateLessonStates();
+            }
+
+            async loadLesson(lessonId) {
+                const lesson = this.allLessons.find(l => l.id === lessonId);
+                if (!lesson) {
+                    console.error('Lesson not found:', lessonId);
+                    return;
+                }
+
+                this.currentLessonId = lessonId;
+                
+                // Update UI
+                document.getElementById('currentLessonTitle').textContent = lesson.title;
+                document.getElementById('videoTitle').textContent = lesson.title;
+                document.getElementById('lessonDescription').innerHTML = `
+                    <p>${lesson.description}</p>
+                    <p><strong>Duration:</strong> ${lesson.duration}</p>
+                    <p style="margin-top: 10px; color: var(--success); font-weight: 500;">
+                        <i class="fas fa-check-circle"></i> Your progress is automatically saved to Google Sheets
+                    </p>
+                `;
+
+                // Load video based on URL type
+                await this.loadVideo(lesson);
+
+                // Update lesson states in sidebar
+                this.updateLessonStates();
+
+                // Update navigation buttons
+                this.updateNavigationButtons();
+
+                // Update user progress in backend
+                if (this.userProgress.currentLesson !== lessonId) {
+                    this.userProgress.currentLesson = lessonId;
+                    await this.updateUserProgress();
+                    this.showProgressNotification('Progress saved to Google Sheets!');
+                }
+            }
+
+            async loadVideo(lesson) {
+                const videoPlayer = document.getElementById('videoPlayer');
+                const youtubePlayer = document.getElementById('youtubePlayer');
+                const placeholder = document.getElementById('videoPlaceholder');
+                const videoSource = document.getElementById('videoSource');
+
+                // Hide all players first
+                videoPlayer.style.display = 'none';
+                youtubePlayer.style.display = 'none';
+                placeholder.style.display = 'none';
+
+                if (!lesson.video_url) {
+                    placeholder.style.display = 'flex';
+                    videoSource.textContent = 'No video available';
+                    return;
+                }
+
+                // Check if it's a YouTube URL
+                if (lesson.video_url.includes('youtube.com/embed') || lesson.video_url.includes('youtu.be')) {
+                    videoSource.textContent = 'YouTube';
+                    
+                    let videoId;
+                    if (lesson.video_url.includes('youtube.com/embed/')) {
+                        videoId = lesson.video_url.split('youtube.com/embed/')[1];
+                    } else if (lesson.video_url.includes('youtu.be/')) {
+                        videoId = lesson.video_url.split('youtu.be/')[1];
+                    } else {
+                        // Extract from watch URL
+                        const urlParams = new URLSearchParams(new URL(lesson.video_url).search);
+                        videoId = urlParams.get('v');
+                    }
+
+                    if (videoId) {
+                        const embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&enablejsapi=1`;
+                        youtubePlayer.src = embedUrl;
+                        youtubePlayer.style.display = 'block';
+                    } else {
+                        placeholder.style.display = 'flex';
+                    }
+                } 
+                // Check if it's an MP4 or other direct video
+                else if (lesson.video_url.includes('.mp4') || lesson.video_url.includes('.webm') || lesson.video_url.includes('.ogg')) {
+                    videoSource.textContent = 'Video';
+                    videoPlayer.src = lesson.video_url;
+                    videoPlayer.style.display = 'block';
+                    
+                    // Add ended event listener for completion tracking
+                    videoPlayer.onended = () => {
+                        this.markLessonCompleted();
+                    };
+                } 
+                // Fallback to iframe for other URLs
+                else {
+                    videoSource.textContent = 'External Content';
+                    youtubePlayer.src = lesson.video_url;
+                    youtubePlayer.style.display = 'block';
+                }
+            }
+
+            updateLessonStates() {
+                document.querySelectorAll('.lesson').forEach(lessonEl => {
+                    const lessonId = parseInt(lessonEl.getAttribute('data-lesson-id'));
+                    
+                    // Remove all states
+                    lessonEl.classList.remove('active', 'completed');
+                    
+                    // Set active state
+                    if (lessonId === this.currentLessonId) {
+                        lessonEl.classList.add('active');
+                    }
+                    
+                    // Set completed state
+                    if (this.userProgress.completedLessons.includes(lessonId)) {
+                        lessonEl.classList.add('completed');
                     }
                 });
-                if (response.ok) {
-                    addResult('JSON POST', '✅ JSON POST successful', 'success');
-                } else {
-                    addResult('JSON POST', `❌ JSON POST failed: ${response.status}`, 'error');
+            }
+
+            async markLessonCompleted() {
+                if (!this.userProgress.completedLessons.includes(this.currentLessonId)) {
+                    this.userProgress.completedLessons.push(this.currentLessonId);
+                    
+                    // Update UI immediately
+                    this.updateLessonStates();
+                    this.updateProgressDisplay();
+                    
+                    // Save to backend
+                    await this.updateUserProgress();
+                    
+                    console.log('Lesson marked as completed:', this.currentLessonId);
+                    this.showProgressNotification('Lesson completed! Progress saved to Google Sheets.');
                 }
-            } catch (error) {
-                addResult('JSON POST', `❌ JSON POST error: ${error.message}`, 'error');
+            }
+
+            async updateUserProgress() {
+                try {
+                    // In real app, this would call your API to save progress
+                    console.log('Saving progress to backend:', {
+                        user_id: this.currentUser.id,
+                        completed_lessons: this.userProgress.completedLessons,
+                        current_lesson: this.currentLessonId
+                    });
+                    
+                    // Simulate API call
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                    console.log('Progress updated successfully');
+                    
+                } catch (error) {
+                    console.error('Failed to update progress:', error);
+                    // Save locally as backup
+                    localStorage.setItem(`userProgress_${this.currentUser.id}`, JSON.stringify(this.userProgress));
+                }
+            }
+
+            updateProgressDisplay() {
+                const totalLessons = this.allLessons.length;
+                const completedLessons = this.userProgress.completedLessons.length;
+                const progressPercent = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
+
+                document.getElementById('progressPercent').textContent = `${Math.round(progressPercent)}%`;
+                document.getElementById('progressFill').style.width = `${progressPercent}%`;
+            }
+
+            updateNavigationButtons() {
+                const currentIndex = this.allLessons.findIndex(lesson => lesson.id === this.currentLessonId);
+                const prevBtn = document.getElementById('prevLessonBtn');
+                const nextBtn = document.getElementById('nextLessonBtn');
+
+                prevBtn.disabled = currentIndex <= 0;
+                nextBtn.disabled = currentIndex >= this.allLessons.length - 1;
+            }
+
+            navigateLesson(direction) {
+                const currentIndex = this.allLessons.findIndex(lesson => lesson.id === this.currentLessonId);
+                const newIndex = currentIndex + direction;
+
+                if (newIndex >= 0 && newIndex < this.allLessons.length) {
+                    this.loadLesson(this.allLessons[newIndex].id);
+                }
+            }
+
+            toggleSidebar() {
+                document.getElementById('sidebar').classList.toggle('open');
+            }
+
+            // Show progress notification
+            showProgressNotification(message) {
+                const notification = document.getElementById('progressNotification');
+                const notificationText = document.getElementById('notificationText');
+                
+                notificationText.textContent = message;
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+
+            // Add this method to show real-time progress updates
+            showProgressUpdate(message) {
+                const welcomeMessage = document.getElementById('welcomeMessage');
+                if (welcomeMessage) {
+                    const originalText = welcomeMessage.textContent;
+                    welcomeMessage.textContent = message;
+                    welcomeMessage.style.color = 'var(--success)';
+                    
+                    setTimeout(() => {
+                        welcomeMessage.textContent = originalText;
+                        welcomeMessage.style.color = '';
+                    }, 3000);
+                }
             }
         }
 
-        function addResult(testName, message, type = 'info') {
-            const resultsDiv = document.getElementById('connectionResults');
-            const resultItem = document.createElement('div');
-            resultItem.className = `result-item ${type}`;
-            resultItem.innerHTML = `<strong>${testName}:</strong> ${message}`;
-            resultsDiv.appendChild(resultItem);
-        }
-
-        // Manual test functions
-        async function testDirectFetch() {
-            const log = document.getElementById('manualTestLog');
-            log.textContent = 'Testing direct fetch...\n';
-            
-            try {
-                log.textContent += `Fetching: ${currentApiUrl}\n`;
-                const response = await fetch(currentApiUrl);
-                log.textContent += `Status: ${response.status} ${response.statusText}\n`;
-                log.textContent += `Headers: ${JSON.stringify([...response.headers])}\n`;
-                
-                const text = await response.text();
-                log.textContent += `Response: ${text}\n`;
-                
-            } catch (error) {
-                log.textContent += `Error: ${error.message}\n${error.stack}\n`;
-            }
-        }
-
-        function testJsonp() {
-            const log = document.getElementById('manualTestLog');
-            log.textContent = 'Testing JSONP...\n';
-            
-            const callbackName = 'test_callback_' + Date.now();
-            window[callbackName] = function(data) {
-                log.textContent += `JSONP Success: ${JSON.stringify(data)}\n`;
-                delete window[callbackName];
-            };
-            
-            const script = document.createElement('script');
-            script.src = `${currentApiUrl}?callback=${callbackName}`;
-            script.onerror = function() {
-                log.textContent += 'JSONP Error: Script failed to load\n';
-            };
-            
-            document.body.appendChild(script);
-        }
-
-        async function testCorsProxy() {
-            const log = document.getElementById('manualTestLog');
-            log.textContent = 'Testing with CORS proxy...\n';
-            
-            try {
-                const proxyUrl = 'https://api.allorigins.win/raw?url=';
-                const targetUrl = encodeURIComponent(currentApiUrl);
-                
-                log.textContent += `Using proxy: ${proxyUrl}${targetUrl}\n`;
-                
-                const response = await fetch(proxyUrl + targetUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: 'action=test'
-                });
-                
-                const text = await response.text();
-                log.textContent += `Proxy Response: ${text}\n`;
-                
-            } catch (error) {
-                log.textContent += `Proxy Error: ${error.message}\n`;
-            }
-        }
-
-        // Run initial diagnostic
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(runFullDiagnostic, 1000);
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            const app = new CourseApp();
+            window.app = app;
         });
     </script>
 </body>
