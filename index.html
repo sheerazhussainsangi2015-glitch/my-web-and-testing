@@ -276,10 +276,21 @@
             clearMessage();
 
             try {
+                // Convert FormData to URL-encoded string
+                const formDataString = new URLSearchParams(formData).toString();
+                
                 const response = await fetch(scriptURL, { 
                     method: 'POST',
-                    body: formData
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: formDataString
                 });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
                 const data = await response.json();
 
                 if (data.success) {
@@ -293,7 +304,7 @@
                 }
             } catch (error) {
                 console.error("Auth Error:", error);
-                showMessage('error', `A network error occurred. Check script URL.`);
+                showMessage('error', `A network error occurred: ${error.message}`);
             } finally {
                 button.disabled = false;
                 button.textContent = formData.get('action') === 'login' ? 'Log In' : 'Create Account';
@@ -311,10 +322,21 @@
             clearMessage();
 
             try {
+                // Convert FormData to URL-encoded string
+                const formDataString = new URLSearchParams(formData).toString();
+                
                 const response = await fetch(scriptURL, { 
                     method: 'POST',
-                    body: formData
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: formDataString
                 });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
                 const data = await response.json();
 
                 if (data.success) {
@@ -326,7 +348,7 @@
                 }
             } catch (error) {
                 console.error("Registration Error:", error);
-                showMessage('error', `A network error occurred. Check script URL.`);
+                showMessage('error', `A network error occurred: ${error.message}`);
             } finally {
                 button.disabled = false;
                 button.textContent = 'Register Student Record';
@@ -343,17 +365,26 @@
             tableContainer.classList.add('hidden');
 
             try {
-                const response = await fetch(scriptURL, { method: 'GET' });
+                const response = await fetch(scriptURL, { 
+                    method: 'GET'
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
                 const data = await response.json();
 
-                if (data && Array.isArray(data.data)) {
+                if (data.success && Array.isArray(data.data)) {
                     renderTable(data.data);
                 } else {
-                    throw new Error('Invalid data structure received.');
+                    throw new Error(data.message || 'Invalid data structure received.');
                 }
             } catch (error) {
                 console.error('Fetch Error:', error);
                 dataLoadingStatus.textContent = 'Error loading data: ' + error.message;
+                dataLoadingStatus.classList.remove('hidden');
+                tableContainer.classList.add('hidden');
             }
         }
         
