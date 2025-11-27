@@ -1,84 +1,1133 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>GSheet Form Submission</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnCode - Online Course Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: Arial, sans-serif; max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
-        input, textarea, button { width: 100%; padding: 10px; margin-bottom: 10px; box-sizing: border-box; }
-        .response-message { margin-top: 15px; padding: 10px; border-radius: 4px; display: none; }
-        .success { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
-        .error { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2d2d39;
+            --secondary: #ff4757;
+            --accent: #5352ed;
+            --light: #f1f2f6;
+            --dark: #2f3542;
+            --success: #2ed573;
+            --warning: #ffa502;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        /* Auth Container */
+        .auth-container {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        .auth-left {
+            flex: 1;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .auth-left h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .auth-left p {
+            font-size: 1.2rem;
+            text-align: center;
+            max-width: 500px;
+            line-height: 1.6;
+        }
+
+        .auth-right {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .auth-form {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .auth-form h2 {
+            margin-bottom: 30px;
+            color: var(--primary);
+            text-align: center;
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--accent);
+            outline: none;
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+            position: relative;
+        }
+
+        .auth-btn:hover {
+            background: #4240e9;
+        }
+
+        .auth-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .auth-switch {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .auth-switch a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .auth-switch a:hover {
+            text-decoration: underline;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Main App Styles */
+        .app-container {
+            display: none;
+            width: 100%;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background: var(--primary);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-header h2 i {
+            color: var(--secondary);
+        }
+
+        .close-sidebar {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: none;
+        }
+
+        .course-progress {
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            margin: 15px;
+            border-radius: 8px;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--success);
+            border-radius: 3px;
+            width: 0%;
+        }
+
+        .courses-list {
+            padding: 0 15px;
+        }
+
+        .course-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 4px solid transparent;
+        }
+
+        .course-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .course-item.active {
+            background: rgba(83, 82, 237, 0.2);
+            border-left-color: var(--accent);
+        }
+
+        .course-item.completed {
+            border-left-color: var(--success);
+        }
+
+        .course-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .course-item.completed .course-title i {
+            color: var(--success);
+        }
+
+        .course-desc {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.4;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .top-nav {
+            background: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--dark);
+            display: none;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--dark);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .video-container {
+            padding: 30px;
+            max-width: 1200px;
+        }
+
+        .video-player {
+            background: var(--dark);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        #youtubePlayer {
+            width: 100%;
+            height: 500px;
+            border: none;
+        }
+
+        .video-placeholder {
+            width: 100%;
+            height: 500px;
+            background: linear-gradient(135deg, #2d2d39, #1e1e28);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .video-info {
+            padding: 20px 0;
+        }
+
+        .video-title {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .video-meta {
+            display: flex;
+            gap: 20px;
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .lesson-description {
+            line-height: 1.6;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            color: #555;
+        }
+
+        .completion-section {
+            background: #e8f5e8;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--success);
+            margin: 20px 0;
+        }
+
+        .nav-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .prev-btn {
+            background: white;
+            color: var(--dark);
+            border: 1px solid #ddd;
+        }
+
+        .next-btn {
+            background: var(--accent);
+            color: white;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .nav-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .setup-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 10px 0;
+        }
+
+        /* Progress Notification */
+        .progress-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .progress-notification.show {
+            transform: translateX(0);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .menu-toggle, .close-sidebar {
+                display: block;
+            }
+            
+            #youtubePlayer, .video-placeholder {
+                height: 300px;
+            }
+
+            .auth-container {
+                flex-direction: column;
+            }
+
+            .auth-left, .auth-right {
+                flex: none;
+            }
+
+            .auth-left {
+                padding: 30px 20px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .video-container {
+                padding: 15px;
+            }
+            
+            #youtubePlayer, .video-placeholder {
+                height: 250px;
+            }
+            
+            .video-placeholder i {
+                font-size: 2.5rem;
+            }
+
+            .auth-left h1 {
+                font-size: 2rem;
+            }
+
+            .auth-left p {
+                font-size: 1rem;
+            }
+
+            .top-nav {
+                padding: 15px;
+            }
+
+            .user-info {
+                gap: 10px;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Auth Container -->
+    <div class="auth-container" id="authContainer">
+        <div class="auth-left">
+            <h1>🚀 LearnCode Academy</h1>
+            <p>Master coding skills with our interactive courses. Track your progress and become a professional developer.</p>
+            <div style="margin-top: 30px; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 10px; text-align: center;">
+                <h3><i class="fas fa-check-circle" style="color: var(--success);"></i> Live Connection</h3>
+                <p>Real-time Google Sheets integration</p>
+            </div>
+        </div>
 
-    <h2>Submit to Google Sheet</h2>
-    <form id="myForm">
-        <label for="Name">Name:</label>
-        <input type="text" id="Name" name="Name" required>
+        <div class="auth-right">
+            <div class="auth-form" id="loginForm">
+                <h2>Welcome Back!</h2>
+                <div class="message" id="loginMessage"></div>
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password">
+                </div>
+                <button class="auth-btn" id="loginBtn">
+                    <span class="btn-text">Sign In</span>
+                </button>
 
-        <label for="Email">Email:</label>
-        <input type="email" id="Email" name="Email" required>
+                <div class="auth-switch">
+                    New here? <a id="showRegister">Create account</a>
+                </div>
 
-        <label for="Message">Message:</label>
-        <textarea id="Message" name="Message" rows="4" required></textarea>
+                <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid var(--accent);">
+                    <h3 style="margin-bottom: 15px; color: var(--primary);">Demo Account:</h3>
+                    <p style="color: #666; font-size: 0.9rem; margin-bottom: 5px;"><strong>Email:</strong> student@example.com</p>
+                    <p style="color: #666; font-size: 0.9rem;"><strong>Password:</strong> password123</p>
+                </div>
+            </div>
 
-        <button type="submit" id="submit-button">Submit Data</button>
-    </form>
+            <div class="auth-form" id="registerForm" style="display: none;">
+                <h2>Join LearnCode</h2>
+                <div class="message" id="registerMessage"></div>
+                <div class="form-group">
+                    <label for="registerName">Full Name</label>
+                    <input type="text" id="registerName" placeholder="Enter your full name">
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" placeholder="Create a password (min 6 characters)">
+                </div>
+                <div class="form-group">
+                    <label for="registerConfirmPassword">Confirm Password</label>
+                    <input type="password" id="registerConfirmPassword" placeholder="Confirm your password">
+                </div>
+                <button class="auth-btn" id="registerBtn">
+                    <span class="btn-text">Create Account</span>
+                </button>
 
-    <div id="response" class="response-message"></div>
+                <div class="auth-switch">
+                    Already have an account? <a id="showLogin">Sign in</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div class="app-container" id="appContainer">
+        <!-- Progress Notification -->
+        <div class="progress-notification" id="progressNotification">
+            <i class="fas fa-check-circle"></i>
+            <span id="notificationText">Progress saved!</span>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-graduation-cap"></i> My Courses</h2>
+                <button class="close-sidebar" id="closeSidebar">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="course-progress">
+                <div class="progress-text">
+                    <span>Overall Progress</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div style="margin-top: 10px; font-size: 0.8rem; color: rgba(255,255,255,0.7);">
+                    <i class="fas fa-database"></i> Synced with Google Sheets
+                </div>
+            </div>
+            
+            <div class="courses-list" id="coursesList">
+                <div style="text-align: center; padding: 20px; color: white;">
+                    <div class="loading"></div> Loading courses...
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="top-nav">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="user-info">
+                    <span id="welcomeMessage">Welcome!</span>
+                    <button class="setup-btn" id="setupBtn" style="display: none;">
+                        <i class="fas fa-database"></i> Setup Sample Data
+                    </button>
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <button class="logout-btn" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+            
+            <div class="video-container">
+                <div class="video-player">
+                    <div id="youtubePlayer" style="display: none;"></div>
+                    
+                    <div class="video-placeholder" id="videoPlaceholder">
+                        <i class="fas fa-play-circle" style="font-size: 4rem; margin-bottom: 20px;"></i>
+                        <h3 id="currentLessonTitle">Welcome to LearnCode!</h3>
+                        <p>Select a course from the sidebar to start learning</p>
+                    </div>
+                </div>
+                
+                <div class="video-info">
+                    <h1 class="video-title" id="videoTitle">Ready to Start Learning?</h1>
+                    <div class="video-meta">
+                        <span><i class="far fa-calendar"></i> Start your coding journey</span>
+                        <span><i class="fas fa-database"></i> Real-time progress tracking</span>
+                    </div>
+                    <div class="lesson-description" id="lessonDescription">
+                        <p>Choose any course from the sidebar to begin. Your progress will be automatically saved to Google Sheets.</p>
+                    </div>
+                    
+                    <div class="completion-section" id="completionSection" style="display: none;">
+                        <h4><i class="fas fa-check-circle"></i> Mark as Completed</h4>
+                        <p>Finished watching this lesson? Mark it complete to track your progress.</p>
+                        <button class="nav-btn" id="completeBtn" style="background: var(--success);">
+                            <i class="fas fa-check"></i> Mark Complete
+                        </button>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+                        <button class="nav-btn prev-btn" id="prevLessonBtn" disabled>
+                            <i class="fas fa-arrow-left"></i> Previous
+                        </button>
+                        <button class="nav-btn next-btn" id="nextLessonBtn" disabled>
+                            Next <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // *** REPLACE THIS WITH YOUR DEPLOYED GOOGLE APPS SCRIPT URL ***
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwAedbTghrO10YxXeW8UP8RpHrQpLanWTjilDpWhimVMHymGSqeyFw8X_o1Jj39-Jjq/exec';
-        const form = document.getElementById('myForm');
-        const responseDiv = document.getElementById('response');
-        const submitButton = document.getElementById('submit-button');
+        // Configuration - YOUR WORKING URL
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwAedbTghrO10YxXeW8UP8RpHrQpLanWTjilDpWhimVMHymGSqeyFw8X_o1Jj39-Jjq/exec';
 
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            submitButton.disabled = true;
-            submitButton.textContent = 'Sending...';
-            responseDiv.style.display = 'none';
-            responseDiv.classList.remove('success', 'error');
+        class CoursePlatform {
+            constructor() {
+                this.currentUser = null;
+                this.courses = [];
+                this.userProgress = null;
+                this.currentCourseId = null;
+                
+                this.initEventListeners();
+                this.checkExistingSession();
+                this.testConnection();
+            }
 
-            // Collect form data using FormData
-            const formData = new FormData(form);
-            
-            // Send the data using the Fetch API
-            fetch(scriptURL, { 
-                method: 'POST',
-                body: formData // FormData object is automatically sent as application/x-www-form-urlencoded
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok: ' + response.statusText);
+            async testConnection() {
+                try {
+                    const result = await this.callAPI('test');
+                    if (result.success) {
+                        console.log('✅ Backend connected');
+                        // Show setup button for admin
+                        document.getElementById('setupBtn').style.display = 'block';
+                    }
+                } catch (error) {
+                    console.error('❌ Backend connection failed');
                 }
-                return response.json();
-            })
-            .then(data => {
-                if (data.result === 'success') {
-                    responseDiv.textContent = '✅ Success! Data submitted to Google Sheet.';
-                    responseDiv.classList.add('success');
-                    form.reset(); // Clear the form on success
+            }
+
+            async setupSampleData() {
+                const result = await this.callAPI('setupSheets');
+                if (result.success) {
+                    this.showNotification('Sample data created successfully!');
+                    await this.loadCourses();
+                }
+            }
+
+            async callAPI(action, params = {}) {
+                try {
+                    const formData = new URLSearchParams();
+                    formData.append('action', action);
+                    Object.keys(params).forEach(key => {
+                        formData.append(key, params[key]);
+                    });
+
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                    });
+                    
+                    const text = await response.text();
+                    return JSON.parse(text);
+                } catch (error) {
+                    return { success: false, error: error.message };
+                }
+            }
+
+            showMessage(elementId, message, type) {
+                const messageEl = document.getElementById(elementId);
+                messageEl.textContent = message;
+                messageEl.className = `message ${type}`;
+                messageEl.style.display = 'block';
+                
+                setTimeout(() => {
+                    messageEl.style.display = 'none';
+                }, 5000);
+            }
+
+            showNotification(message) {
+                const notification = document.getElementById('progressNotification');
+                const notificationText = document.getElementById('notificationText');
+                
+                notificationText.textContent = message;
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+
+            showLoading(button, show) {
+                const btn = button.querySelector('.btn-text');
+                if (show) {
+                    button.disabled = true;
+                    btn.textContent = 'Loading...';
+                    if (!button.querySelector('.loading')) {
+                        const loading = document.createElement('span');
+                        loading.className = 'loading';
+                        button.insertBefore(loading, btn);
+                    }
                 } else {
-                    throw new Error(data.error || 'Unknown error occurred in Apps Script.');
+                    button.disabled = false;
+                    btn.textContent = button.id === 'loginBtn' ? 'Sign In' : 'Create Account';
+                    const loading = button.querySelector('.loading');
+                    if (loading) loading.remove();
                 }
-            })
-            .catch(error => {
-                console.error('Submission Error:', error);
-                responseDiv.textContent = `❌ Error: ${error.message}`;
-                responseDiv.classList.add('error');
-            })
-            .finally(() => {
-                submitButton.disabled = false;
-                submitButton.textContent = 'Submit Data';
-                responseDiv.style.display = 'block';
-            });
+            }
+
+            // User Authentication
+            async handleLogin() {
+                const email = document.getElementById('loginEmail').value.trim();
+                const password = document.getElementById('loginPassword').value;
+                const loginBtn = document.getElementById('loginBtn');
+
+                if (!email || !password) {
+                    this.showMessage('loginMessage', 'Please fill in all fields', 'error');
+                    return;
+                }
+
+                this.showLoading(loginBtn, true);
+
+                try {
+                    const result = await this.callAPI('login', { email, password });
+                    
+                    if (result.success) {
+                        this.currentUser = result.user;
+                        this.startSession();
+                        await this.showApp();
+                        this.showMessage('loginMessage', `Welcome back, ${this.currentUser.name}!`, 'success');
+                    } else {
+                        this.showMessage('loginMessage', result.error || 'Login failed', 'error');
+                    }
+                } catch (error) {
+                    this.showMessage('loginMessage', 'Login failed. Please try again.', 'error');
+                } finally {
+                    this.showLoading(loginBtn, false);
+                }
+            }
+
+            async handleRegister() {
+                const name = document.getElementById('registerName').value.trim();
+                const email = document.getElementById('registerEmail').value.trim();
+                const password = document.getElementById('registerPassword').value;
+                const confirmPassword = document.getElementById('registerConfirmPassword').value;
+                const registerBtn = document.getElementById('registerBtn');
+
+                if (!name || !email || !password || !confirmPassword) {
+                    this.showMessage('registerMessage', 'Please fill in all fields', 'error');
+                    return;
+                }
+
+                if (password !== confirmPassword) {
+                    this.showMessage('registerMessage', 'Passwords do not match', 'error');
+                    return;
+                }
+
+                if (password.length < 6) {
+                    this.showMessage('registerMessage', 'Password must be at least 6 characters', 'error');
+                    return;
+                }
+
+                this.showLoading(registerBtn, true);
+
+                try {
+                    const result = await this.callAPI('register', { name, email, password });
+                    
+                    if (result.success) {
+                        this.currentUser = result.user;
+                        this.startSession();
+                        await this.showApp();
+                        this.showMessage('registerMessage', `Welcome to LearnCode, ${name}!`, 'success');
+                    } else {
+                        this.showMessage('registerMessage', result.error || 'Registration failed', 'error');
+                    }
+                } catch (error) {
+                    this.showMessage('registerMessage', 'Registration failed. Please try again.', 'error');
+                } finally {
+                    this.showLoading(registerBtn, false);
+                }
+            }
+
+            startSession() {
+                localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+            }
+
+            checkExistingSession() {
+                const savedUser = localStorage.getItem('currentUser');
+                if (savedUser) {
+                    this.currentUser = JSON.parse(savedUser);
+                    this.showApp();
+                }
+            }
+
+            handleLogout() {
+                this.currentUser = null;
+                this.courses = [];
+                this.userProgress = null;
+                localStorage.removeItem('currentUser');
+                this.showAuth();
+            }
+
+            showAuth() {
+                document.getElementById('authContainer').style.display = 'flex';
+                document.getElementById('appContainer').style.display = 'none';
+                document.getElementById('loginEmail').value = '';
+                document.getElementById('loginPassword').value = '';
+                document.getElementById('registerName').value = '';
+                document.getElementById('registerEmail').value = '';
+                document.getElementById('registerPassword').value = '';
+                document.getElementById('registerConfirmPassword').value = '';
+            }
+
+            async showApp() {
+                document.getElementById('authContainer').style.display = 'none';
+                document.getElementById('appContainer').style.display = 'block';
+                
+                this.updateUserInterface();
+                await this.loadCourses();
+                await this.loadUserProgress();
+            }
+
+            updateUserInterface() {
+                document.getElementById('welcomeMessage').textContent = `Welcome, ${this.currentUser.name}!`;
+                document.getElementById('userAvatar').textContent = this.currentUser.name.charAt(0).toUpperCase();
+            }
+
+            // Course Management
+            async loadCourses() {
+                try {
+                    const result = await this.callAPI('getCourseContent');
+                    
+                    if (result.success) {
+                        this.courses = result.courses;
+                        this.renderCourses();
+                        console.log('✅ Courses loaded:', this.courses);
+                    } else {
+                        throw new Error(result.error);
+                    }
+                } catch (error) {
+                    console.error('Failed to load courses:', error);
+                    document.getElementById('coursesList').innerHTML = '<div style="text-align: center; padding: 20px; color: white;">Failed to load courses</div>';
+                }
+            }
+
+            renderCourses() {
+                const coursesList = document.getElementById('coursesList');
+                coursesList.innerHTML = '';
+
+                this.courses.forEach(course => {
+                    const isCompleted = this.userProgress.completedLessons.includes(course.id);
+                    const isActive = this.currentCourseId === course.id;
+                    
+                    const courseEl = document.createElement('div');
+                    courseEl.className = `course-item ${isCompleted ? 'completed' : ''} ${isActive ? 'active' : ''}`;
+                    courseEl.innerHTML = `
+                        <div class="course-title">
+                            <i class="fas ${isCompleted ? 'fa-check-circle' : 'fa-play-circle'}"></i>
+                            ${course.title}
+                        </div>
+                        <div class="course-desc">${course.description}</div>
+                    `;
+                    
+                    courseEl.addEventListener('click', () => {
+                        this.loadCourse(course.id);
+                    });
+                    
+                    coursesList.appendChild(courseEl);
+                });
+            }
+
+            async loadCourse(courseId) {
+                const course = this.courses.find(c => c.id === courseId);
+                if (!course) return;
+
+                this.currentCourseId = courseId;
+                
+                // Update UI
+                document.getElementById('currentLessonTitle').textContent = course.title;
+                document.getElementById('videoTitle').textContent = course.title;
+                document.getElementById('lessonDescription').textContent = course.description;
+                
+                // Load video
+                this.loadVideo(course.video_url);
+                
+                // Show completion section
+                document.getElementById('completionSection').style.display = 'block';
+                
+                // Update course states
+                this.renderCourses();
+                
+                // Update navigation
+                this.updateNavigation();
+            }
+
+            loadVideo(videoUrl) {
+                const youtubePlayer = document.getElementById('youtubePlayer');
+                const placeholder = document.getElementById('videoPlaceholder');
+
+                if (videoUrl) {
+                    youtubePlayer.src = videoUrl;
+                    youtubePlayer.style.display = 'block';
+                    placeholder.style.display = 'none';
+                } else {
+                    youtubePlayer.style.display = 'none';
+                    placeholder.style.display = 'flex';
+                }
+            }
+
+            async markCourseCompleted() {
+                if (!this.currentCourseId) return;
+                
+                if (!this.userProgress.completedLessons.includes(this.currentCourseId)) {
+                    this.userProgress.completedLessons.push(this.currentCourseId);
+                    
+                    // Save to backend
+                    await this.callAPI('updateProgress', {
+                        user_id: this.currentUser.id,
+                        completed_lessons: this.userProgress.completedLessons.join(','),
+                        current_lesson: this.currentCourseId
+                    });
+                    
+                    // Update UI
+                    this.updateProgressDisplay();
+                    this.renderCourses();
+                    this.showNotification('Course marked as completed!');
+                }
+            }
+
+            async loadUserProgress() {
+                try {
+                    const result = await this.callAPI('getUserProgress', { user_id: this.currentUser.id });
+                    if (result.success) {
+                        this.userProgress = result.progress;
+                        this.updateProgressDisplay();
+                    }
+                } catch (error) {
+                    console.error('Failed to load progress:', error);
+                    this.userProgress = {
+                        completedLessons: [],
+                        currentLesson: 1
+                    };
+                }
+            }
+
+            updateProgressDisplay() {
+                const totalCourses = this.courses.length;
+                const completedCourses = this.userProgress.completedLessons.length;
+                const progressPercent = totalCourses > 0 ? (completedCourses / totalCourses) * 100 : 0;
+
+                document.getElementById('progressPercent').textContent = `${Math.round(progressPercent)}%`;
+                document.getElementById('progressFill').style.width = `${progressPercent}%`;
+            }
+
+            updateNavigation() {
+                const currentIndex = this.courses.findIndex(course => course.id === this.currentCourseId);
+                const prevBtn = document.getElementById('prevLessonBtn');
+                const nextBtn = document.getElementById('nextLessonBtn');
+
+                prevBtn.disabled = currentIndex <= 0;
+                nextBtn.disabled = currentIndex >= this.courses.length - 1;
+            }
+
+            navigateCourse(direction) {
+                const currentIndex = this.courses.findIndex(course => course.id === this.currentCourseId);
+                const newIndex = currentIndex + direction;
+
+                if (newIndex >= 0 && newIndex < this.courses.length) {
+                    this.loadCourse(this.courses[newIndex].id);
+                }
+            }
+
+            toggleSidebar() {
+                document.getElementById('sidebar').classList.toggle('open');
+            }
+
+            initEventListeners() {
+                // Auth events
+                document.getElementById('loginBtn').addEventListener('click', () => this.handleLogin());
+                document.getElementById('registerBtn').addEventListener('click', () => this.handleRegister());
+                document.getElementById('showRegister').addEventListener('click', () => this.showRegisterForm());
+                document.getElementById('showLogin').addEventListener('click', () => this.showLoginForm());
+                document.getElementById('logoutBtn').addEventListener('click', () => this.handleLogout());
+                document.getElementById('setupBtn').addEventListener('click', () => this.setupSampleData());
+
+                // Course events
+                document.getElementById('menuToggle').addEventListener('click', () => this.toggleSidebar());
+                document.getElementById('closeSidebar').addEventListener('click', () => this.toggleSidebar());
+                document.getElementById('prevLessonBtn').addEventListener('click', () => this.navigateCourse(-1));
+                document.getElementById('nextLessonBtn').addEventListener('click', () => this.navigateCourse(1));
+                document.getElementById('completeBtn').addEventListener('click', () => this.markCourseCompleted());
+
+                // Enter key support
+                document.getElementById('loginPassword').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.handleLogin();
+                });
+                document.getElementById('registerConfirmPassword').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.handleRegister();
+                });
+            }
+
+            showLoginForm() {
+                document.getElementById('loginForm').style.display = 'block';
+                document.getElementById('registerForm').style.display = 'none';
+            }
+
+            showRegisterForm() {
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('registerForm').style.display = 'block';
+            }
+        }
+
+        // Initialize the platform
+        document.addEventListener('DOMContentLoaded', () => {
+            window.platform = new CoursePlatform();
         });
     </script>
-
 </body>
 </html>
