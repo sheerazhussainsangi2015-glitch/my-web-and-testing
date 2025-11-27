@@ -1,105 +1,84 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Test Backend Connection</title>
+    <title>GSheet Form Submission</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
-        .test-area { background: #f5f5f5; padding: 20px; border-radius: 10px; margin: 20px 0; }
-        button { background: #007cba; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 5px; }
-        .result { margin-top: 20px; padding: 15px; border-radius: 5px; }
-        .success { background: #d4edda; color: #155724; }
-        .error { background: #f8d7da; color: #721c24; }
+        body { font-family: Arial, sans-serif; max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
+        input, textarea, button { width: 100%; padding: 10px; margin-bottom: 10px; box-sizing: border-box; }
+        .response-message { margin-top: 15px; padding: 10px; border-radius: 4px; display: none; }
+        .success { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }
     </style>
 </head>
 <body>
-    <h1>🔧 Test Your Backend Connection</h1>
-    
-    <div class="test-area">
-        <h3>Your API URL:</h3>
-        <code id="apiUrl">https://script.google.com/macros/s/AKfycbwAedbTghrO10YxXeW8UP8RpHrQpLanWTjilDpWhimVMHymGSqeyFw8X_o1Jj39-Jjq/exec</code>
-        
-        <h3>Test Actions:</h3>
-        <button onclick="testConnection()">Test Basic Connection</button>
-        <button onclick="testLogin()">Test Login</button>
-        <button onclick="testGetCourses()">Test Get Courses</button>
-        <button onclick="setupSheets()">Setup Sheets (Run First)</button>
-        
-        <div id="testResult" class="result"></div>
-        <div id="responseData" style="margin-top: 10px; display: none;"></div>
-    </div>
+
+    <h2>Submit to Google Sheet</h2>
+    <form id="myForm">
+        <label for="Name">Name:</label>
+        <input type="text" id="Name" name="Name" required>
+
+        <label for="Email">Email:</label>
+        <input type="email" id="Email" name="Email" required>
+
+        <label for="Message">Message:</label>
+        <textarea id="Message" name="Message" rows="4" required></textarea>
+
+        <button type="submit" id="submit-button">Submit Data</button>
+    </form>
+
+    <div id="response" class="response-message"></div>
 
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbwAedbTghrO10YxXeW8UP8RpHrQpLanWTjilDpWhimVMHymGSqeyFw8X_o1Jj39-Jjq/exec';
+        // *** REPLACE THIS WITH YOUR DEPLOYED GOOGLE APPS SCRIPT URL ***
+        const scriptURL = 'YOUR_WEB_APP_URL';
+        const form = document.getElementById('myForm');
+        const responseDiv = document.getElementById('response');
+        const submitButton = document.getElementById('submit-button');
 
-        async function callAPI(action, params = {}) {
-            try {
-                const formData = new URLSearchParams();
-                formData.append('action', action);
-                Object.keys(params).forEach(key => {
-                    formData.append(key, params[key]);
-                });
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            submitButton.disabled = true;
+            submitButton.textContent = 'Sending...';
+            responseDiv.style.display = 'none';
+            responseDiv.classList.remove('success', 'error');
 
-                console.log(`Calling: ${action}`, params);
-                
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                });
-                
-                const text = await response.text();
-                console.log('Raw response:', text);
-                
-                return JSON.parse(text);
-            } catch (error) {
-                console.error('API call failed:', error);
-                return { success: false, error: error.toString() };
-            }
-        }
-
-        async function testConnection() {
-            const result = await callAPI('test');
-            displayResult('testConnection', result);
-        }
-
-        async function testLogin() {
-            const result = await callAPI('login', {
-                email: 'student@example.com',
-                password: 'password123'
+            // Collect form data using FormData
+            const formData = new FormData(form);
+            
+            // Send the data using the Fetch API
+            fetch(scriptURL, { 
+                method: 'POST',
+                body: formData // FormData object is automatically sent as application/x-www-form-urlencoded
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.result === 'success') {
+                    responseDiv.textContent = '✅ Success! Data submitted to Google Sheet.';
+                    responseDiv.classList.add('success');
+                    form.reset(); // Clear the form on success
+                } else {
+                    throw new Error(data.error || 'Unknown error occurred in Apps Script.');
+                }
+            })
+            .catch(error => {
+                console.error('Submission Error:', error);
+                responseDiv.textContent = `❌ Error: ${error.message}`;
+                responseDiv.classList.add('error');
+            })
+            .finally(() => {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Submit Data';
+                responseDiv.style.display = 'block';
             });
-            displayResult('testLogin', result);
-        }
-
-        async function testGetCourses() {
-            const result = await callAPI('getCourseContent');
-            displayResult('testGetCourses', result);
-        }
-
-        async function setupSheets() {
-            const result = await callAPI('setupSheets');
-            displayResult('setupSheets', result);
-        }
-
-        function displayResult(testName, result) {
-            const resultDiv = document.getElementById('testResult');
-            const dataDiv = document.getElementById('responseData');
-            
-            if (result.success) {
-                resultDiv.className = 'result success';
-                resultDiv.innerHTML = `<strong>✅ ${testName} SUCCESS:</strong> ${result.message || 'Request completed successfully'}`;
-            } else {
-                resultDiv.className = 'result error';
-                resultDiv.innerHTML = `<strong>❌ ${testName} FAILED:</strong> ${result.error || 'Unknown error'}`;
-            }
-            
-            dataDiv.style.display = 'block';
-            dataDiv.innerHTML = `<strong>Response Data:</strong><pre>${JSON.stringify(result, null, 2)}</pre>`;
-        }
-
-        // Test connection on load
-        window.onload = testConnection;
+        });
     </script>
+
 </body>
 </html>
