@@ -188,7 +188,7 @@
             width: 100%;
         }
 
-        /* Sidebar Styles */
+        /* Sidebar/Drawer Styles */
         .sidebar {
             width: 280px;
             background: var(--primary);
@@ -256,49 +256,67 @@
             width: 0%;
         }
 
-        .courses-list {
+        .course-modules {
             padding: 0 15px;
         }
 
-        .course-item {
-            padding: 15px;
+        .module {
             margin-bottom: 10px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border-left: 4px solid transparent;
         }
 
-        .course-item:hover {
+        .module-header {
+            padding: 12px 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .module-header.active {
             background: rgba(255,255,255,0.1);
         }
 
-        .course-item.active {
-            background: rgba(83, 82, 237, 0.2);
-            border-left-color: var(--accent);
+        .module-content {
+            padding-left: 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
         }
 
-        .course-item.completed {
-            border-left-color: var(--success);
+        .module-content.open {
+            max-height: 500px;
         }
 
-        .course-title {
-            font-weight: 600;
-            margin-bottom: 5px;
+        .lesson {
+            padding: 10px 15px;
+            border-left: 2px solid rgba(255,255,255,0.1);
+            margin: 8px 0;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
         }
 
-        .course-item.completed .course-title i {
+        .lesson:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .lesson.active {
+            border-left-color: var(--accent);
+            background: rgba(83, 82, 237, 0.1);
+        }
+
+        .lesson.completed i {
             color: var(--success);
         }
 
-        .course-desc {
+        .lesson-duration {
             font-size: 0.8rem;
-            color: rgba(255,255,255,0.7);
-            line-height: 1.4;
+            color: rgba(255,255,255,0.6);
+            margin-left: auto;
         }
 
         /* Main Content Styles */
@@ -368,15 +386,22 @@
             position: relative;
         }
 
+        /* Video Player Styles */
+        #videoPlayer {
+            width: 100%;
+            height: 400px;
+            background: #000;
+        }
+
         #youtubePlayer {
             width: 100%;
-            height: 500px;
+            height: 400px;
             border: none;
         }
 
         .video-placeholder {
             width: 100%;
-            height: 500px;
+            height: 400px;
             background: linear-gradient(135deg, #2d2d39, #1e1e28);
             display: flex;
             flex-direction: column;
@@ -390,9 +415,8 @@
         }
 
         .video-title {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             margin-bottom: 10px;
-            color: var(--primary);
         }
 
         .video-meta {
@@ -406,16 +430,12 @@
         .lesson-description {
             line-height: 1.6;
             margin-bottom: 30px;
-            font-size: 1.1rem;
-            color: #555;
         }
 
-        .completion-section {
-            background: #e8f5e8;
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 4px solid var(--success);
-            margin: 20px 0;
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
         }
 
         .nav-btn {
@@ -453,20 +473,34 @@
             box-shadow: none;
         }
 
-        .setup-btn {
+        /* Refresh Button */
+        .refresh-btn {
             background: var(--success);
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 8px 16px;
             border-radius: 6px;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 8px;
-            margin: 10px 0;
+            margin-left: 10px;
         }
 
-        /* Progress Notification */
+        /* Video Source Indicator */
+        .video-source {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            z-index: 10;
+        }
+
+        /* Progress Tracking Notification */
         .progress-notification {
             position: fixed;
             top: 20px;
@@ -488,6 +522,21 @@
             transform: translateX(0);
         }
 
+        /* Setup Button */
+        .setup-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--warning);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            z-index: 1002;
+        }
+
         /* Responsive Styles */
         @media (max-width: 992px) {
             .sidebar {
@@ -506,7 +555,7 @@
                 display: block;
             }
             
-            #youtubePlayer, .video-placeholder {
+            #videoPlayer, #youtubePlayer, .video-placeholder {
                 height: 300px;
             }
 
@@ -528,8 +577,8 @@
                 padding: 15px;
             }
             
-            #youtubePlayer, .video-placeholder {
-                height: 250px;
+            #videoPlayer, #youtubePlayer, .video-placeholder {
+                height: 200px;
             }
             
             .video-placeholder i {
@@ -551,24 +600,39 @@
             .user-info {
                 gap: 10px;
             }
+
+            .progress-notification {
+                left: 15px;
+                right: 15px;
+                transform: translateY(-100px);
+            }
+
+            .progress-notification.show {
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Setup Button (Visible only in auth screen) -->
+    <button class="setup-btn" id="setupBtn" onclick="app.setupSheets()" style="display: none;">
+        <i class="fas fa-cog"></i> Setup Sheets
+    </button>
+
     <!-- Auth Container -->
     <div class="auth-container" id="authContainer">
         <div class="auth-left">
-            <h1>🚀 LearnCode Academy</h1>
-            <p>Master coding skills with our interactive courses. Track your progress and become a professional developer.</p>
+            <h1>Welcome to LearnCode</h1>
+            <p>Master web development with our comprehensive courses. Track your progress and become a coding expert.</p>
             <div style="margin-top: 30px; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 10px; text-align: center;">
-                <h3><i class="fas fa-check-circle" style="color: var(--success);"></i> Live Connection</h3>
-                <p>Real-time Google Sheets integration</p>
+                <h3><i class="fas fa-check-circle" style="color: var(--success);"></i> Platform Ready</h3>
+                <p>Complete course management with Google Sheets</p>
             </div>
         </div>
 
         <div class="auth-right">
             <div class="auth-form" id="loginForm">
-                <h2>Welcome Back!</h2>
+                <h2>Login to Your Account</h2>
                 <div class="message" id="loginMessage"></div>
                 <div class="form-group">
                     <label for="loginEmail">Email</label>
@@ -579,7 +643,7 @@
                     <input type="password" id="loginPassword" placeholder="Enter your password">
                 </div>
                 <button class="auth-btn" id="loginBtn">
-                    <span class="btn-text">Sign In</span>
+                    <span class="btn-text">Login to Dashboard</span>
                 </button>
 
                 <div class="auth-switch">
@@ -594,7 +658,7 @@
             </div>
 
             <div class="auth-form" id="registerForm" style="display: none;">
-                <h2>Join LearnCode</h2>
+                <h2>Create New Account</h2>
                 <div class="message" id="registerMessage"></div>
                 <div class="form-group">
                     <label for="registerName">Full Name</label>
@@ -613,11 +677,11 @@
                     <input type="password" id="registerConfirmPassword" placeholder="Confirm your password">
                 </div>
                 <button class="auth-btn" id="registerBtn">
-                    <span class="btn-text">Create Account</span>
+                    <span class="btn-text">Create Account & Start Learning</span>
                 </button>
 
                 <div class="auth-switch">
-                    Already have an account? <a id="showLogin">Sign in</a>
+                    Already have an account? <a id="showLogin">Login here</a>
                 </div>
             </div>
         </div>
@@ -628,13 +692,13 @@
         <!-- Progress Notification -->
         <div class="progress-notification" id="progressNotification">
             <i class="fas fa-check-circle"></i>
-            <span id="notificationText">Progress saved!</span>
+            <span id="notificationText">Progress saved successfully!</span>
         </div>
 
-        <!-- Sidebar -->
+        <!-- Sidebar/Drawer Menu -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <h2><i class="fas fa-graduation-cap"></i> My Courses</h2>
+                <h2><i class="fas fa-graduation-cap"></i> Web Dev Course</h2>
                 <button class="close-sidebar" id="closeSidebar">
                     <i class="fas fa-times"></i>
                 </button>
@@ -642,7 +706,7 @@
             
             <div class="course-progress">
                 <div class="progress-text">
-                    <span>Overall Progress</span>
+                    <span>Course Progress</span>
                     <span id="progressPercent">0%</span>
                 </div>
                 <div class="progress-bar">
@@ -653,9 +717,9 @@
                 </div>
             </div>
             
-            <div class="courses-list" id="coursesList">
-                <div style="text-align: center; padding: 20px; color: white;">
-                    <div class="loading"></div> Loading courses...
+            <div class="course-modules" id="courseModules">
+                <div class="loading-modules" style="text-align: center; padding: 20px; color: white;">
+                    <div class="loading"></div> Loading course content...
                 </div>
             </div>
         </div>
@@ -667,9 +731,9 @@
                     <i class="fas fa-bars"></i>
                 </button>
                 <div class="user-info">
-                    <span id="welcomeMessage">Welcome!</span>
-                    <button class="setup-btn" id="setupBtn" style="display: none;">
-                        <i class="fas fa-database"></i> Setup Sample Data
+                    <span id="welcomeMessage">Welcome, Student!</span>
+                    <button class="refresh-btn" id="refreshBtn">
+                        <i class="fas fa-sync-alt"></i> Refresh
                     </button>
                     <div class="user-avatar" id="userAvatar">U</div>
                     <button class="logout-btn" id="logoutBtn">
@@ -680,34 +744,42 @@
             
             <div class="video-container">
                 <div class="video-player">
-                    <div id="youtubePlayer" style="display: none;"></div>
+                    <div class="video-source" id="videoSource">Ready</div>
                     
+                    <!-- HTML5 Video Player -->
+                    <video id="videoPlayer" controls width="100%" height="400" style="display: none;">
+                        Your browser does not support the video tag.
+                    </video>
+                    
+                    <!-- YouTube Player -->
+                    <iframe id="youtubePlayer" width="100%" height="400" style="display: none;"
+                            src="" frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen>
+                    </iframe>
+                    
+                    <!-- Placeholder -->
                     <div class="video-placeholder" id="videoPlaceholder">
-                        <i class="fas fa-play-circle" style="font-size: 4rem; margin-bottom: 20px;"></i>
-                        <h3 id="currentLessonTitle">Welcome to LearnCode!</h3>
-                        <p>Select a course from the sidebar to start learning</p>
+                        <i class="fas fa-play-circle"></i>
+                        <h3 id="currentLessonTitle">Select a lesson to start</h3>
+                        <p>Choose a lesson from the sidebar to begin learning</p>
                     </div>
                 </div>
                 
                 <div class="video-info">
-                    <h1 class="video-title" id="videoTitle">Ready to Start Learning?</h1>
+                    <h1 class="video-title" id="videoTitle">Welcome to LearnCode</h1>
                     <div class="video-meta">
                         <span><i class="far fa-calendar"></i> Start your coding journey</span>
-                        <span><i class="fas fa-database"></i> Real-time progress tracking</span>
+                        <span><i class="fas fa-database"></i> Real-time Google Sheets sync</span>
                     </div>
                     <div class="lesson-description" id="lessonDescription">
-                        <p>Choose any course from the sidebar to begin. Your progress will be automatically saved to Google Sheets.</p>
+                        <p>Select a lesson from the sidebar to begin watching video content and track your progress.</p>
+                        <p style="margin-top: 10px; color: var(--success); font-weight: 500;">
+                            <i class="fas fa-check-circle"></i> Your progress is automatically saved
+                        </p>
                     </div>
                     
-                    <div class="completion-section" id="completionSection" style="display: none;">
-                        <h4><i class="fas fa-check-circle"></i> Mark as Completed</h4>
-                        <p>Finished watching this lesson? Mark it complete to track your progress.</p>
-                        <button class="nav-btn" id="completeBtn" style="background: var(--success);">
-                            <i class="fas fa-check"></i> Mark Complete
-                        </button>
-                    </div>
-                    
-                    <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+                    <div class="navigation-buttons">
                         <button class="nav-btn prev-btn" id="prevLessonBtn" disabled>
                             <i class="fas fa-arrow-left"></i> Previous
                         </button>
@@ -724,15 +796,17 @@
         // Configuration - YOUR WORKING URL
         const API_URL = 'https://script.google.com/macros/s/AKfycbwAedbTghrO10YxXeW8UP8RpHrQpLanWTjilDpWhimVMHymGSqeyFw8X_o1Jj39-Jjq/exec';
 
-        class CoursePlatform {
+        class CourseApp {
             constructor() {
                 this.currentUser = null;
-                this.courses = [];
+                this.courseContent = null;
                 this.userProgress = null;
-                this.currentCourseId = null;
+                this.currentLessonId = null;
+                this.allLessons = [];
                 
                 this.initEventListeners();
                 this.checkExistingSession();
+                this.loadYouTubeAPI();
                 this.testConnection();
             }
 
@@ -741,20 +815,51 @@
                     const result = await this.callAPI('test');
                     if (result.success) {
                         console.log('✅ Backend connected');
-                        // Show setup button for admin
                         document.getElementById('setupBtn').style.display = 'block';
                     }
                 } catch (error) {
-                    console.error('❌ Backend connection failed');
+                    console.error('Connection test failed');
                 }
             }
 
-            async setupSampleData() {
-                const result = await this.callAPI('setupSheets');
-                if (result.success) {
-                    this.showNotification('Sample data created successfully!');
-                    await this.loadCourses();
+            async setupSheets() {
+                try {
+                    const result = await this.callAPI('setupSheets');
+                    this.showMessage('loginMessage', result.message, result.success ? 'success' : 'error');
+                } catch (error) {
+                    this.showMessage('loginMessage', 'Setup failed', 'error');
                 }
+            }
+
+            initEventListeners() {
+                // Auth events
+                document.getElementById('loginBtn').addEventListener('click', () => this.handleLogin());
+                document.getElementById('registerBtn').addEventListener('click', () => this.handleRegister());
+                document.getElementById('showRegister').addEventListener('click', () => this.showRegisterForm());
+                document.getElementById('showLogin').addEventListener('click', () => this.showLoginForm());
+                document.getElementById('logoutBtn').addEventListener('click', () => this.handleLogout());
+                document.getElementById('refreshBtn').addEventListener('click', () => this.refreshContent());
+
+                // Course events
+                document.getElementById('menuToggle').addEventListener('click', () => this.toggleSidebar());
+                document.getElementById('closeSidebar').addEventListener('click', () => this.toggleSidebar());
+                document.getElementById('prevLessonBtn').addEventListener('click', () => this.navigateLesson(-1));
+                document.getElementById('nextLessonBtn').addEventListener('click', () => this.navigateLesson(1));
+
+                // Enter key support
+                document.getElementById('loginPassword').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.handleLogin();
+                });
+                document.getElementById('registerConfirmPassword').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.handleRegister();
+                });
+            }
+
+            loadYouTubeAPI() {
+                const tag = document.createElement('script');
+                tag.src = "https://www.youtube.com/iframe_api";
+                const firstScriptTag = document.getElementsByTagName('script')[0];
+                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
             }
 
             async callAPI(action, params = {}) {
@@ -776,7 +881,8 @@
                     const text = await response.text();
                     return JSON.parse(text);
                 } catch (error) {
-                    return { success: false, error: error.message };
+                    console.error('API call failed:', error);
+                    return { success: false, error: 'Network error' };
                 }
             }
 
@@ -791,18 +897,6 @@
                 }, 5000);
             }
 
-            showNotification(message) {
-                const notification = document.getElementById('progressNotification');
-                const notificationText = document.getElementById('notificationText');
-                
-                notificationText.textContent = message;
-                notification.classList.add('show');
-                
-                setTimeout(() => {
-                    notification.classList.remove('show');
-                }, 3000);
-            }
-
             showLoading(button, show) {
                 const btn = button.querySelector('.btn-text');
                 if (show) {
@@ -815,13 +909,23 @@
                     }
                 } else {
                     button.disabled = false;
-                    btn.textContent = button.id === 'loginBtn' ? 'Sign In' : 'Create Account';
+                    const isLogin = button.id === 'loginBtn';
+                    btn.textContent = isLogin ? 'Login to Dashboard' : 'Create Account & Start Learning';
                     const loading = button.querySelector('.loading');
                     if (loading) loading.remove();
                 }
             }
 
-            // User Authentication
+            showLoginForm() {
+                document.getElementById('loginForm').style.display = 'block';
+                document.getElementById('registerForm').style.display = 'none';
+            }
+
+            showRegisterForm() {
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('registerForm').style.display = 'block';
+            }
+
             async handleLogin() {
                 const email = document.getElementById('loginEmail').value.trim();
                 const password = document.getElementById('loginPassword').value;
@@ -841,7 +945,7 @@
                         this.currentUser = result.user;
                         this.startSession();
                         await this.showApp();
-                        this.showMessage('loginMessage', `Welcome back, ${this.currentUser.name}!`, 'success');
+                        this.showMessage('loginMessage', `Welcome back ${this.currentUser.name}!`, 'success');
                     } else {
                         this.showMessage('loginMessage', result.error || 'Login failed', 'error');
                     }
@@ -883,7 +987,7 @@
                         this.currentUser = result.user;
                         this.startSession();
                         await this.showApp();
-                        this.showMessage('registerMessage', `Welcome to LearnCode, ${name}!`, 'success');
+                        this.showMessage('registerMessage', 'Account created successfully!', 'success');
                     } else {
                         this.showMessage('registerMessage', result.error || 'Registration failed', 'error');
                     }
@@ -908,15 +1012,25 @@
 
             handleLogout() {
                 this.currentUser = null;
-                this.courses = [];
+                this.courseContent = null;
                 this.userProgress = null;
                 localStorage.removeItem('currentUser');
                 this.showAuth();
             }
 
+            async refreshContent() {
+                if (this.currentUser) {
+                    await this.loadCourseContent();
+                    await this.loadUserProgress();
+                    this.showProgressNotification('Content refreshed!');
+                }
+            }
+
             showAuth() {
                 document.getElementById('authContainer').style.display = 'flex';
                 document.getElementById('appContainer').style.display = 'none';
+                document.getElementById('setupBtn').style.display = 'block';
+                // Clear forms
                 document.getElementById('loginEmail').value = '';
                 document.getElementById('loginPassword').value = '';
                 document.getElementById('registerName').value = '';
@@ -928,10 +1042,17 @@
             async showApp() {
                 document.getElementById('authContainer').style.display = 'none';
                 document.getElementById('appContainer').style.display = 'block';
+                document.getElementById('setupBtn').style.display = 'none';
                 
                 this.updateUserInterface();
-                await this.loadCourses();
+                await this.loadCourseContent();
                 await this.loadUserProgress();
+                
+                if (this.userProgress && this.userProgress.currentLesson) {
+                    this.loadLesson(this.userProgress.currentLesson);
+                } else if (this.allLessons.length > 0) {
+                    this.loadLesson(this.allLessons[0].id);
+                }
             }
 
             updateUserInterface() {
@@ -939,148 +1060,224 @@
                 document.getElementById('userAvatar').textContent = this.currentUser.name.charAt(0).toUpperCase();
             }
 
-            // Course Management
-            async loadCourses() {
+            async loadCourseContent() {
                 try {
                     const result = await this.callAPI('getCourseContent');
                     
-                    if (result.success) {
-                        this.courses = result.courses;
-                        this.renderCourses();
-                        console.log('✅ Courses loaded:', this.courses);
+                    if (result.success && result.modules) {
+                        this.courseContent = result.modules;
+                        this.allLessons = this.courseContent.flatMap(module => module.lessons);
+                        this.renderCourseContent();
+                        console.log('Course content loaded:', this.courseContent);
                     } else {
-                        throw new Error(result.error);
+                        throw new Error(result.error || 'No course content');
                     }
                 } catch (error) {
-                    console.error('Failed to load courses:', error);
-                    document.getElementById('coursesList').innerHTML = '<div style="text-align: center; padding: 20px; color: white;">Failed to load courses</div>';
-                }
-            }
-
-            renderCourses() {
-                const coursesList = document.getElementById('coursesList');
-                coursesList.innerHTML = '';
-
-                this.courses.forEach(course => {
-                    const isCompleted = this.userProgress.completedLessons.includes(course.id);
-                    const isActive = this.currentCourseId === course.id;
-                    
-                    const courseEl = document.createElement('div');
-                    courseEl.className = `course-item ${isCompleted ? 'completed' : ''} ${isActive ? 'active' : ''}`;
-                    courseEl.innerHTML = `
-                        <div class="course-title">
-                            <i class="fas ${isCompleted ? 'fa-check-circle' : 'fa-play-circle'}"></i>
-                            ${course.title}
-                        </div>
-                        <div class="course-desc">${course.description}</div>
-                    `;
-                    
-                    courseEl.addEventListener('click', () => {
-                        this.loadCourse(course.id);
-                    });
-                    
-                    coursesList.appendChild(courseEl);
-                });
-            }
-
-            async loadCourse(courseId) {
-                const course = this.courses.find(c => c.id === courseId);
-                if (!course) return;
-
-                this.currentCourseId = courseId;
-                
-                // Update UI
-                document.getElementById('currentLessonTitle').textContent = course.title;
-                document.getElementById('videoTitle').textContent = course.title;
-                document.getElementById('lessonDescription').textContent = course.description;
-                
-                // Load video
-                this.loadVideo(course.video_url);
-                
-                // Show completion section
-                document.getElementById('completionSection').style.display = 'block';
-                
-                // Update course states
-                this.renderCourses();
-                
-                // Update navigation
-                this.updateNavigation();
-            }
-
-            loadVideo(videoUrl) {
-                const youtubePlayer = document.getElementById('youtubePlayer');
-                const placeholder = document.getElementById('videoPlaceholder');
-
-                if (videoUrl) {
-                    youtubePlayer.src = videoUrl;
-                    youtubePlayer.style.display = 'block';
-                    placeholder.style.display = 'none';
-                } else {
-                    youtubePlayer.style.display = 'none';
-                    placeholder.style.display = 'flex';
-                }
-            }
-
-            async markCourseCompleted() {
-                if (!this.currentCourseId) return;
-                
-                if (!this.userProgress.completedLessons.includes(this.currentCourseId)) {
-                    this.userProgress.completedLessons.push(this.currentCourseId);
-                    
-                    // Save to backend
-                    await this.callAPI('updateProgress', {
-                        user_id: this.currentUser.id,
-                        completed_lessons: this.userProgress.completedLessons.join(','),
-                        current_lesson: this.currentCourseId
-                    });
-                    
-                    // Update UI
-                    this.updateProgressDisplay();
-                    this.renderCourses();
-                    this.showNotification('Course marked as completed!');
+                    console.error('Failed to load course content:', error);
+                    const modulesContainer = document.getElementById('courseModules');
+                    modulesContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: white;">Please run Setup Sheets first</div>';
                 }
             }
 
             async loadUserProgress() {
                 try {
                     const result = await this.callAPI('getUserProgress', { user_id: this.currentUser.id });
-                    if (result.success) {
+                    if (result && result.progress) {
                         this.userProgress = result.progress;
                         this.updateProgressDisplay();
                     }
                 } catch (error) {
-                    console.error('Failed to load progress:', error);
+                    console.error('Failed to load user progress:', error);
                     this.userProgress = {
                         completedLessons: [],
-                        currentLesson: 1
+                        currentLesson: this.allLessons.length > 0 ? this.allLessons[0].id : null
                     };
                 }
             }
 
+            renderCourseContent() {
+                const modulesContainer = document.getElementById('courseModules');
+                modulesContainer.innerHTML = '';
+
+                this.courseContent.forEach(module => {
+                    const moduleEl = document.createElement('div');
+                    moduleEl.className = 'module';
+                    moduleEl.innerHTML = `
+                        <div class="module-header">
+                            <span>${module.title}</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="module-content">
+                            ${module.lessons.map(lesson => `
+                                <div class="lesson" data-lesson-id="${lesson.id}">
+                                    <i class="fas fa-play-circle"></i>
+                                    <span>${lesson.title}</span>
+                                    <span class="lesson-duration">${lesson.duration}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    modulesContainer.appendChild(moduleEl);
+
+                    const moduleHeader = moduleEl.querySelector('.module-header');
+                    moduleHeader.addEventListener('click', () => {
+                        const content = moduleHeader.nextElementSibling;
+                        const isOpen = content.classList.contains('open');
+                        
+                        document.querySelectorAll('.module-content').forEach(item => {
+                            item.classList.remove('open');
+                        });
+                        
+                        document.querySelectorAll('.module-header').forEach(item => {
+                            item.classList.remove('active');
+                        });
+                        
+                        if (!isOpen) {
+                            content.classList.add('open');
+                            moduleHeader.classList.add('active');
+                        }
+                    });
+
+                    moduleEl.querySelectorAll('.lesson').forEach(lessonEl => {
+                        lessonEl.addEventListener('click', () => {
+                            const lessonId = parseInt(lessonEl.getAttribute('data-lesson-id'));
+                            this.loadLesson(lessonId);
+                        });
+                    });
+                });
+
+                const firstModule = modulesContainer.querySelector('.module');
+                if (firstModule) {
+                    const firstHeader = firstModule.querySelector('.module-header');
+                    firstHeader.click();
+                }
+
+                this.updateLessonStates();
+            }
+
+            async loadLesson(lessonId) {
+                const lesson = this.allLessons.find(l => l.id === lessonId);
+                if (!lesson) return;
+
+                this.currentLessonId = lessonId;
+                
+                document.getElementById('currentLessonTitle').textContent = lesson.title;
+                document.getElementById('videoTitle').textContent = lesson.title;
+                document.getElementById('lessonDescription').innerHTML = `
+                    <p>${lesson.description}</p>
+                    <p><strong>Duration:</strong> ${lesson.duration}</p>
+                    <p style="margin-top: 10px; color: var(--success); font-weight: 500;">
+                        <i class="fas fa-check-circle"></i> Progress automatically saved to Google Sheets
+                    </p>
+                `;
+
+                await this.loadVideo(lesson);
+                this.updateLessonStates();
+                this.updateNavigationButtons();
+
+                if (this.userProgress.currentLesson !== lessonId) {
+                    this.userProgress.currentLesson = lessonId;
+                    await this.updateUserProgress();
+                    this.showProgressNotification('Progress saved to Google Sheets!');
+                }
+            }
+
+            async loadVideo(lesson) {
+                const videoPlayer = document.getElementById('videoPlayer');
+                const youtubePlayer = document.getElementById('youtubePlayer');
+                const placeholder = document.getElementById('videoPlaceholder');
+                const videoSource = document.getElementById('videoSource');
+
+                videoPlayer.style.display = 'none';
+                youtubePlayer.style.display = 'none';
+                placeholder.style.display = 'none';
+
+                if (!lesson.video_url) {
+                    placeholder.style.display = 'flex';
+                    videoSource.textContent = 'No video';
+                    return;
+                }
+
+                if (lesson.video_url.includes('youtube.com/embed') || lesson.video_url.includes('youtu.be')) {
+                    videoSource.textContent = 'YouTube';
+                    youtubePlayer.src = lesson.video_url;
+                    youtubePlayer.style.display = 'block';
+                } else if (lesson.video_url.includes('.mp4') || lesson.video_url.includes('.webm')) {
+                    videoSource.textContent = 'Video';
+                    videoPlayer.src = lesson.video_url;
+                    videoPlayer.style.display = 'block';
+                    videoPlayer.onended = () => {
+                        this.markLessonCompleted();
+                    };
+                } else {
+                    videoSource.textContent = 'External';
+                    youtubePlayer.src = lesson.video_url;
+                    youtubePlayer.style.display = 'block';
+                }
+            }
+
+            updateLessonStates() {
+                document.querySelectorAll('.lesson').forEach(lessonEl => {
+                    const lessonId = parseInt(lessonEl.getAttribute('data-lesson-id'));
+                    lessonEl.classList.remove('active', 'completed');
+                    
+                    if (lessonId === this.currentLessonId) {
+                        lessonEl.classList.add('active');
+                    }
+                    
+                    if (this.userProgress.completedLessons.includes(lessonId)) {
+                        lessonEl.classList.add('completed');
+                    }
+                });
+            }
+
+            async markLessonCompleted() {
+                if (!this.userProgress.completedLessons.includes(this.currentLessonId)) {
+                    this.userProgress.completedLessons.push(this.currentLessonId);
+                    this.updateLessonStates();
+                    this.updateProgressDisplay();
+                    await this.updateUserProgress();
+                    this.showProgressNotification('Lesson completed! Progress saved.');
+                }
+            }
+
+            async updateUserProgress() {
+                try {
+                    await this.callAPI('updateProgress', {
+                        user_id: this.currentUser.id,
+                        completed_lessons: this.userProgress.completedLessons.join(','),
+                        current_lesson: this.currentLessonId
+                    });
+                } catch (error) {
+                    console.error('Failed to update progress:', error);
+                    localStorage.setItem(`userProgress_${this.currentUser.id}`, JSON.stringify(this.userProgress));
+                }
+            }
+
             updateProgressDisplay() {
-                const totalCourses = this.courses.length;
-                const completedCourses = this.userProgress.completedLessons.length;
-                const progressPercent = totalCourses > 0 ? (completedCourses / totalCourses) * 100 : 0;
+                const totalLessons = this.allLessons.length;
+                const completedLessons = this.userProgress.completedLessons.length;
+                const progressPercent = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
 
                 document.getElementById('progressPercent').textContent = `${Math.round(progressPercent)}%`;
                 document.getElementById('progressFill').style.width = `${progressPercent}%`;
             }
 
-            updateNavigation() {
-                const currentIndex = this.courses.findIndex(course => course.id === this.currentCourseId);
+            updateNavigationButtons() {
+                const currentIndex = this.allLessons.findIndex(lesson => lesson.id === this.currentLessonId);
                 const prevBtn = document.getElementById('prevLessonBtn');
                 const nextBtn = document.getElementById('nextLessonBtn');
 
                 prevBtn.disabled = currentIndex <= 0;
-                nextBtn.disabled = currentIndex >= this.courses.length - 1;
+                nextBtn.disabled = currentIndex >= this.allLessons.length - 1;
             }
 
-            navigateCourse(direction) {
-                const currentIndex = this.courses.findIndex(course => course.id === this.currentCourseId);
+            navigateLesson(direction) {
+                const currentIndex = this.allLessons.findIndex(lesson => lesson.id === this.currentLessonId);
                 const newIndex = currentIndex + direction;
 
-                if (newIndex >= 0 && newIndex < this.courses.length) {
-                    this.loadCourse(this.courses[newIndex].id);
+                if (newIndex >= 0 && newIndex < this.allLessons.length) {
+                    this.loadLesson(this.allLessons[newIndex].id);
                 }
             }
 
@@ -1088,45 +1285,22 @@
                 document.getElementById('sidebar').classList.toggle('open');
             }
 
-            initEventListeners() {
-                // Auth events
-                document.getElementById('loginBtn').addEventListener('click', () => this.handleLogin());
-                document.getElementById('registerBtn').addEventListener('click', () => this.handleRegister());
-                document.getElementById('showRegister').addEventListener('click', () => this.showRegisterForm());
-                document.getElementById('showLogin').addEventListener('click', () => this.showLoginForm());
-                document.getElementById('logoutBtn').addEventListener('click', () => this.handleLogout());
-                document.getElementById('setupBtn').addEventListener('click', () => this.setupSampleData());
-
-                // Course events
-                document.getElementById('menuToggle').addEventListener('click', () => this.toggleSidebar());
-                document.getElementById('closeSidebar').addEventListener('click', () => this.toggleSidebar());
-                document.getElementById('prevLessonBtn').addEventListener('click', () => this.navigateCourse(-1));
-                document.getElementById('nextLessonBtn').addEventListener('click', () => this.navigateCourse(1));
-                document.getElementById('completeBtn').addEventListener('click', () => this.markCourseCompleted());
-
-                // Enter key support
-                document.getElementById('loginPassword').addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') this.handleLogin();
-                });
-                document.getElementById('registerConfirmPassword').addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') this.handleRegister();
-                });
-            }
-
-            showLoginForm() {
-                document.getElementById('loginForm').style.display = 'block';
-                document.getElementById('registerForm').style.display = 'none';
-            }
-
-            showRegisterForm() {
-                document.getElementById('loginForm').style.display = 'none';
-                document.getElementById('registerForm').style.display = 'block';
+            showProgressNotification(message) {
+                const notification = document.getElementById('progressNotification');
+                const notificationText = document.getElementById('notificationText');
+                
+                notificationText.textContent = message;
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
             }
         }
 
-        // Initialize the platform
+        // Initialize the application
         document.addEventListener('DOMContentLoaded', () => {
-            window.platform = new CoursePlatform();
+            window.app = new CourseApp();
         });
     </script>
 </body>
