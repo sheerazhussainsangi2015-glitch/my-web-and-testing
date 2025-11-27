@@ -1,19 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>GSheet Form Submission</title>
+    <title>GSheet Form Submission with Data Display</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body { font-family: Arial, sans-serif; max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
         input, textarea, button { width: 100%; padding: 10px; margin-bottom: 10px; box-sizing: border-box; }
         .response-message { margin-top: 15px; padding: 10px; border-radius: 4px; display: none; }
         .success { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
         .error { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+        #dataTable th, #dataTable td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        #dataTable th { background-color: #f2f2f2; }
+        #data-display-section { margin-top: 30px; }
     </style>
 </head>
 <body>
 
-    <h2>Submit to Google Sheet</h2>
+    <h2>Submit Data</h2>
     <form id="myForm">
         <label for="Name">Name:</label>
         <input type="text" id="Name" name="Name" required>
@@ -29,13 +32,87 @@
 
     <div id="response" class="response-message"></div>
 
+    <hr>
+
+    <div id="data-display-section">
+        <h3>Submitted Data (from Sheet)</h3>
+        <p id="loading-status">Loading data...</p>
+        <table id="dataTable" style="width:100%; border-collapse: collapse; display: none;">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Message</th>
+                </tr>
+            </thead>
+            <tbody>
+                </tbody>
+        </table>
+    </div>
+
     <script>
-        // *** REPLACE THIS WITH YOUR DEPLOYED GOOGLE APPS SCRIPT URL ***
+        // *** YOUR DEPLOYED GOOGLE APPS SCRIPT URL ***
         const scriptURL = 'https://script.google.com/macros/s/AKfycbwAedbTghrO10YxXeW8UP8RpHrQpLanWTjilDpWhimVMHymGSqeyFw8X_o1Jj39-Jjq/exec';
+        
         const form = document.getElementById('myForm');
         const responseDiv = document.getElementById('response');
         const submitButton = document.getElementById('submit-button');
 
+        const loadingStatus = document.getElementById('loading-status');
+        const dataTable = document.getElementById('dataTable');
+        const dataTableBody = dataTable.querySelector('tbody');
+
+
+        // Function to render the data into the HTML table
+        function renderTable(data) {
+            dataTableBody.innerHTML = ''; // Clear existing data
+
+            if (data.length === 0) {
+                loadingStatus.textContent = 'No data submitted yet.';
+                dataTable.style.display = 'none';
+                return;
+            }
+
+            // Loop through the data array and create table rows
+            data.forEach(item => {
+                const row = dataTableBody.insertRow();
+                // Assumes the keys match the column headers: Timestamp, Name, Email, Message
+                row.insertCell().textContent = item.Timestamp;
+                row.insertCell().textContent = item.Name;
+                row.insertCell().textContent = item.Email;
+                row.insertCell().textContent = item.Message;
+            });
+
+            loadingStatus.style.display = 'none';
+            dataTable.style.display = 'table';
+        }
+
+        // Function to fetch the data from the Apps Script (using doGet)
+        function fetchData() {
+            loadingStatus.textContent = 'Loading data...';
+            loadingStatus.style.display = 'block';
+            dataTable.style.display = 'none';
+
+            // Send a GET request to the same script URL
+            fetch(scriptURL, {
+                method: 'GET'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.data) {
+                    renderTable(data.data);
+                } else {
+                    throw new Error('Invalid data structure received from Apps Script.');
+                }
+            })
+            .catch(error => {
+                console.error('Fetch Error:', error);
+                loadingStatus.textContent = 'Error loading data: ' + error.message;
+            });
+        }
+
+        // Form submission handler (uses doPost)
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -44,13 +121,11 @@
             responseDiv.style.display = 'none';
             responseDiv.classList.remove('success', 'error');
 
-            // Collect form data using FormData
             const formData = new FormData(form);
             
-            // Send the data using the Fetch API
             fetch(scriptURL, { 
                 method: 'POST',
-                body: formData // FormData object is automatically sent as application/x-www-form-urlencoded
+                body: formData
             })
             .then(response => {
                 if (!response.ok) {
@@ -62,7 +137,9 @@
                 if (data.result === 'success') {
                     responseDiv.textContent = '✅ Success! Data submitted to Google Sheet.';
                     responseDiv.classList.add('success');
-                    form.reset(); // Clear the form on success
+                    form.reset(); 
+                    // Refresh the table with the latest data
+                    fetchData(); 
                 } else {
                     throw new Error(data.error || 'Unknown error occurred in Apps Script.');
                 }
@@ -78,6 +155,9 @@
                 responseDiv.style.display = 'block';
             });
         });
+
+        // Load data when the page finishes loading
+        document.addEventListener('DOMContentLoaded', fetchData);
     </script>
 
 </body>
