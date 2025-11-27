@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Form & Data Viewer</title>
+    <title>Learning Management System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -12,6 +12,7 @@
             --secondary: #3f37c9;
             --success: #4cc9f0;
             --danger: #f72585;
+            --warning: #f8961e;
             --light: #f8f9fa;
             --dark: #212529;
             --gray: #6c757d;
@@ -100,7 +101,7 @@
             color: var(--dark);
         }
         
-        input, textarea {
+        input, select, textarea {
             width: 100%;
             padding: 14px 16px;
             border: 1px solid #e1e5ee;
@@ -110,7 +111,7 @@
             background-color: #f8f9fa;
         }
         
-        input:focus, textarea:focus {
+        input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: var(--primary-light);
             box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
@@ -148,12 +149,28 @@
             transform: none;
         }
         
-        .btn-refresh {
+        .btn-success {
             background: var(--success);
         }
         
-        .btn-refresh:hover {
+        .btn-success:hover {
             background: #3aa8d8;
+        }
+        
+        .btn-warning {
+            background: var(--warning);
+        }
+        
+        .btn-warning:hover {
+            background: #e68a1a;
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+        }
+        
+        .btn-danger:hover {
+            background: #e61475;
         }
         
         .response-message {
@@ -174,6 +191,12 @@
             background-color: rgba(247, 37, 133, 0.1);
             color: #721c24;
             border-left: 4px solid var(--danger);
+        }
+        
+        .warning {
+            background-color: rgba(248, 150, 30, 0.1);
+            color: #856404;
+            border-left: 4px solid var(--warning);
         }
         
         table {
@@ -200,6 +223,21 @@
             background-color: rgba(67, 97, 238, 0.03);
         }
         
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: var(--success);
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+        
         .loading-container {
             display: flex;
             flex-direction: column;
@@ -219,15 +257,6 @@
             margin-bottom: 15px;
         }
         
-        .timestamp {
-            font-size: 0.9rem;
-            color: var(--gray);
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
         .empty-state {
             text-align: center;
             padding: 40px 20px;
@@ -240,10 +269,120 @@
             color: #dee2e6;
         }
         
-        .layout {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
+        .view {
+            display: none;
+        }
+        
+        .active-view {
+            display: block;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e1e5ee;
+        }
+        
+        .nav-tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+        
+        .nav-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .user-details {
+            flex: 1;
+        }
+        
+        .user-role {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .role-admin {
+            background: rgba(247, 37, 133, 0.1);
+            color: var(--danger);
+        }
+        
+        .role-student {
+            background: rgba(76, 201, 240, 0.1);
+            color: var(--success);
+        }
+        
+        .course-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: var(--transition);
+        }
+        
+        .course-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .course-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        
+        .course-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .course-description {
+            color: var(--gray);
+            margin-bottom: 15px;
+        }
+        
+        .course-progress {
+            margin-top: 15px;
+        }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
         }
         
         @keyframes spin {
@@ -256,13 +395,7 @@
             to { opacity: 1; }
         }
         
-        @media (max-width: 992px) {
-            .layout {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        @media (max-width: 576px) {
+        @media (max-width: 768px) {
             .card {
                 padding: 20px;
             }
@@ -271,9 +404,18 @@
                 font-size: 2rem;
             }
             
-            th, td {
-                padding: 10px 12px;
-                font-size: 14px;
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .nav-tab {
+                border-bottom: 1px solid #e1e5ee;
+                border-left: 3px solid transparent;
+            }
+            
+            .nav-tab.active {
+                border-left-color: var(--primary);
+                border-bottom-color: #e1e5ee;
             }
         }
     </style>
@@ -281,258 +423,730 @@
 <body>
     <div class="container">
         <header>
-            <h1>Contact Form & Data Viewer</h1>
-            <p class="subtitle">Submit your information and view all entries from the Google Sheet in real-time</p>
+            <h1>Learning Management System</h1>
+            <p class="subtitle">Learn, track progress, and manage your courses</p>
         </header>
         
-        <div class="layout">
-            <!-- Form Section -->
+        <!-- Setup View (shown when system is not set up) -->
+        <div id="setup-view" class="view">
             <div class="card">
                 <div class="card-header">
-                    <h2 class="card-title">Submit Your Information</h2>
-                    <i class="fas fa-pen-to-square" style="color: var(--primary); font-size: 1.5rem;"></i>
+                    <h2 class="card-title">System Setup Required</h2>
+                    <i class="fas fa-cogs" style="color: var(--primary); font-size: 1.5rem;"></i>
                 </div>
                 
-                <form id="myForm">
-                    <div class="form-group">
-                        <label for="Name">Full Name</label>
-                        <input type="text" id="Name" name="Name" placeholder="Enter your full name" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="Email">Email Address</label>
-                        <input type="email" id="Email" name="Email" placeholder="Enter your email" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="Message">Your Message</label>
-                        <textarea id="Message" name="Message" rows="4" placeholder="Type your message here..." required></textarea>
-                    </div>
-                    
-                    <button type="submit" id="submit-button">
-                        <i class="fas fa-paper-plane"></i>
-                        Submit Data
-                    </button>
-                </form>
+                <p>This is the first time you're using the system. You need to set up the required sheets and data structure.</p>
+                <p><strong>Note:</strong> This will create an admin user with email: <code>admin@example.com</code> and password: <code>admin123</code></p>
                 
-                <div id="response" class="response-message"></div>
+                <button id="setup-button" onclick="runSetup()">
+                    <i class="fas fa-play-circle"></i>
+                    Run Setup
+                </button>
+                
+                <div id="setup-response" class="response-message"></div>
+            </div>
+        </div>
+        
+        <!-- Login/Signup View -->
+        <div id="auth-view" class="view">
+            <div class="nav-tabs">
+                <div class="nav-tab active" data-tab="login">Login</div>
+                <div class="nav-tab" data-tab="signup">Sign Up</div>
             </div>
             
-            <!-- Data Display Section -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Submitted Data</h2>
-                    <div>
-                        <button class="btn-refresh" id="refresh-button">
-                            <i class="fas fa-sync-alt"></i>
-                            Refresh
+            <!-- Login Form -->
+            <div id="login-form" class="auth-form">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Login to Your Account</h2>
+                        <i class="fas fa-sign-in-alt" style="color: var(--primary); font-size: 1.5rem;"></i>
+                    </div>
+                    
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="login-email">Email Address</label>
+                            <input type="email" id="login-email" name="email" placeholder="Enter your email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="login-password">Password</label>
+                            <input type="password" id="login-password" name="password" placeholder="Enter your password" required>
+                        </div>
+                        
+                        <button type="submit" id="login-button">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Login
                         </button>
+                    </form>
+                    
+                    <div id="login-response" class="response-message"></div>
+                </div>
+            </div>
+            
+            <!-- Signup Form -->
+            <div id="signup-form" class="auth-form" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Create New Account</h2>
+                        <i class="fas fa-user-plus" style="color: var(--primary); font-size: 1.5rem;"></i>
+                    </div>
+                    
+                    <form id="signupForm">
+                        <div class="form-group">
+                            <label for="signup-email">Email Address</label>
+                            <input type="email" id="signup-email" name="email" placeholder="Enter your email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="signup-password">Password</label>
+                            <input type="password" id="signup-password" name="password" placeholder="Create a password" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="signup-role">Account Type</label>
+                            <select id="signup-role" name="role">
+                                <option value="student">Student</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" id="signup-button">
+                            <i class="fas fa-user-plus"></i>
+                            Sign Up
+                        </button>
+                    </form>
+                    
+                    <div id="signup-response" class="response-message"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main App View (shown after login) -->
+        <div id="app-view" class="view">
+            <div class="user-info">
+                <div class="user-avatar" id="user-avatar">U</div>
+                <div class="user-details">
+                    <h3 id="user-email">user@example.com</h3>
+                    <span class="user-role" id="user-role">Student</span>
+                </div>
+                <button class="btn-danger" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+            
+            <div class="nav-tabs">
+                <div class="nav-tab active" data-tab="courses">My Courses</div>
+                <div class="nav-tab" data-tab="progress" id="progress-tab">My Progress</div>
+                <div class="nav-tab admin-only" data-tab="users" style="display: none;">Users</div>
+                <div class="nav-tab admin-only" data-tab="all-progress" style="display: none;">All Progress</div>
+            </div>
+            
+            <!-- Courses View -->
+            <div id="courses-view" class="app-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Available Courses</h2>
+                        <i class="fas fa-book" style="color: var(--primary); font-size: 1.5rem;"></i>
+                    </div>
+                    
+                    <div id="courses-container">
+                        <div class="loading-container">
+                            <div class="spinner"></div>
+                            <p>Loading courses...</p>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="timestamp">
-                    <i class="far fa-clock"></i>
-                    Last updated: <span id="last-updated">Never</span>
+            </div>
+            
+            <!-- Progress View -->
+            <div id="progress-view" class="app-content" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">My Learning Progress</h2>
+                        <i class="fas fa-chart-line" style="color: var(--success); font-size: 1.5rem;"></i>
+                    </div>
+                    
+                    <div id="progress-container">
+                        <div class="loading-container">
+                            <div class="spinner"></div>
+                            <p>Loading progress data...</p>
+                        </div>
+                    </div>
                 </div>
-                
-                <div id="loading-status" class="loading-container">
-                    <div class="spinner"></div>
-                    <p>Loading data from Google Sheets...</p>
+            </div>
+            
+            <!-- Users View (Admin Only) -->
+            <div id="users-view" class="app-content" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">User Management</h2>
+                        <i class="fas fa-users" style="color: var(--warning); font-size: 1.5rem;"></i>
+                    </div>
+                    
+                    <div id="users-container">
+                        <div class="loading-container">
+                            <div class="spinner"></div>
+                            <p>Loading users...</p>
+                        </div>
+                    </div>
                 </div>
-                
-                <div id="empty-state" class="empty-state" style="display: none;">
-                    <i class="fas fa-inbox"></i>
-                    <h3>No Data Yet</h3>
-                    <p>Submit the form to see your data here</p>
-                </div>
-                
-                <div id="table-container" style="display: none;">
-                    <table id="dataTable">
-                        <thead>
-                            <tr>
-                                <th>Timestamp</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Message</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Data will be populated here -->
-                        </tbody>
-                    </table>
+            </div>
+            
+            <!-- All Progress View (Admin Only) -->
+            <div id="all-progress-view" class="app-content" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">All User Progress</h2>
+                        <i class="fas fa-chart-bar" style="color: var(--danger); font-size: 1.5rem;"></i>
+                    </div>
+                    
+                    <div id="all-progress-container">
+                        <div class="loading-container">
+                            <div class="spinner"></div>
+                            <p>Loading all progress data...</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // *** YOUR DEPLOYED GOOGLE APPS SCRIPT URL ***
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwAedbTghrO10YxXeW8UP8RpHrQpLanWTjilDpWhimVMHymGSqeyFw8X_o1Jj39-Jjq/exec';
+        // Configuration
+        const scriptURL = 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
+        
+        // Global state
+        let currentUser = null;
         
         // DOM Elements
-        const form = document.getElementById('myForm');
-        const responseDiv = document.getElementById('response');
-        const submitButton = document.getElementById('submit-button');
-        const refreshButton = document.getElementById('refresh-button');
-        const lastUpdatedSpan = document.getElementById('last-updated');
+        const setupView = document.getElementById('setup-view');
+        const authView = document.getElementById('auth-view');
+        const appView = document.getElementById('app-view');
         
-        const loadingStatus = document.getElementById('loading-status');
-        const emptyState = document.getElementById('empty-state');
-        const tableContainer = document.getElementById('table-container');
-        const dataTable = document.getElementById('dataTable');
-        const dataTableBody = dataTable.querySelector('tbody');
-
-        // Format timestamp for display
-        function formatTimestamp(timestamp) {
-            const now = new Date();
-            return now.toLocaleString();
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            checkSystemStatus();
+            setupEventListeners();
+        });
+        
+        // Check if system is set up
+        function checkSystemStatus() {
+            fetch(`${scriptURL}?action=setup`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // System is set up, show login
+                        showView(authView);
+                    } else {
+                        // System needs setup
+                        showView(setupView);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking system status:', error);
+                    showView(setupView);
+                });
         }
-
-        // Update the last updated timestamp
-        function updateTimestamp() {
-            lastUpdatedSpan.textContent = formatTimestamp();
+        
+        // Run initial setup
+        function runSetup() {
+            const setupButton = document.getElementById('setup-button');
+            const setupResponse = document.getElementById('setup-response');
+            
+            setupButton.disabled = true;
+            setupButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Setting up...';
+            
+            fetch(`${scriptURL}?action=setup`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        setupResponse.textContent = data.message;
+                        setupResponse.className = 'response-message success';
+                        setupResponse.style.display = 'block';
+                        
+                        // Show login after successful setup
+                        setTimeout(() => {
+                            showView(authView);
+                        }, 2000);
+                    } else {
+                        throw new Error(data.message);
+                    }
+                })
+                .catch(error => {
+                    setupResponse.textContent = `Setup failed: ${error.message}`;
+                    setupResponse.className = 'response-message error';
+                    setupResponse.style.display = 'block';
+                })
+                .finally(() => {
+                    setupButton.disabled = false;
+                    setupButton.innerHTML = '<i class="fas fa-play-circle"></i> Run Setup';
+                });
         }
-
-        // Function to render the data into the HTML table
-        function renderTable(data) {
-            dataTableBody.innerHTML = ''; // Clear existing data
-
-            if (data.length === 0) {
-                loadingStatus.style.display = 'none';
-                emptyState.style.display = 'block';
-                tableContainer.style.display = 'none';
-                return;
-            }
-
-            // Loop through the data array and create table rows
-            data.forEach(item => {
-                const row = dataTableBody.insertRow();
-                
-                // Format the timestamp if it exists
-                const timestamp = item.Timestamp || 'N/A';
-                
-                // Create cells and add content
-                row.insertCell().textContent = timestamp;
-                row.insertCell().textContent = item.Name || 'N/A';
-                row.insertCell().textContent = item.Email || 'N/A';
-                
-                // Truncate long messages
-                const message = item.Message || 'N/A';
-                const truncatedMessage = message.length > 50 ? message.substring(0, 50) + '...' : message;
-                const messageCell = row.insertCell();
-                messageCell.textContent = truncatedMessage;
-                
-                // Add title attribute for full message on hover
-                if (message.length > 50) {
-                    messageCell.title = message;
-                }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Tab navigation
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    
+                    // Update active tab
+                    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Handle auth tabs
+                    if (tabName === 'login' || tabName === 'signup') {
+                        document.querySelectorAll('.auth-form').forEach(form => {
+                            form.style.display = 'none';
+                        });
+                        document.getElementById(`${tabName}-form`).style.display = 'block';
+                    }
+                    
+                    // Handle app tabs
+                    if (tabName === 'courses' || tabName === 'progress' || tabName === 'users' || tabName === 'all-progress') {
+                        document.querySelectorAll('.app-content').forEach(view => {
+                            view.style.display = 'none';
+                        });
+                        document.getElementById(`${tabName}-view`).style.display = 'block';
+                        
+                        // Load data for the tab
+                        if (tabName === 'courses') loadCourses();
+                        if (tabName === 'progress') loadUserProgress();
+                        if (tabName === 'users') loadAllUsers();
+                        if (tabName === 'all-progress') loadAllProgress();
+                    }
+                });
             });
-
-            loadingStatus.style.display = 'none';
-            emptyState.style.display = 'none';
-            tableContainer.style.display = 'block';
+            
+            // Login form
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                loginUser();
+            });
+            
+            // Signup form
+            document.getElementById('signupForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                signupUser();
+            });
         }
-
-        // Function to fetch the data from the Apps Script (using doGet)
-        function fetchData() {
-            loadingStatus.style.display = 'flex';
-            emptyState.style.display = 'none';
-            tableContainer.style.display = 'none';
-
-            // Send a GET request to the same script URL
+        
+        // Login user
+        function loginUser() {
+            const loginButton = document.getElementById('login-button');
+            const loginResponse = document.getElementById('login-response');
+            const formData = new FormData(document.getElementById('loginForm'));
+            
+            loginButton.disabled = true;
+            loginButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+            loginResponse.style.display = 'none';
+            
+            const params = new URLSearchParams();
+            params.append('action', 'login');
+            params.append('email', formData.get('email'));
+            params.append('password', formData.get('password'));
+            
             fetch(scriptURL, {
-                method: 'GET'
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok: ' + response.statusText);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data && data.data) {
-                    renderTable(data.data);
-                    updateTimestamp();
-                } else {
-                    throw new Error('Invalid data structure received from Apps Script.');
-                }
-            })
-            .catch(error => {
-                console.error('Fetch Error:', error);
-                loadingStatus.innerHTML = `
-                    <i class="fas fa-exclamation-triangle" style="font-size: 2rem; color: var(--danger); margin-bottom: 15px;"></i>
-                    <p>Error loading data: ${error.message}</p>
-                `;
-            });
-        }
-
-        // Form submission handler (uses doPost)
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            submitButton.disabled = true;
-            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-            responseDiv.style.display = 'none';
-            responseDiv.classList.remove('success', 'error');
-
-            const formData = new FormData(form);
-            
-            fetch(scriptURL, { 
                 method: 'POST',
-                body: formData
+                body: params
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok: ' + response.statusText);
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
-                if (data.result === 'success') {
-                    responseDiv.textContent = '✅ Success! Your data has been submitted to Google Sheet.';
-                    responseDiv.classList.add('success');
-                    form.reset(); 
-                    // Refresh the table with the latest data
-                    fetchData(); 
+                if (data.success) {
+                    currentUser = data.user;
+                    showAppView();
                 } else {
-                    throw new Error(data.error || 'Unknown error occurred in Apps Script.');
+                    throw new Error(data.message);
                 }
             })
             .catch(error => {
-                console.error('Submission Error:', error);
-                responseDiv.textContent = `❌ Error: ${error.message}`;
-                responseDiv.classList.add('error');
+                loginResponse.textContent = error.message;
+                loginResponse.className = 'response-message error';
+                loginResponse.style.display = 'block';
             })
             .finally(() => {
-                submitButton.disabled = false;
-                submitButton.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Data';
-                responseDiv.style.display = 'block';
-                
-                // Auto-hide success message after 5 seconds
-                if (responseDiv.classList.contains('success')) {
-                    setTimeout(() => {
-                        responseDiv.style.display = 'none';
-                    }, 5000);
-                }
+                loginButton.disabled = false;
+                loginButton.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
             });
-        });
-
-        // Refresh button handler
-        refreshButton.addEventListener('click', function() {
-            refreshButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
-            refreshButton.disabled = true;
+        }
+        
+        // Signup user
+        function signupUser() {
+            const signupButton = document.getElementById('signup-button');
+            const signupResponse = document.getElementById('signup-response');
+            const formData = new FormData(document.getElementById('signupForm'));
             
-            fetchData();
+            signupButton.disabled = true;
+            signupButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing up...';
+            signupResponse.style.display = 'none';
             
-            // Re-enable the button after a short delay
-            setTimeout(() => {
-                refreshButton.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
-                refreshButton.disabled = false;
-            }, 1000);
-        });
-
-        // Load data when the page finishes loading
-        document.addEventListener('DOMContentLoaded', fetchData);
+            const params = new URLSearchParams();
+            params.append('action', 'signup');
+            params.append('email', formData.get('email'));
+            params.append('password', formData.get('password'));
+            params.append('role', formData.get('role'));
+            
+            fetch(scriptURL, {
+                method: 'POST',
+                body: params
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    signupResponse.textContent = 'Account created successfully! Please login.';
+                    signupResponse.className = 'response-message success';
+                    signupResponse.style.display = 'block';
+                    
+                    // Switch to login tab
+                    document.querySelector('.nav-tab[data-tab="login"]').click();
+                    document.getElementById('login-email').value = formData.get('email');
+                } else {
+                    throw new Error(data.message);
+                }
+            })
+            .catch(error => {
+                signupResponse.textContent = error.message;
+                signupResponse.className = 'response-message error';
+                signupResponse.style.display = 'block';
+            })
+            .finally(() => {
+                signupButton.disabled = false;
+                signupButton.innerHTML = '<i class="fas fa-user-plus"></i> Sign Up';
+            });
+        }
+        
+        // Show app view after login
+        function showAppView() {
+            // Update user info
+            document.getElementById('user-email').textContent = currentUser.email;
+            document.getElementById('user-role').textContent = currentUser.role;
+            document.getElementById('user-role').className = `user-role role-${currentUser.role}`;
+            document.getElementById('user-avatar').textContent = currentUser.email.charAt(0).toUpperCase();
+            
+            // Show/hide admin tabs
+            document.querySelectorAll('.admin-only').forEach(el => {
+                el.style.display = currentUser.role === 'admin' ? 'flex' : 'none';
+            });
+            
+            // Load initial data
+            loadCourses();
+            
+            // Show app view
+            showView(appView);
+        }
+        
+        // Load courses
+        function loadCourses() {
+            const coursesContainer = document.getElementById('courses-container');
+            
+            fetch(`${scriptURL}?action=getCourses`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        if (data.courses.length === 0) {
+                            coursesContainer.innerHTML = `
+                                <div class="empty-state">
+                                    <i class="fas fa-book-open"></i>
+                                    <h3>No Courses Available</h3>
+                                    <p>There are no courses available at the moment.</p>
+                                </div>
+                            `;
+                        } else {
+                            coursesContainer.innerHTML = '';
+                            data.courses.forEach(course => {
+                                const courseCard = document.createElement('div');
+                                courseCard.className = 'course-card';
+                                courseCard.innerHTML = `
+                                    <div class="course-header">
+                                        <div>
+                                            <h3 class="course-title">${course.courseName}</h3>
+                                            <p class="course-description">${course.description}</p>
+                                        </div>
+                                        <span class="user-role role-student">${course.status}</span>
+                                    </div>
+                                    ${currentUser.role === 'student' ? `
+                                    <div class="course-progress">
+                                        <div class="progress-info">
+                                            <span>Progress</span>
+                                            <span>0%</span>
+                                        </div>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 0%"></div>
+                                        </div>
+                                    </div>
+                                    <button class="btn-success" style="margin-top: 15px;" onclick="startCourse('${course.courseId}')">
+                                        <i class="fas fa-play"></i>
+                                        Start Learning
+                                    </button>
+                                    ` : ''}
+                                `;
+                                coursesContainer.appendChild(courseCard);
+                            });
+                        }
+                    } else {
+                        throw new Error(data.message);
+                    }
+                })
+                .catch(error => {
+                    coursesContainer.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>Error Loading Courses</h3>
+                            <p>${error.message}</p>
+                        </div>
+                    `;
+                });
+        }
+        
+        // Load user progress
+        function loadUserProgress() {
+            const progressContainer = document.getElementById('progress-container');
+            
+            fetch(`${scriptURL}?action=getUserProgress&email=${currentUser.email}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        if (data.progress.length === 0) {
+                            progressContainer.innerHTML = `
+                                <div class="empty-state">
+                                    <i class="fas fa-chart-line"></i>
+                                    <h3>No Progress Data</h3>
+                                    <p>You haven't started any courses yet.</p>
+                                </div>
+                            `;
+                        } else {
+                            progressContainer.innerHTML = '';
+                            data.progress.forEach(item => {
+                                const progressCard = document.createElement('div');
+                                progressCard.className = 'course-card';
+                                progressCard.innerHTML = `
+                                    <div class="course-header">
+                                        <div>
+                                            <h3 class="course-title">${item.courseName}</h3>
+                                            <p>Course ID: ${item.courseId}</p>
+                                        </div>
+                                        <span class="user-role role-student">${item.status}</span>
+                                    </div>
+                                    <div class="course-progress">
+                                        <div class="progress-info">
+                                            <span>Progress</span>
+                                            <span>${item.progress}%</span>
+                                        </div>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: ${item.progress}%"></div>
+                                        </div>
+                                    </div>
+                                    <p><small>Last accessed: ${new Date(item.lastAccessed).toLocaleDateString()}</small></p>
+                                    <button class="btn-success" style="margin-top: 15px;" onclick="updateProgress('${item.courseId}', ${parseInt(item.progress) + 10})">
+                                        <i class="fas fa-plus"></i>
+                                        Update Progress
+                                    </button>
+                                `;
+                                progressContainer.appendChild(progressCard);
+                            });
+                        }
+                    } else {
+                        throw new Error(data.message);
+                    }
+                })
+                .catch(error => {
+                    progressContainer.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>Error Loading Progress</h3>
+                            <p>${error.message}</p>
+                        </div>
+                    `;
+                });
+        }
+        
+        // Load all users (admin only)
+        function loadAllUsers() {
+            const usersContainer = document.getElementById('users-container');
+            
+            fetch(`${scriptURL}?action=getAllUsers`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        if (data.users.length === 0) {
+                            usersContainer.innerHTML = `
+                                <div class="empty-state">
+                                    <i class="fas fa-users"></i>
+                                    <h3>No Users</h3>
+                                    <p>There are no users in the system.</p>
+                                </div>
+                            `;
+                        } else {
+                            let tableHTML = `
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Email</th>
+                                            <th>Role</th>
+                                            <th>Status</th>
+                                            <th>Joined</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                            `;
+                            
+                            data.users.forEach(user => {
+                                tableHTML += `
+                                    <tr>
+                                        <td>${user.email}</td>
+                                        <td><span class="user-role role-${user.role}">${user.role}</span></td>
+                                        <td>${user.status}</td>
+                                        <td>${new Date(user.timestamp).toLocaleDateString()}</td>
+                                    </tr>
+                                `;
+                            });
+                            
+                            tableHTML += `
+                                    </tbody>
+                                </table>
+                            `;
+                            
+                            usersContainer.innerHTML = tableHTML;
+                        }
+                    } else {
+                        throw new Error(data.message);
+                    }
+                })
+                .catch(error => {
+                    usersContainer.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>Error Loading Users</h3>
+                            <p>${error.message}</p>
+                        </div>
+                    `;
+                });
+        }
+        
+        // Load all progress (admin only)
+        function loadAllProgress() {
+            const progressContainer = document.getElementById('all-progress-container');
+            
+            fetch(`${scriptURL}?action=getAllProgress`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        if (data.progress.length === 0) {
+                            progressContainer.innerHTML = `
+                                <div class="empty-state">
+                                    <i class="fas fa-chart-bar"></i>
+                                    <h3>No Progress Data</h3>
+                                    <p>There is no progress data available.</p>
+                                </div>
+                            `;
+                        } else {
+                            let tableHTML = `
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>User</th>
+                                            <th>Course</th>
+                                            <th>Progress</th>
+                                            <th>Last Accessed</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                            `;
+                            
+                            data.progress.forEach(item => {
+                                tableHTML += `
+                                    <tr>
+                                        <td>${item.userEmail}</td>
+                                        <td>${item.courseName}</td>
+                                        <td>
+                                            <div class="progress-info">
+                                                <span>${item.progress}%</span>
+                                            </div>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" style="width: ${item.progress}%"></div>
+                                            </div>
+                                        </td>
+                                        <td>${new Date(item.lastAccessed).toLocaleDateString()}</td>
+                                        <td>${item.status}</td>
+                                    </tr>
+                                `;
+                            });
+                            
+                            tableHTML += `
+                                    </tbody>
+                                </table>
+                            `;
+                            
+                            progressContainer.innerHTML = tableHTML;
+                        }
+                    } else {
+                        throw new Error(data.message);
+                    }
+                })
+                .catch(error => {
+                    progressContainer.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>Error Loading Progress</h3>
+                            <p>${error.message}</p>
+                        </div>
+                    `;
+                });
+        }
+        
+        // Start a course (student only)
+        function startCourse(courseId) {
+            // In a real application, this would redirect to course content
+            alert(`Starting course: ${courseId}\n\nIn a real application, this would redirect to the course content.`);
+            
+            // Update progress to 10% when starting
+            updateProgress(courseId, 10);
+        }
+        
+        // Update user progress
+        function updateProgress(courseId, newProgress) {
+            const params = new URLSearchParams();
+            params.append('action', 'updateProgress');
+            params.append('email', currentUser.email);
+            params.append('courseId', courseId);
+            params.append('progress', newProgress);
+            
+            fetch(scriptURL, {
+                method: 'POST',
+                body: params
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Reload progress if we're on the progress tab
+                    if (document.getElementById('progress-view').style.display !== 'none') {
+                        loadUserProgress();
+                    }
+                } else {
+                    alert('Failed to update progress: ' + data.message);
+                }
+            })
+            .catch(error => {
+                alert('Error updating progress: ' + error.message);
+            });
+        }
+        
+        // Logout user
+        function logout() {
+            currentUser = null;
+            showView(authView);
+        }
+        
+        // Helper function to show a specific view
+        function showView(view) {
+            setupView.style.display = 'none';
+            authView.style.display = 'none';
+            appView.style.display = 'none';
+            
+            view.style.display = 'block';
+        }
     </script>
 </body>
 </html>
