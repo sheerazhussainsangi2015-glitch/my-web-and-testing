@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Learning Platform</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Google Sheets Connection Diagnostic</title>
     <style>
         * {
             margin: 0;
@@ -13,188 +12,112 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        :root {
-            --primary: #2d2d39;
-            --secondary: #ff4757;
-            --accent: #5352ed;
-            --light: #f1f2f6;
-            --dark: #2f3542;
-            --success: #2ed573;
-            --warning: #ffa502;
-        }
-
         body {
-            background-color: #f8f9fa;
-            color: var(--dark);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            padding: 20px;
         }
 
-        /* Auth Container */
-        .auth-container {
-            display: flex;
-            width: 100%;
-            min-height: 100vh;
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 1000px;
+            margin: 0 auto;
         }
 
-        .auth-left {
-            flex: 1;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            color: white;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 40px;
-        }
-
-        .auth-left h1 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
+        h1 {
             text-align: center;
-        }
-
-        .auth-left p {
-            font-size: 1.2rem;
-            text-align: center;
-            max-width: 500px;
-            line-height: 1.6;
-        }
-
-        .auth-right {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 40px;
-        }
-
-        .auth-form {
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .auth-form h2 {
+            color: #333;
             margin-bottom: 30px;
-            color: var(--primary);
-            text-align: center;
-            font-size: 1.8rem;
+            font-size: 2.5rem;
         }
 
-        .form-group {
+        .test-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
             margin-bottom: 20px;
+            border-left: 4px solid #007bff;
         }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--dark);
+        .test-section.error {
+            border-left-color: #dc3545;
+            background: #f8d7da;
         }
 
-        .form-group input {
-            width: 100%;
-            padding: 14px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border 0.3s;
+        .test-section.success {
+            border-left-color: #28a745;
+            background: #d4edda;
         }
 
-        .form-group input:focus {
-            border-color: var(--accent);
-            outline: none;
+        .test-section.warning {
+            border-left-color: #ffc107;
+            background: #fff3cd;
         }
 
-        .auth-btn {
-            width: 100%;
-            padding: 14px;
-            background: var(--accent);
+        .test-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .test-header h3 {
+            color: #333;
+            font-size: 1.3rem;
+        }
+
+        .status-icon {
+            font-size: 1.5rem;
+        }
+
+        .status-online { color: #28a745; }
+        .status-offline { color: #dc3545; }
+        .status-warning { color: #ffc107; }
+
+        .btn {
+            background: #007bff;
             color: white;
             border: none;
+            padding: 12px 24px;
             border-radius: 8px;
+            cursor: pointer;
             font-size: 1rem;
             font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-            margin-top: 10px;
-            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 10px 5px;
+            transition: background 0.3s;
+            text-decoration: none;
         }
 
-        .auth-btn:hover {
-            background: #4240e9;
+        .btn:hover {
+            background: #0056b3;
         }
 
-        .auth-btn:disabled {
-            background: #ccc;
+        .btn:disabled {
+            background: #6c757d;
             cursor: not-allowed;
         }
 
-        .auth-switch {
-            text-align: center;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
+        .btn-success {
+            background: #28a745;
         }
 
-        .auth-switch a {
-            color: var(--accent);
-            text-decoration: none;
-            font-weight: 500;
-            cursor: pointer;
+        .btn-success:hover {
+            background: #1e7e34;
         }
 
-        .auth-switch a:hover {
-            text-decoration: underline;
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
         }
 
-        .demo-accounts {
-            margin-top: 30px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            border-left: 4px solid var(--accent);
-        }
-
-        .demo-accounts h3 {
-            margin-bottom: 15px;
-            color: var(--primary);
-        }
-
-        .demo-account {
-            padding: 10px;
-            background: white;
-            border-radius: 6px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .demo-account:hover {
-            background: #e9ecef;
-        }
-
-        .demo-account:last-child {
-            margin-bottom: 0;
-        }
-
-        .message {
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            text-align: center;
-            display: none;
-        }
-
-        .message.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .message.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+        .btn-warning:hover {
+            background: #e0a800;
         }
 
         .loading {
@@ -205,919 +128,493 @@
             border-radius: 50%;
             border-top-color: transparent;
             animation: spin 1s ease-in-out infinite;
-            margin-right: 10px;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
-        /* Main App Styles */
-        .app-container {
-            display: none;
-            width: 100%;
-        }
-
-        /* Sidebar/Drawer Styles */
-        .sidebar {
-            width: 280px;
-            background: var(--primary);
-            color: white;
-            height: 100vh;
-            position: fixed;
-            overflow-y: auto;
-            transition: transform 0.3s ease;
-            z-index: 1000;
-        }
-
-        .sidebar-header {
-            padding: 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .sidebar-header h2 {
-            font-size: 1.4rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .sidebar-header h2 i {
-            color: var(--secondary);
-        }
-
-        .close-sidebar {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.2rem;
-            cursor: pointer;
-            display: none;
-        }
-
-        .course-progress {
-            padding: 20px;
-            background: rgba(0,0,0,0.2);
-            margin: 15px;
+        .code-block {
+            background: #2d2d39;
+            color: #f8f9fa;
+            padding: 15px;
             border-radius: 8px;
-        }
-
-        .progress-text {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
+            font-family: 'Courier New', monospace;
             font-size: 0.9rem;
+            margin: 10px 0;
+            overflow-x: auto;
+            white-space: pre-wrap;
         }
 
-        .progress-bar {
-            height: 6px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: var(--success);
-            border-radius: 3px;
-            width: 0%;
-        }
-
-        .course-modules {
-            padding: 0 15px;
-        }
-
-        .module {
-            margin-bottom: 10px;
-        }
-
-        .module-header {
-            padding: 12px 15px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .module-header.active {
-            background: rgba(255,255,255,0.1);
-        }
-
-        .module-content {
-            padding-left: 20px;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-        }
-
-        .module-content.open {
-            max-height: 500px;
-        }
-
-        .lesson {
+        .url-display {
+            background: #e9ecef;
             padding: 10px 15px;
-            border-left: 2px solid rgba(255,255,255,0.1);
-            margin: 8px 0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: monospace;
+            word-break: break-all;
+            border: 1px solid #ced4da;
         }
 
-        .lesson:hover {
-            background: rgba(255,255,255,0.05);
-        }
-
-        .lesson.active {
-            border-left-color: var(--accent);
-            background: rgba(83, 82, 237, 0.1);
-        }
-
-        .lesson.completed i {
-            color: var(--success);
-        }
-
-        .lesson-duration {
-            font-size: 0.8rem;
-            color: rgba(255,255,255,0.6);
-            margin-left: auto;
-        }
-
-        /* Main Content Styles */
-        .main-content {
-            flex: 1;
-            margin-left: 280px;
-            transition: margin-left 0.3s ease;
-        }
-
-        .top-nav {
+        .step {
+            margin: 15px 0;
+            padding: 15px;
             background: white;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            border-left: 4px solid #6c757d;
         }
 
-        .menu-toggle {
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            cursor: pointer;
-            color: var(--dark);
-            display: none;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .step-number {
+            display: inline-block;
+            background: #007bff;
             color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 10px;
             font-weight: bold;
         }
 
-        .logout-btn {
-            background: none;
-            border: none;
-            color: var(--dark);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .video-container {
-            padding: 30px;
-            max-width: 1200px;
-        }
-
-        .video-player {
-            background: var(--dark);
+        .log-output {
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 15px;
             border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            margin-bottom: 25px;
-            position: relative;
-        }
-
-        /* Video Player Styles */
-        #videoPlayer {
-            width: 100%;
-            height: 400px;
-            background: #000;
-        }
-
-        #youtubePlayer {
-            width: 100%;
-            height: 400px;
-            border: none;
-        }
-
-        .video-placeholder {
-            width: 100%;
-            height: 400px;
-            background: linear-gradient(135deg, #2d2d39, #1e1e28);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-        }
-
-        .video-info {
-            padding: 20px 0;
-        }
-
-        .video-title {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-        }
-
-        .video-meta {
-            display: flex;
-            gap: 20px;
-            color: #666;
+            font-family: 'Courier New', monospace;
             font-size: 0.9rem;
-            margin-bottom: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 15px;
         }
 
-        .lesson-description {
-            line-height: 1.6;
-            margin-bottom: 30px;
+        .solution-box {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
         }
 
-        .navigation-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
+        .test-results {
+            margin-top: 20px;
         }
 
-        .nav-btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
-
-        .prev-btn {
+        .result-item {
+            padding: 10px;
+            margin: 5px 0;
             background: white;
-            color: var(--dark);
-            border: 1px solid #ddd;
+            border-radius: 5px;
+            border-left: 4px solid #6c757d;
         }
 
-        .next-btn {
-            background: var(--accent);
-            color: white;
+        .result-item.success {
+            border-left-color: #28a745;
+            background: #d4edda;
         }
 
-        .nav-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-
-        .nav-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        /* Refresh Button */
-        .refresh-btn {
-            background: var(--success);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-left: 10px;
-        }
-
-        /* Video Source Indicator */
-        .video-source {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            z-index: 10;
-        }
-
-        /* Responsive Styles */
-        @media (max-width: 992px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            
-            .sidebar.open {
-                transform: translateX(0);
-            }
-            
-            .main-content {
-                margin-left: 0;
-            }
-            
-            .menu-toggle, .close-sidebar {
-                display: block;
-            }
-            
-            #videoPlayer, #youtubePlayer, .video-placeholder {
-                height: 300px;
-            }
-
-            .auth-container {
-                flex-direction: column;
-            }
-
-            .auth-left, .auth-right {
-                flex: none;
-            }
-
-            .auth-left {
-                padding: 30px 20px;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .video-container {
-                padding: 15px;
-            }
-            
-            #videoPlayer, #youtubePlayer, .video-placeholder {
-                height: 200px;
-            }
-            
-            .video-placeholder i {
-                font-size: 2.5rem;
-            }
-
-            .auth-left h1 {
-                font-size: 2rem;
-            }
-
-            .auth-left p {
-                font-size: 1rem;
-            }
+        .result-item.error {
+            border-left-color: #dc3545;
+            background: #f8d7da;
         }
     </style>
 </head>
 <body>
-    <!-- Auth Container (Login/Register) -->
-    <div class="auth-container" id="authContainer">
-        <div class="auth-left">
-            <h1>Welcome to CodeMaster Academy</h1>
-            <p>Access our exclusive collection of private video tutorials. Track your progress, bookmark lessons, and become a coding expert at your own pace.</p>
-        </div>
-        <div class="auth-right">
-            <div class="auth-form" id="loginForm">
-                <h2>Login to Your Account</h2>
-                <div class="message" id="loginMessage"></div>
-                <div class="form-group">
-                    <label for="loginEmail">Email</label>
-                    <input type="email" id="loginEmail" placeholder="Enter your email">
-                </div>
-                <div class="form-group">
-                    <label for="loginPassword">Password</label>
-                    <input type="password" id="loginPassword" placeholder="Enter your password">
-                </div>
-                <button class="auth-btn" id="loginBtn">
-                    <span class="btn-text">Login to Course</span>
-                </button>
-
-                <div class="auth-switch">
-                    Don't have an account? <a id="showRegister">Register here</a>
-                </div>
-
-                <div class="demo-accounts">
-                    <h3>Demo Accounts (Click to use):</h3>
-                    <div class="demo-account" data-email="student@example.com" data-password="password123">
-                        <strong>Student Account</strong><br>
-                        Email: student@example.com | Password: password123
-                    </div>
-                    <div class="demo-account" data-email="john.doe@example.com" data-password="password123">
-                        <strong>John Doe</strong><br>
-                        Email: john.doe@example.com | Password: password123
-                    </div>
-                </div>
-            </div>
-
-            <div class="auth-form" id="registerForm" style="display: none;">
-                <h2>Create New Account</h2>
-                <div class="message" id="registerMessage"></div>
-                <div class="form-group">
-                    <label for="registerName">Full Name</label>
-                    <input type="text" id="registerName" placeholder="Enter your full name">
-                </div>
-                <div class="form-group">
-                    <label for="registerEmail">Email</label>
-                    <input type="email" id="registerEmail" placeholder="Enter your email">
-                </div>
-                <div class="form-group">
-                    <label for="registerPassword">Password</label>
-                    <input type="password" id="registerPassword" placeholder="Create a password">
-                </div>
-                <div class="form-group">
-                    <label for="registerConfirmPassword">Confirm Password</label>
-                    <input type="password" id="registerConfirmPassword" placeholder="Confirm your password">
-                </div>
-                <button class="auth-btn" id="registerBtn">
-                    <span class="btn-text">Create Account</span>
-                </button>
-
-                <div class="auth-switch">
-                    Already have an account? <a id="showLogin">Login here</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Main App -->
-    <div class="app-container" id="appContainer">
-        <!-- Sidebar/Drawer Menu -->
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <h2><i class="fas fa-graduation-cap"></i> Web Dev Course</h2>
-                <button class="close-sidebar" id="closeSidebar">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            
-            <div class="course-progress">
-                <div class="progress-text">
-                    <span>Course Progress</span>
-                    <span id="progressPercent">0%</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill"></div>
-                </div>
-            </div>
-            
-            <div class="course-modules" id="courseModules">
-                <div class="loading-modules" style="text-align: center; padding: 20px; color: white;">
-                    <div class="loading"></div> Loading course content...
-                </div>
-            </div>
-        </div>
+    <div class="container">
+        <h1>🔧 Google Sheets Connection Diagnostic</h1>
         
-        <!-- Main Content -->
-        <div class="main-content">
-            <div class="top-nav">
-                <button class="menu-toggle" id="menuToggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <div class="user-info">
-                    <span id="welcomeMessage">Welcome, Student!</span>
-                    <button class="refresh-btn" id="refreshBtn">
-                        <i class="fas fa-sync-alt"></i> Refresh Content
-                    </button>
-                    <div class="user-avatar" id="userAvatar">U</div>
-                    <button class="logout-btn" id="logoutBtn">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </button>
+        <!-- Connection Test Section -->
+        <div class="test-section" id="connectionTest">
+            <div class="test-header">
+                <i class="fas fa-plug status-icon status-offline" id="connectionIcon"></i>
+                <h3>Connection Test</h3>
+            </div>
+            
+            <div class="url-display">
+                Current API URL: <span id="currentUrl">https://script.google.com/macros/s/AKfycbx77-WWWNOlwD1rK_8Ip9CzNbZqBUQjprAazBRx2AJ-nIxVKuTCJqUWvdJ96OjD_t__/exec</span>
+            </div>
+            
+            <p id="connectionStatus">Testing connection to Google Apps Script...</p>
+            
+            <button class="btn" onclick="runFullDiagnostic()">
+                <i class="fas fa-play"></i>
+                <span>Run Full Diagnostic</span>
+            </button>
+            
+            <div class="test-results" id="connectionResults"></div>
+        </div>
+
+        <!-- Deployment Guide Section -->
+        <div class="test-section warning">
+            <div class="test-header">
+                <i class="fas fa-cogs status-icon status-warning"></i>
+                <h3>Deployment Checklist</h3>
+            </div>
+            
+            <div class="step">
+                <span class="step-number">1</span>
+                <strong>Create Google Apps Script</strong>
+                <p>Go to <a href="https://script.google.com" target="_blank">script.google.com</a> and create a new project.</p>
+            </div>
+            
+            <div class="step">
+                <span class="step-number">2</span>
+                <strong>Paste This Code</strong>
+                <div class="code-block">
+// Simple Diagnostic Backend
+function doGet(e) {
+  return handleRequest(e);
+}
+
+function doPost(e) {
+  return handleRequest(e);
+}
+
+function handleRequest(e) {
+  const result = {
+    success: true,
+    message: "Hello from Google Apps Script!",
+    timestamp: new Date().toISOString(),
+    parameters: e.parameters
+  };
+  
+  return ContentService
+    .createTextOutput(JSON.stringify(result))
+    .setMimeType(ContentService.MimeType.JSON)
+    .setHeaders({
+      'Access-Control-Allow-Origin': '*'
+    });
+}
                 </div>
             </div>
             
-            <div class="video-container">
-                <div class="video-player">
-                    <div class="video-source" id="videoSource">Loading...</div>
-                    
-                    <!-- HTML5 Video Player -->
-                    <video id="videoPlayer" controls width="100%" height="400" style="display: none;">
-                        Your browser does not support the video tag.
-                    </video>
-                    
-                    <!-- YouTube Player -->
-                    <iframe id="youtubePlayer" width="100%" height="400" style="display: none;"
-                            src="" frameborder="0" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                            allowfullscreen>
-                    </iframe>
-                    
-                    <!-- Placeholder -->
-                    <div class="video-placeholder" id="videoPlaceholder">
-                        <i class="fas fa-play-circle"></i>
-                        <h3 id="currentLessonTitle">Select a lesson to start</h3>
-                        <p>Choose a lesson from the sidebar to begin learning</p>
-                    </div>
-                </div>
-                
-                <div class="video-info">
-                    <h1 class="video-title" id="videoTitle">Welcome to the Course</h1>
-                    <div class="video-meta">
-                        <span><i class="far fa-calendar"></i> Start your learning journey</span>
-                    </div>
-                    <div class="lesson-description" id="lessonDescription">
-                        <p>Select a lesson from the sidebar to begin watching video content and track your progress.</p>
-                    </div>
-                    
-                    <div class="navigation-buttons">
-                        <button class="nav-btn prev-btn" id="prevLessonBtn" disabled>
-                            <i class="fas fa-arrow-left"></i> Previous Lesson
-                        </button>
-                        <button class="nav-btn next-btn" id="nextLessonBtn" disabled>
-                            Next Lesson <i class="fas fa-arrow-right"></i>
-                        </button>
-                    </div>
-                </div>
+            <div class="step">
+                <span class="step-number">3</span>
+                <strong>Deploy as Web App</strong>
+                <ul>
+                    <li>Click <strong>Deploy</strong> → <strong>New deployment</strong></li>
+                    <li>Select <strong>Web App</strong> as type</li>
+                    <li><strong>Execute as:</strong> Me</li>
+                    <li><strong>Who has access:</strong> Anyone</li>
+                    <li>Click <strong>Deploy</strong></li>
+                    <li><strong>Copy the Web App URL</strong></li>
+                </ul>
             </div>
+            
+            <div class="step">
+                <span class="step-number">4</span>
+                <strong>Update URL Here</strong>
+                <p>Paste your deployment URL below:</p>
+                <input type="text" id="newApiUrl" placeholder="Paste your Web App URL here" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px;">
+                <button class="btn btn-success" onclick="updateApiUrl()">
+                    <i class="fas fa-save"></i>
+                    Update API URL
+                </button>
+            </div>
+        </div>
+
+        <!-- Manual Test Section -->
+        <div class="test-section">
+            <div class="test-header">
+                <i class="fas fa-vial status-icon"></i>
+                <h3>Manual Tests</h3>
+            </div>
+            
+            <button class="btn" onclick="testDirectFetch()">
+                <i class="fas fa-exchange-alt"></i>
+                Test Direct Fetch
+            </button>
+            
+            <button class="btn" onclick="testJsonp()">
+                <i class="fas fa-code"></i>
+                Test JSONP
+            </button>
+            
+            <button class="btn" onclick="testCorsProxy()">
+                <i class="fas fa-server"></i>
+                Test with CORS Proxy
+            </button>
+            
+            <div class="log-output" id="manualTestLog"></div>
+        </div>
+
+        <!-- Solution Section -->
+        <div class="solution-box">
+            <h4>🚨 Common Solutions:</h4>
+            <ul>
+                <li><strong>Check Deployment:</strong> Make sure your script is deployed as "Web App" not "API Executable"</li>
+                <li><strong>Permissions:</strong> Set "Execute as: Me" and "Who has access: Anyone"</li>
+                <li><strong>Authorization:</strong> You might need to authorize the script the first time</li>
+                <li><strong>CORS:</strong> Google Apps Script has CORS issues - we need to handle them</li>
+                <li><strong>URL Format:</strong> Make sure your URL ends with <code>/exec</code></li>
+            </ul>
         </div>
     </div>
 
     <script>
-        // Configuration
-        const API_URL = 'https://script.google.com/macros/s/AKfycbx77-WWWNOlwD1rK_8Ip9CzNbZqBUQjprAazBRx2AJ-nIxVKuTCJqUWvdJ96OjD_t__/exec';
+        const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbx77-WWWNOlwD1rK_8Ip9CzNbZqBUQjprAazBRx2AJ-nIxVKuTCJqUWvdJ96OjD_t__/exec';
+        let currentApiUrl = DEFAULT_API_URL;
 
-        // Application Controller
-        class CourseApp {
-            constructor() {
-                this.currentUser = null;
-                this.courseContent = null;
-                this.userProgress = null;
-                this.currentLessonId = null;
-                this.allLessons = [];
-                this.youtubeAPIReady = false;
-                
-                this.initEventListeners();
-                this.checkExistingSession();
-                this.loadYouTubeAPI();
+        function updateApiUrl() {
+            const newUrl = document.getElementById('newApiUrl').value.trim();
+            if (newUrl) {
+                currentApiUrl = newUrl;
+                document.getElementById('currentUrl').textContent = newUrl;
+                document.getElementById('connectionTest').className = 'test-section warning';
+                document.getElementById('connectionStatus').textContent = 'URL updated. Run diagnostic again.';
+            }
+        }
+
+        async function runFullDiagnostic() {
+            const resultsDiv = document.getElementById('connectionResults');
+            const connectionIcon = document.getElementById('connectionIcon');
+            const connectionStatus = document.getElementById('connectionStatus');
+            
+            resultsDiv.innerHTML = '';
+            connectionIcon.className = 'fas fa-sync-alt status-icon status-warning';
+            connectionStatus.textContent = 'Running diagnostic tests...';
+
+            const tests = [
+                testUrlFormat,
+                testDirectConnection,
+                testWithCorsProxy,
+                testWithJsonp,
+                testAlternativeMethods
+            ];
+
+            for (const test of tests) {
+                await test();
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Delay between tests
             }
 
-            initEventListeners() {
-                // Auth events
-                document.getElementById('loginBtn').addEventListener('click', () => this.handleLogin());
-                document.getElementById('registerBtn').addEventListener('click', () => this.handleRegister());
-                document.getElementById('showRegister').addEventListener('click', () => this.showRegisterForm());
-                document.getElementById('showLogin').addEventListener('click', () => this.showLoginForm());
-                document.getElementById('logoutBtn').addEventListener('click', () => this.handleLogout());
-                document.getElementById('refreshBtn').addEventListener('click', () => this.refreshContent());
+            connectionIcon.className = 'fas fa-check-circle status-icon status-online';
+            connectionStatus.textContent = 'Diagnostic complete! Check results below.';
+        }
 
-                // Demo accounts
-                document.querySelectorAll('.demo-account').forEach(account => {
-                    account.addEventListener('click', () => {
-                        const email = account.getAttribute('data-email');
-                        const password = account.getAttribute('data-password');
-                        document.getElementById('loginEmail').value = email;
-                        document.getElementById('loginPassword').value = password;
-                    });
+        async function testUrlFormat() {
+            addResult('URL Format Check', 'Checking if URL format is correct...');
+            
+            if (!currentApiUrl.includes('script.google.com')) {
+                addResult('URL Format Check', '❌ URL does not contain script.google.com', 'error');
+                return false;
+            }
+            
+            if (!currentApiUrl.endsWith('/exec')) {
+                addResult('URL Format Check', '❌ URL should end with /exec', 'error');
+                return false;
+            }
+            
+            addResult('URL Format Check', '✅ URL format looks correct', 'success');
+            return true;
+        }
+
+        async function testDirectConnection() {
+            addResult('Direct Connection', 'Testing direct connection...');
+            
+            try {
+                const startTime = Date.now();
+                const response = await fetch(currentApiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'action=test'
                 });
-
-                // Course events
-                document.getElementById('menuToggle').addEventListener('click', () => this.toggleSidebar());
-                document.getElementById('closeSidebar').addEventListener('click', () => this.toggleSidebar());
-                document.getElementById('prevLessonBtn').addEventListener('click', () => this.navigateLesson(-1));
-                document.getElementById('nextLessonBtn').addEventListener('click', () => this.navigateLesson(1));
-            }
-
-            loadYouTubeAPI() {
-                // Load YouTube IFrame API
-                const tag = document.createElement('script');
-                tag.src = "https://www.youtube.com/iframe_api";
-                const firstScriptTag = document.getElementsByTagName('script')[0];
-                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-                window.onYouTubeIframeAPIReady = () => {
-                    this.youtubeAPIReady = true;
-                    console.log('YouTube API Ready');
-                };
-            }
-
-            // Improved API Call with multiple fallbacks
-            async callAPI(action, params = {}) {
-                const methods = [
-                    () => this.callAPIWithCorsProxy(action, params),
-                    () => this.callAPIDirect(action, params),
-                    () => this.callAPIWithJsonp(action, params)
-                ];
-
-                for (const method of methods) {
-                    try {
-                        const result = await method();
-                        if (result && !result.error) {
-                            return result;
-                        }
-                    } catch (error) {
-                        console.warn(`API method failed: ${method.name}`, error);
-                        continue;
-                    }
+                const endTime = Date.now();
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
-
-                // All methods failed, use mock data
-                console.log('All API methods failed, using mock data');
-                return this.getMockData(action, params);
-            }
-
-            async callAPIWithCorsProxy(action, params = {}) {
-                const proxyUrl = 'https://api.allorigins.win/raw?url=';
-                const targetUrl = encodeURIComponent(API_URL);
                 
-                const formData = new URLSearchParams();
-                formData.append('action', action);
-                Object.keys(params).forEach(key => {
-                    formData.append(key, params[key]);
-                });
+                const text = await response.text();
+                const data = JSON.parse(text);
+                
+                addResult('Direct Connection', `✅ Connected successfully (${endTime - startTime}ms)`, 'success');
+                addResult('Response Data', `Server says: ${data.message || 'Connected!'}`, 'success');
+                return true;
+                
+            } catch (error) {
+                addResult('Direct Connection', `❌ Failed: ${error.message}`, 'error');
+                return false;
+            }
+        }
 
+        async function testWithCorsProxy() {
+            addResult('CORS Proxy Test', 'Testing with CORS proxy...');
+            
+            const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+            
+            try {
+                const response = await fetch(proxyUrl + currentApiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: 'action=test'
+                });
+                
+                if (response.ok) {
+                    const text = await response.text();
+                    addResult('CORS Proxy Test', '✅ Connected via CORS proxy', 'success');
+                    return true;
+                } else {
+                    throw new Error(`Proxy returned ${response.status}`);
+                }
+            } catch (error) {
+                addResult('CORS Proxy Test', `❌ CORS proxy failed: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        async function testWithJsonp() {
+            addResult('JSONP Test', 'Testing JSONP method...');
+            
+            return new Promise((resolve) => {
+                const callbackName = 'jsonp_callback_' + Date.now();
+                const script = document.createElement('script');
+                
+                window[callbackName] = function(data) {
+                    document.body.removeChild(script);
+                    delete window[callbackName];
+                    addResult('JSONP Test', '✅ JSONP connection successful', 'success');
+                    resolve(true);
+                };
+                
+                script.src = `${currentApiUrl}?action=test&callback=${callbackName}`;
+                script.onerror = function() {
+                    document.body.removeChild(script);
+                    delete window[callbackName];
+                    addResult('JSONP Test', '❌ JSONP failed - script load error', 'error');
+                    resolve(false);
+                };
+                
+                // Timeout after 10 seconds
+                setTimeout(() => {
+                    if (document.body.contains(script)) {
+                        document.body.removeChild(script);
+                        delete window[callbackName];
+                        addResult('JSONP Test', '❌ JSONP timeout', 'error');
+                        resolve(false);
+                    }
+                }, 10000);
+                
+                document.body.appendChild(script);
+            });
+        }
+
+        async function testAlternativeMethods() {
+            addResult('Alternative Methods', 'Testing other connection methods...');
+            
+            // Test 1: Simple GET request
+            try {
+                const response = await fetch(currentApiUrl);
+                if (response.ok) {
+                    addResult('GET Request', '✅ GET request successful', 'success');
+                } else {
+                    addResult('GET Request', `❌ GET failed: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                addResult('GET Request', `❌ GET error: ${error.message}`, 'error');
+            }
+            
+            // Test 2: Different content type
+            try {
+                const response = await fetch(currentApiUrl, {
+                    method: 'POST',
+                    body: JSON.stringify({action: 'test'}),
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                if (response.ok) {
+                    addResult('JSON POST', '✅ JSON POST successful', 'success');
+                } else {
+                    addResult('JSON POST', `❌ JSON POST failed: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                addResult('JSON POST', `❌ JSON POST error: ${error.message}`, 'error');
+            }
+        }
+
+        function addResult(testName, message, type = 'info') {
+            const resultsDiv = document.getElementById('connectionResults');
+            const resultItem = document.createElement('div');
+            resultItem.className = `result-item ${type}`;
+            resultItem.innerHTML = `<strong>${testName}:</strong> ${message}`;
+            resultsDiv.appendChild(resultItem);
+        }
+
+        // Manual test functions
+        async function testDirectFetch() {
+            const log = document.getElementById('manualTestLog');
+            log.textContent = 'Testing direct fetch...\n';
+            
+            try {
+                log.textContent += `Fetching: ${currentApiUrl}\n`;
+                const response = await fetch(currentApiUrl);
+                log.textContent += `Status: ${response.status} ${response.statusText}\n`;
+                log.textContent += `Headers: ${JSON.stringify([...response.headers])}\n`;
+                
+                const text = await response.text();
+                log.textContent += `Response: ${text}\n`;
+                
+            } catch (error) {
+                log.textContent += `Error: ${error.message}\n${error.stack}\n`;
+            }
+        }
+
+        function testJsonp() {
+            const log = document.getElementById('manualTestLog');
+            log.textContent = 'Testing JSONP...\n';
+            
+            const callbackName = 'test_callback_' + Date.now();
+            window[callbackName] = function(data) {
+                log.textContent += `JSONP Success: ${JSON.stringify(data)}\n`;
+                delete window[callbackName];
+            };
+            
+            const script = document.createElement('script');
+            script.src = `${currentApiUrl}?callback=${callbackName}`;
+            script.onerror = function() {
+                log.textContent += 'JSONP Error: Script failed to load\n';
+            };
+            
+            document.body.appendChild(script);
+        }
+
+        async function testCorsProxy() {
+            const log = document.getElementById('manualTestLog');
+            log.textContent = 'Testing with CORS proxy...\n';
+            
+            try {
+                const proxyUrl = 'https://api.allorigins.win/raw?url=';
+                const targetUrl = encodeURIComponent(currentApiUrl);
+                
+                log.textContent += `Using proxy: ${proxyUrl}${targetUrl}\n`;
+                
                 const response = await fetch(proxyUrl + targetUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
+                    'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    body: formData
-                });
-
-                if (!response.ok) throw new Error('CORS proxy failed');
-                return await response.json();
-            }
-
-            async callAPIDirect(action, params = {}) {
-                const formData = new URLSearchParams();
-                formData.append('action', action);
-                Object.keys(params).forEach(key => {
-                    formData.append(key, params[key]);
-                });
-
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'Accept': 'application/json'
-                    },
+                    body: 'action=test'
                 });
                 
                 const text = await response.text();
-                try {
-                    return JSON.parse(text);
-                } catch (e) {
-                    // Try to extract JSON from response
-                    const jsonMatch = text.match(/\{[\s\S]*\}/);
-                    if (jsonMatch) return JSON.parse(jsonMatch[0]);
-                    throw new Error('Invalid JSON response');
-                }
-            }
-
-            async callAPIWithJsonp(action, params = {}) {
-                return new Promise((resolve, reject) => {
-                    const callbackName = 'jsonp_callback_' + Date.now();
-                    const script = document.createElement('script');
-                    
-                    const urlParams = new URLSearchParams({
-                        action,
-                        ...params,
-                        callback: callbackName
-                    });
-                    
-                    script.src = `${API_URL}?${urlParams}`;
-                    
-                    window[callbackName] = (data) => {
-                        delete window[callbackName];
-                        document.body.removeChild(script);
-                        resolve(data);
-                    };
-                    
-                    script.onerror = () => {
-                        delete window[callbackName];
-                        document.body.removeChild(script);
-                        reject(new Error('JSONP failed'));
-                    };
-                    
-                    document.body.appendChild(script);
-                });
-            }
-
-            getMockData(action, params) {
-                console.log('Using mock data for:', action);
-                // Your actual lesson data from Google Sheets
-                const mockData = {
-                    getCourseContent: {
-                        modules: [
-                            {
-                                id: 1,
-                                title: "Module 1: HTML Fundamentals",
-                                order: 1,
-                                lessons: [
-                                    { 
-                                        id: 1, 
-                                        title: "Introduction to HTML", 
-                                        duration: "12:45", 
-                                        description: "Learn HTML basics and structure", 
-                                        video_url: "https://www.youtube.com/embed/gAXbB_4BavE",
-                                        order: 1 
-                                    },
-                                    { 
-                                        id: 2, 
-                                        title: "HTML Document Structure", 
-                                        duration: "18:30", 
-                                        description: "Understand HTML document anatomy", 
-                                        video_url: "https://www.youtube.com/embed/i94zoNYSFik",
-                                        order: 2 
-                                    },
-                                    { 
-                                        id: 3, 
-                                        title: "HTML Forms and Inputs", 
-                                        duration: "22:15", 
-                                        description: "Create interactive HTML forms", 
-                                        video_url: "https://www.youtube.com/embed/2O8pkybH6po",
-                                        order: 3 
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    login: { 
-                        success: true, 
-                        user: { 
-                            id: params.email === 'student@example.com' ? 1 : 2, 
-                            name: params.email === 'student@example.com' ? 'Student User' : 'John Doe', 
-                            email: params.email 
-                        } 
-                    },
-                    register: { 
-                        success: true, 
-                        user: { 
-                            id: Date.now(), 
-                            name: params.name, 
-                            email: params.email 
-                        } 
-                    },
-                    getUserProgress: {
-                        progress: {
-                            completedLessons: params.user_id == 1 ? [1, 2] : [1],
-                            currentLesson: 1,
-                            lastUpdated: new Date().toISOString()
-                        }
-                    },
-                    updateProgress: { success: true }
-                };
-
-                return mockData[action] || { error: 'Action not found in mock data' };
-            }
-
-            showMessage(elementId, message, type) {
-                const messageEl = document.getElementById(elementId);
-                messageEl.textContent = message;
-                messageEl.className = `message ${type}`;
-                messageEl.style.display = 'block';
+                log.textContent += `Proxy Response: ${text}\n`;
                 
-                setTimeout(() => {
-                    messageEl.style.display = 'none';
-                }, 5000);
+            } catch (error) {
+                log.textContent += `Proxy Error: ${error.message}\n`;
             }
+        }
 
-            showLoading(button, show) {
-                const btn = button.querySelector('.btn-text');
-                if (show) {
-                    button.disabled = true;
-                    btn.textContent = 'Loading...';
-                    if (!button.querySelector('.loading')) {
-                        const loading = document.createElement('span');
-                        loading.className = 'loading';
-                        button.insertBefore(loading, btn);
-                    }
-                } else {
-                    button.disabled = false;
-                    btn.textContent = button.id === 'loginBtn' ? 'Login to Course' : 'Create Account';
-                    const loading = button.querySelector('.loading');
-                    if (loading) loading.remove();
-                }
-            }
-
-            showLoginForm() {
-                document.getElementById('loginForm').style.display = 'block';
-                document.getElementById('registerForm').style.display = 'none';
-            }
-
-            showRegisterForm() {
-                document.getElementById('loginForm').style.display = 'none';
-                document.getElementById('registerForm').style.display = 'block';
-            }
-
-            async handleLogin() {
-                const email = document.getElementById('loginEmail').value;
-                const password = document.getElementById('loginPassword').value;
-                const loginBtn = document.getElementById('loginBtn');
-
-                if (!email || !password) {
-                    this.showMessage('loginMessage', 'Please fill in all fields', 'error');
-                    return;
-                }
-
-                this.showLoading(loginBtn, true);
-
-                try {
-                    const result = await this.callAPI('login', { email, password });
-                    
-                    if (result.success) {
-                        this.currentUser = result.user;
-                        this.startSession();
-                        await this.showApp();
-                        this.showMessage('loginMessage', 'Login successful!', 'success');
-                    } else {
-                        this.showMessage('loginMessage', result.error || 'Login failed', 'error');
-                    }
-                } catch (error) {
-                    console.error('Login error:', error);
-                    this.showMessage('loginMessage', 'Login failed. Please try again.', 'error');
-                } finally {
-                    this.showLoading(loginBtn, false);
-                }
-            }
-
-            async handleRegister() {
-                const name = document.getElementById('registerName').value;
-                const email = document.getElementById('registerEmail').value;
-                const password = document.getElementById('registerPassword').value;
-                const confirmPassword = document.getElementById('registerConfirmPassword').value;
-                const registerBtn = document.getElementById('registerBtn');
-
-                if (!name || !email || !password || !confirmPassword) {
-                    this.showMessage('registerMessage', 'Please fill in all fields', 'error');
-                    return;
-                }
-
-                if (password !== confirmPassword) {
-                    this.showMessage('registerMessage', 'Passwords do not match', 'error');
-                    return;
-                }
-
-                this.showLoading(registerBtn, true);
-
-                try {
-                    const result = await this.callAPI('register', { name, email, password });
-                    
-                    if (result.success) {
-                        this.currentUser = result.user;
-                        this.startSession();
-                        await this.showApp();
-                        this.showMessage('registerMessage', 'Account created successfully!', 'success');
-                    } else {
-                        this.showMessage('registerMessage', result.error || 'Registration failed', 'error');
-                    }
-                } catch (error) {
-                    console.error('Registration error:', error);
-                    this.showMessage('registerMessage', 'Registration failed. Please try again.', 'error');
-                } finally {
-                    this.showLoading(registerBtn, false);
-                }
-            }
-
-            startSession() {
-                localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-            }
-
-            checkExistingSession() {
-                const savedUser = localStorage.getItem('currentUser');
-                if (savedUser) {
-                    this.currentUser = JSON.parse(savedUser);
-                    this.showApp();
-                }
-            }
-
-            handleLogout() {
-                this.currentUser = null;
-                this.courseContent = null;
-                this.userProgress = null;
-                localStorage.removeItem('currentUser');
-                this.showAuth();
-            }
-
-            async refreshContent() {
-                if (this.currentUser) {
-                    await this.loadCourseContent();
-                    await this.loadUserProgress();
-                    this.showMessage('welcomeMessage', 'Content refreshed successfully!', 'success');
-                }
-            }
-
-            showAuth() {
-                document.getElementById('authContainer').style.display = 'flex';
-                document.getElementById('appContainer').style.display = 'none';
-                // Clear forms
-                document.getElementById('loginEmail').value = '';
-                document.getElementById('loginPassword
+        // Run initial diagnostic
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(runFullDiagnostic, 1000);
+        });
+    </script>
+</body>
+</html>
