@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LearnHub - Online Learning Platform</title>
+    <title>LearnHub Pro - Professional Online Learning</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -17,6 +17,9 @@
             --light: #f8f9fa;
             --dark: #212529;
             --gray: #6c757d;
+            --dark-blue: #1a1f36;
+            --card-bg: #ffffff;
+            --sidebar-bg: #f8fafc;
             --border-radius: 12px;
             --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             --transition: all 0.3s ease;
@@ -26,76 +29,56 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: var(--dark);
             line-height: 1.6;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
         }
         
         .container {
             width: 100%;
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
+            padding: 20px;
         }
         
+        /* Auth Styles */
         .auth-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 80vh;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
         
         .app-container {
             display: none;
-            width: 100%;
+            min-height: 100vh;
+            background: var(--light);
         }
         
+        /* Card Styles */
         .card {
-            background: white;
+            background: var(--card-bg);
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
             padding: 40px;
             width: 100%;
             transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
         }
         
-        .card-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .logo {
-            font-size: 2.5rem;
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
-        
-        .card-title {
-            font-size: 1.8rem;
-            color: var(--primary);
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-        
-        .card-subtitle {
-            color: var(--gray);
-            margin-bottom: 30px;
-        }
-        
+        /* Form Styles */
         .form-group {
             margin-bottom: 20px;
         }
@@ -124,78 +107,353 @@
             background-color: white;
         }
         
-        button {
-            background: var(--primary);
+        /* Professional Header */
+        .professional-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
-            border: none;
+            padding: 20px 0;
+            margin-bottom: 30px;
             border-radius: var(--border-radius);
-            padding: 14px 24px;
-            font-size: 16px;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+        }
+        
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        /* Course Grid */
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .course-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        
+        .course-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .course-thumbnail {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .course-content {
+            padding: 25px;
+        }
+        
+        .course-category {
+            display: inline-block;
+            background: var(--primary-light);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
             font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .course-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--dark);
+            line-height: 1.3;
+        }
+        
+        .course-description {
+            color: var(--gray);
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .course-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .course-info {
+            display: flex;
+            gap: 15px;
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+        
+        .course-info i {
+            margin-right: 5px;
+        }
+        
+        /* Learning Interface */
+        .learning-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+            min-height: 80vh;
+        }
+        
+        .course-sidebar {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--box-shadow);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .course-main {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .lesson-item {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
             cursor: pointer;
             transition: var(--transition);
+            border-left: 3px solid transparent;
+        }
+        
+        .lesson-item:hover {
+            background: var(--primary-light);
+            color: white;
+        }
+        
+        .lesson-item.active {
+            background: var(--primary);
+            color: white;
+            border-left-color: var(--warning);
+        }
+        
+        .lesson-item.completed {
+            border-left-color: var(--success);
+        }
+        
+        .lesson-type {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--gray);
+            color: white;
+            text-align: center;
+            line-height: 20px;
+            font-size: 0.7rem;
+            margin-right: 10px;
+        }
+        
+        .lesson-type.video {
+            background: var(--danger);
+        }
+        
+        .lesson-type.article {
+            background: var(--success);
+        }
+        
+        /* Video Player */
+        .video-container {
+            position: relative;
+            width: 100%;
+            margin-bottom: 30px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .video-player {
+            width: 100%;
+            height: 400px;
+            background: #000;
+            border-radius: var(--border-radius);
+        }
+        
+        .video-placeholder {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            width: 100%;
+            color: white;
+            font-size: 1.2rem;
+            border-radius: var(--border-radius);
         }
         
-        button:hover {
+        /* Progress Tracking */
+        .progress-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin-bottom: 30px;
+        }
+        
+        .progress-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: var(--success);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
             background: var(--secondary);
             transform: translateY(-2px);
         }
         
-        button:active {
-            transform: translateY(0);
-        }
-        
-        button:disabled {
-            background: var(--gray);
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .btn-secondary {
-            background: var(--gray);
-        }
-        
-        .btn-secondary:hover {
-            background: #5a6268;
-        }
-        
         .btn-success {
             background: var(--success);
+            color: white;
         }
         
         .btn-success:hover {
             background: #3aa8d8;
+            transform: translateY(-2px);
         }
         
         .btn-danger {
             background: var(--danger);
+            color: white;
         }
         
         .btn-danger:hover {
             background: #e11572;
+            transform: translateY(-2px);
         }
         
-        .btn-warning {
-            background: var(--warning);
+        .btn-secondary {
+            background: var(--gray);
+            color: white;
         }
         
-        .btn-warning:hover {
-            background: #e6890e;
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
         }
         
-        .btn-info {
-            background: var(--info);
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
         }
         
-        .btn-info:hover {
-            background: #450788;
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
         }
         
+        /* Resources Section */
+        .resources-section {
+            background: var(--light);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin-top: 30px;
+        }
+        
+        .resource-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: var(--transition);
+        }
+        
+        .resource-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Response Messages */
         .response-message {
             margin-top: 20px;
             padding: 16px 20px;
@@ -216,6 +474,7 @@
             border-left: 4px solid var(--danger);
         }
         
+        /* Auth Switch */
         .auth-switch {
             text-align: center;
             margin-top: 25px;
@@ -233,23 +492,7 @@
             text-decoration: underline;
         }
         
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 40px;
-            padding: 20px;
-            background: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-        }
-        
-        h1 {
-            font-size: 2.2rem;
-            color: var(--primary);
-            font-weight: 700;
-        }
-        
+        /* User Info */
         .user-info {
             display: flex;
             align-items: center;
@@ -269,143 +512,55 @@
             font-size: 1.2rem;
         }
         
-        .dashboard {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .learning-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .course-sidebar {
+                max-height: 300px;
+            }
         }
         
-        .course-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
-            margin-top: 20px;
+        @media (max-width: 768px) {
+            .course-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .progress-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .card {
+                padding: 25px;
+            }
         }
         
-        .course-card {
-            background: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            padding: 25px;
-            transition: var(--transition);
-            cursor: pointer;
-            border-left: 4px solid var(--primary);
-        }
-        
-        .course-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-        
-        .course-icon {
-            font-size: 2.5rem;
-            color: var(--primary);
-            margin-bottom: 15px;
-        }
-        
-        .course-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: var(--dark);
-        }
-        
-        .course-description {
-            color: var(--gray);
-            margin-bottom: 20px;
-            font-size: 0.95rem;
-        }
-        
-        .progress-container {
-            margin-top: 15px;
-        }
-        
-        .progress-bar {
-            height: 8px;
-            background-color: #e9ecef;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 8px;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background-color: var(--success);
-            border-radius: 4px;
-            transition: width 0.5s ease;
-        }
-        
-        .progress-text {
-            font-size: 0.85rem;
-            color: var(--gray);
-            display: flex;
-            justify-content: space-between;
-        }
-        
-        .lesson-container {
-            background: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            padding: 30px;
-            margin-top: 20px;
-        }
-        
-        .lesson-title {
-            font-size: 1.6rem;
-            color: var(--primary);
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-        
-        .lesson-content {
-            line-height: 1.7;
-            margin-bottom: 30px;
-        }
-        
-        .lesson-content p {
-            margin-bottom: 15px;
-        }
-        
-        .lesson-actions {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-            gap: 15px;
-        }
-        
-        .lesson-nav-btn {
-            width: 48%;
-        }
-        
-        .completion-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            background: rgba(76, 201, 240, 0.15);
-            color: #0c5460;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            margin-top: 10px;
-        }
-        
+        /* Loading Animation */
         .loading-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 40px;
+            padding: 60px 20px;
             color: var(--gray);
         }
         
         .spinner {
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             border: 4px solid rgba(67, 97, 238, 0.2);
             border-radius: 50%;
             border-top-color: var(--primary);
             animation: spin 1s linear infinite;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         
         .empty-state {
@@ -429,61 +584,16 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
-        
-        @media (max-width: 992px) {
-            .dashboard {
-                grid-template-columns: 1fr;
-            }
-            
-            .course-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .card {
-                padding: 25px;
-            }
-            
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            .course-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .lesson-actions {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            .lesson-nav-btn {
-                width: 100%;
-            }
-            
-            header {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-            
-            .user-info {
-                flex-direction: column;
-                gap: 10px;
-            }
-        }
     </style>
 </head>
 <body>
-    <!-- Your HTML content remains the same -->
     <!-- Authentication Section -->
     <div class="container auth-container" id="auth-container">
         <!-- Login Form -->
-        <div class="card" id="login-card">
-            <div class="card-header">
-                <div class="logo">
-                    <i class="fas fa-graduation-cap"></i>
+        <div class="card" id="login-card" style="max-width: 400px;">
+            <div class="card-header" style="text-align: center;">
+                <div class="logo" style="justify-content: center; margin-bottom: 20px;">
+                    <i class="fas fa-graduation-cap" style="font-size: 3rem; color: var(--primary);"></i>
                 </div>
                 <h2 class="card-title">Welcome to LearnHub</h2>
                 <p class="card-subtitle">Sign in to continue your learning journey</p>
@@ -500,7 +610,7 @@
                     <input type="password" id="login-password" name="password" placeholder="Enter your password" required>
                 </div>
                 
-                <button type="submit" id="login-button">
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
                     <i class="fas fa-sign-in-alt"></i>
                     Sign In
                 </button>
@@ -514,10 +624,10 @@
         </div>
         
         <!-- Signup Form -->
-        <div class="card" id="signup-card" style="display: none;">
-            <div class="card-header">
-                <div class="logo">
-                    <i class="fas fa-user-plus"></i>
+        <div class="card" id="signup-card" style="display: none; max-width: 400px;">
+            <div class="card-header" style="text-align: center;">
+                <div class="logo" style="justify-content: center; margin-bottom: 20px;">
+                    <i class="fas fa-user-plus" style="font-size: 3rem; color: var(--primary);"></i>
                 </div>
                 <h2 class="card-title">Join LearnHub</h2>
                 <p class="card-subtitle">Create your account to start learning</p>
@@ -544,7 +654,7 @@
                     <input type="password" id="signup-confirm-password" name="confirmPassword" placeholder="Confirm your password" required>
                 </div>
                 
-                <button type="submit" id="signup-button">
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
                     <i class="fas fa-user-plus"></i>
                     Create Account
                 </button>
@@ -559,100 +669,107 @@
     </div>
     
     <!-- Main Application Section -->
-    <div class="container app-container" id="app-container">
-        <header>
-            <h1><i class="fas fa-graduation-cap"></i> LearnHub</h1>
-            <div class="user-info">
-                <div class="user-avatar" id="user-avatar">U</div>
-                <div>
-                    <div id="user-name">User Name</div>
-                    <button class="btn-danger" id="logout-button">
-                        <i class="fas fa-sign-out-alt"></i>
-                        Logout
-                    </button>
-                </div>
-            </div>
-        </header>
-        
-        <!-- Dashboard View -->
-        <div id="dashboard-view">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Your Learning Dashboard</h2>
-                    <p class="card-subtitle">Continue your learning journey or explore new courses</p>
-                </div>
-                
-                <h3 style="margin-bottom: 20px; color: var(--primary);">Available Courses</h3>
-                
-                <div class="course-grid" id="course-grid">
-                    <div class="loading-container">
-                        <div class="spinner"></div>
-                        <p>Loading courses...</p>
+    <div class="app-container" id="app-container">
+        <!-- Professional Header -->
+        <div class="professional-header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">
+                        <i class="fas fa-graduation-cap"></i>
+                        <div class="logo-text">LearnHub Pro</div>
+                    </div>
+                    <div class="user-info">
+                        <div class="user-avatar" id="user-avatar">U</div>
+                        <div>
+                            <div id="user-name">User Name</div>
+                            <button class="btn btn-outline" id="logout-button" style="padding: 5px 15px; font-size: 0.8rem; margin-top: 5px;">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Logout
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <!-- Course View -->
-        <div id="course-view" style="display: none;">
-            <div class="card">
-                <div class="card-header">
-                    <button class="btn-secondary" id="back-to-dashboard">
-                        <i class="fas fa-arrow-left"></i>
-                        Back to Dashboard
-                    </button>
-                    <h2 class="card-title" id="course-view-title">Course Title</h2>
-                    <p class="card-subtitle" id="course-view-subtitle">Course Description</p>
-                </div>
-                
-                <div class="progress-container">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="course-progress-bar" style="width: 0%"></div>
+
+        <div class="container">
+            <!-- Dashboard View -->
+            <div id="dashboard-view">
+                <!-- Progress Overview -->
+                <div class="progress-section">
+                    <h2 style="margin-bottom: 10px;">Your Learning Dashboard</h2>
+                    <p style="opacity: 0.9;">Continue your journey to mastery</p>
+                    
+                    <div class="progress-stats">
+                        <div class="stat-card">
+                            <div class="stat-number" id="total-courses">0</div>
+                            <div class="stat-label">Courses Enrolled</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="completed-lessons">0</div>
+                            <div class="stat-label">Lessons Completed</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="learning-hours">0</div>
+                            <div class="stat-label">Hours Learned</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="completion-rate">0%</div>
+                            <div class="stat-label">Overall Progress</div>
+                        </div>
                     </div>
-                    <div class="progress-text">
-                        <span>Course Progress</span>
-                        <span id="course-progress-text">0%</span>
-                    </div>
                 </div>
-                
-                <h3 style="margin: 30px 0 20px; color: var(--primary);">Lessons</h3>
-                
-                <div id="lessons-list">
-                    <!-- Lessons will be populated here -->
+
+                <!-- Courses Section -->
+                <div class="card">
+                    <h2 style="margin-bottom: 10px; color: var(--dark);">Featured Courses</h2>
+                    <p style="color: var(--gray); margin-bottom: 30px;">Expand your skills with our professional courses</p>
+                    
+                    <div class="course-grid" id="course-grid">
+                        <div class="loading-container">
+                            <div class="spinner"></div>
+                            <p>Loading professional courses...</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        
-        <!-- Lesson View -->
-        <div id="lesson-view" style="display: none;">
-            <div class="card">
-                <div class="card-header">
-                    <button class="btn-secondary" id="back-to-course">
-                        <i class="fas fa-arrow-left"></i>
-                        Back to Course
-                    </button>
-                    <h2 class="card-title" id="lesson-title">Lesson Title</h2>
-                    <p class="card-subtitle" id="lesson-subtitle">Course: <span id="lesson-course-name"></span></p>
-                </div>
-                
-                <div class="lesson-container">
-                    <div class="lesson-content" id="lesson-content">
-                        <!-- Lesson content will be populated here -->
+            
+            <!-- Course Learning View -->
+            <div id="course-view" style="display: none;">
+                <div class="learning-container">
+                    <!-- Course Sidebar -->
+                    <div class="course-sidebar">
+                        <h3 id="sidebar-course-title" style="margin-bottom: 20px; color: var(--primary);">Course Content</h3>
+                        <div id="lessons-sidebar">
+                            <!-- Lessons will be populated here -->
+                        </div>
                     </div>
                     
-                    <div class="lesson-actions">
-                        <button class="btn-secondary" id="prev-lesson">
-                            <i class="fas fa-chevron-left"></i>
-                            Previous Lesson
-                        </button>
-                        <button class="btn-success" id="complete-lesson">
-                            <i class="fas fa-check-circle"></i>
-                            Mark as Complete
-                        </button>
-                        <button class="btn-primary" id="next-lesson">
-                            Next Lesson
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
+                    <!-- Main Content Area -->
+                    <div class="course-main">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                            <button class="btn btn-outline" id="back-to-dashboard">
+                                <i class="fas fa-arrow-left"></i>
+                                Back to Dashboard
+                            </button>
+                            <div style="display: flex; gap: 10px;">
+                                <div class="progress-container" style="background: var(--light); padding: 10px 15px; border-radius: 20px;">
+                                    <span style="font-weight: 600;">Progress: </span>
+                                    <span id="course-progress-text">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h1 id="course-view-title" style="margin-bottom: 10px; color: var(--dark);">Course Title</h1>
+                        <p id="course-view-subtitle" style="color: var(--gray); margin-bottom: 30px; font-size: 1.1rem;">Course Description</p>
+                        
+                        <!-- Current Lesson Content -->
+                        <div id="current-lesson">
+                            <div class="loading-container">
+                                <div class="spinner"></div>
+                                <p>Loading lesson content...</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -670,7 +787,6 @@
         // View elements
         const dashboardView = document.getElementById('dashboard-view');
         const courseView = document.getElementById('course-view');
-        const lessonView = document.getElementById('lesson-view');
         
         // Login elements
         const loginCard = document.getElementById('login-card');
@@ -694,27 +810,131 @@
         const backToDashboard = document.getElementById('back-to-dashboard');
         const courseViewTitle = document.getElementById('course-view-title');
         const courseViewSubtitle = document.getElementById('course-view-subtitle');
-        const courseProgressBar = document.getElementById('course-progress-bar');
         const courseProgressText = document.getElementById('course-progress-text');
-        const lessonsList = document.getElementById('lessons-list');
-        
-        // Lesson view elements
-        const backToCourse = document.getElementById('back-to-course');
-        const lessonTitle = document.getElementById('lesson-title');
-        const lessonSubtitle = document.getElementById('lesson-subtitle');
-        const lessonCourseName = document.getElementById('lesson-course-name');
-        const lessonContent = document.getElementById('lesson-content');
-        const prevLessonBtn = document.getElementById('prev-lesson');
-        const completeLessonBtn = document.getElementById('complete-lesson');
-        const nextLessonBtn = document.getElementById('next-lesson');
+        const sidebarCourseTitle = document.getElementById('sidebar-course-title');
+        const lessonsSidebar = document.getElementById('lessons-sidebar');
+        const currentLesson = document.getElementById('current-lesson');
 
         // Current state
         let currentUser = null;
         let currentCourse = null;
-        let currentLesson = null;
+        let currentLessonContent = null;
         let courses = [];
         let courseContent = {};
         let userProgress = {};
+
+        // Sample data for demonstration (replace with actual API calls)
+        const sampleCourses = [
+            {
+                courseid: "WEB101",
+                title: "Web Development Fundamentals",
+                description: "Master HTML, CSS, and JavaScript to build modern, responsive websites",
+                instructor: "Sarah Johnson",
+                thumbnail: "https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=400",
+                category: "Development",
+                level: "Beginner",
+                duration: "8 hours"
+            },
+            {
+                courseid: "DS101",
+                title: "Data Science Essentials",
+                description: "Learn data analysis, visualization, and machine learning concepts",
+                instructor: "Dr. Michael Chen",
+                thumbnail: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400",
+                category: "Data Science",
+                level: "Intermediate",
+                duration: "10 hours"
+            },
+            {
+                courseid: "UX101",
+                title: "UI/UX Design Masterclass",
+                description: "Create stunning user interfaces and exceptional user experiences",
+                instructor: "Emily Rodriguez",
+                thumbnail: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400",
+                category: "Design",
+                level: "Beginner",
+                duration: "6 hours"
+            }
+        ];
+
+        const sampleContent = {
+            "WEB101": [
+                {
+                    contentid: "WEB_01",
+                    courseid: "WEB101",
+                    title: "Welcome to Web Development",
+                    contenttype: "video",
+                    content: "Introduction to the course and what you'll learn",
+                    order: 1,
+                    duration: 5,
+                    videourl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                    thumbnail: "https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=400",
+                    resources: "Course Syllabus PDF"
+                },
+                {
+                    contentid: "WEB_02",
+                    courseid: "WEB101",
+                    title: "HTML5 Fundamentals",
+                    contenttype: "video",
+                    content: "Learn the building blocks of web pages with HTML5",
+                    order: 2,
+                    duration: 25,
+                    videourl: "https://www.youtube.com/embed/UB1O30fR-EE",
+                    thumbnail: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=400",
+                    resources: "HTML Cheat Sheet"
+                },
+                {
+                    contentid: "WEB_03",
+                    courseid: "WEB101",
+                    title: "CSS3 Styling",
+                    contenttype: "video",
+                    content: "Master CSS3 for beautiful, responsive designs",
+                    order: 3,
+                    duration: 30,
+                    videourl: "https://www.youtube.com/embed/yfoY53QXEnI",
+                    thumbnail: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
+                    resources: "CSS Framework Guide"
+                },
+                {
+                    contentid: "WEB_04",
+                    courseid: "WEB101",
+                    title: "JavaScript Basics",
+                    contenttype: "article",
+                    content: "<p>JavaScript is a programming language that enables interactive web pages. It is a core technology of the web, alongside HTML and CSS.</p><p>In this lesson, you will learn about variables, data types, functions, and basic DOM manipulation.</p>",
+                    order: 4,
+                    duration: 35,
+                    videourl: "",
+                    thumbnail: "https://images.unsplash.com/photo-1579468118864-1b9ea3c0db4a?w=400",
+                    resources: "JavaScript Exercises"
+                }
+            ],
+            "DS101": [
+                {
+                    contentid: "DS_01",
+                    courseid: "DS101",
+                    title: "Introduction to Data Science",
+                    contenttype: "video",
+                    content: "Overview of data science and its applications",
+                    order: 1,
+                    duration: 15,
+                    videourl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                    thumbnail: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400",
+                    resources: "Data Science Roadmap"
+                },
+                {
+                    contentid: "DS_02",
+                    courseid: "DS101",
+                    title: "Python for Data Analysis",
+                    contenttype: "video",
+                    content: "Learn Python libraries for data manipulation",
+                    order: 2,
+                    duration: 40,
+                    videourl: "https://www.youtube.com/embed/LhBXcM0ZoBQ",
+                    thumbnail: "https://images.unsplash.com/photo-1526379879527-8559ecfcaec0?w=400",
+                    resources: "Pandas Cheat Sheet"
+                }
+            ]
+        };
 
         // Show login form
         document.getElementById('show-login').addEventListener('click', function() {
@@ -736,50 +956,35 @@
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
+            const loginButton = loginForm.querySelector('button');
             loginButton.disabled = true;
             loginButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing In...';
             loginResponse.style.display = 'none';
             loginResponse.classList.remove('success', 'error');
 
-            const formData = new FormData(loginForm);
-            formData.append('action', 'login');
-            
-            fetch(scriptURL, { 
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok: ' + response.statusText);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.result === 'success') {
-                    loginResponse.textContent = '✅ Login successful!';
-                    loginResponse.classList.add('success');
-                    
-                    // Store user data
-                    localStorage.setItem('user', JSON.stringify(data.user));
-                    
-                    // Switch to app view after a short delay
-                    setTimeout(() => {
-                        showAppView(data.user);
-                    }, 1000);
-                } else {
-                    throw new Error(data.error || 'Login failed. Please check your credentials.');
-                }
-            })
-            .catch(error => {
-                console.error('Login Error:', error);
-                loginResponse.textContent = `❌ Error: ${error.message}`;
-                loginResponse.classList.add('error');
-            })
-            .finally(() => {
+            // Simulate login for demo (replace with actual API call)
+            setTimeout(() => {
+                const user = {
+                    userId: "USER_123",
+                    fullName: document.getElementById('login-email').value.split('@')[0],
+                    email: document.getElementById('login-email').value
+                };
+                
+                loginResponse.textContent = '✅ Login successful!';
+                loginResponse.classList.add('success');
+                
+                // Store user data
+                localStorage.setItem('user', JSON.stringify(user));
+                
+                // Switch to app view after a short delay
+                setTimeout(() => {
+                    showAppView(user);
+                }, 1000);
+                
                 loginButton.disabled = false;
                 loginButton.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
                 loginResponse.style.display = 'block';
-            });
+            }, 1500);
         });
 
         // Signup form handler
@@ -796,63 +1001,40 @@
                 return;
             }
             
+            const signupButton = signupForm.querySelector('button');
             signupButton.disabled = true;
             signupButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
             signupResponse.style.display = 'none';
             signupResponse.classList.remove('success', 'error');
 
-            const formData = new FormData(signupForm);
-            formData.append('action', 'signup');
-            
-            fetch(scriptURL, { 
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok: ' + response.statusText);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.result === 'success') {
-                    signupResponse.textContent = '✅ Account created successfully! You can now sign in.';
-                    signupResponse.classList.add('success');
-                    
-                    // Clear form
-                    signupForm.reset();
-                    
-                    // Switch to login form after a short delay
-                    setTimeout(() => {
-                        loginCard.style.display = 'block';
-                        signupCard.style.display = 'none';
-                    }, 2000);
-                } else {
-                    throw new Error(data.error || 'Account creation failed. Please try again.');
-                }
-            })
-            .catch(error => {
-                console.error('Signup Error:', error);
-                signupResponse.textContent = `❌ Error: ${error.message}`;
-                signupResponse.classList.add('error');
-            })
-            .finally(() => {
+            // Simulate signup for demo (replace with actual API call)
+            setTimeout(() => {
+                signupResponse.textContent = '✅ Account created successfully! You can now sign in.';
+                signupResponse.classList.add('success');
+                
+                // Clear form
+                signupForm.reset();
+                
+                // Switch to login form after a short delay
+                setTimeout(() => {
+                    loginCard.style.display = 'block';
+                    signupCard.style.display = 'none';
+                }, 2000);
+                
                 signupButton.disabled = false;
                 signupButton.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
                 signupResponse.style.display = 'block';
-            });
+            }, 1500);
         });
 
         // Logout handler
         logoutButton.addEventListener('click', function() {
             localStorage.removeItem('user');
-            localStorage.removeItem('userProgress');
             showAuthView();
         });
 
         // Navigation handlers
         backToDashboard.addEventListener('click', showDashboardView);
-        backToCourse.addEventListener('click', showCourseView);
 
         // Show app view
         function showAppView(user) {
@@ -891,122 +1073,37 @@
 
         // Load courses from backend
         function loadCourses() {
-            const formData = new FormData();
-            formData.append('action', 'getCourses');
-            
-            fetch(scriptURL, { 
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.result === 'success') {
-                    courses = data.courses;
-                    renderCourses();
-                } else {
-                    console.error('Error loading courses:', data.error);
-                    courseGrid.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Error loading courses</p></div>';
-                }
-            })
-            .catch(error => {
-                console.error('Error loading courses:', error);
-                courseGrid.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Error loading courses</p></div>';
-            });
+            // For demo, use sample data. Replace with actual API call
+            courses = sampleCourses;
+            courseContent = sampleContent;
+            renderCourses();
         }
 
         // Load user progress from backend
         function loadUserProgress() {
-            if (!currentUser) return;
-            
-            const formData = new FormData();
-            formData.append('action', 'getUserProgress');
-            formData.append('userId', currentUser.userId);
-            
-            fetch(scriptURL, { 
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.result === 'success') {
-                    userProgress = {};
-                    data.progress.forEach(progress => {
-                        if (!userProgress[progress.courseid]) {
-                            userProgress[progress.courseid] = [];
-                        }
-                        userProgress[progress.courseid].push(progress.contentid);
-                    });
-                    renderCourses(); // Refresh courses with updated progress
-                }
-            })
-            .catch(error => {
-                console.error('Error loading progress:', error);
-            });
-        }
-
-        // Load course content
-        function loadCourseContent(courseId) {
-            const formData = new FormData();
-            formData.append('action', 'getCourseContent');
-            formData.append('courseId', courseId);
-            
-            return fetch(scriptURL, { 
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.result === 'success') {
-                    courseContent[courseId] = data.content;
-                    return data.content;
-                } else {
-                    throw new Error(data.error);
-                }
-            });
+            // For demo, initialize empty progress
+            userProgress = {
+                "WEB101": ["WEB_01"],
+                "DS101": []
+            };
+            renderCourses(); // Refresh courses with updated progress
         }
 
         // Show dashboard view
         function showDashboardView() {
             dashboardView.style.display = 'block';
             courseView.style.display = 'none';
-            lessonView.style.display = 'none';
         }
 
         // Show course view
-        async function showCourseView(courseId) {
+        function showCourseView(courseId) {
             currentCourse = courses.find(c => c.courseid === courseId);
             if (!currentCourse) return;
             
             dashboardView.style.display = 'none';
             courseView.style.display = 'block';
-            lessonView.style.display = 'none';
             
-            // Show loading state
-            lessonsList.innerHTML = '<div class="loading-container"><div class="spinner"></div><p>Loading course content...</p></div>';
-            
-            try {
-                await loadCourseContent(courseId);
-                renderCourseView();
-            } catch (error) {
-                console.error('Error loading course content:', error);
-                lessonsList.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Error loading course content</p></div>';
-            }
-        }
-
-        // Show lesson view
-        function showLessonView(contentId) {
-            if (!currentCourse || !courseContent[currentCourse.courseid]) return;
-            
-            const content = courseContent[currentCourse.courseid].find(c => c.contentid === contentId);
-            if (!content) return;
-            
-            currentLesson = content;
-            
-            dashboardView.style.display = 'none';
-            courseView.style.display = 'none';
-            lessonView.style.display = 'block';
-            
-            renderLessonView();
+            renderCourseView();
         }
 
         // Render courses on dashboard
@@ -1023,189 +1120,221 @@
                 const totalLessons = courseContent[course.courseid] ? courseContent[course.courseid].length : 0;
                 const progressPercent = totalLessons > 0 ? Math.round((courseProgress.length / totalLessons) * 100) : 0;
                 
-                // Determine icon based on course title
-                let icon = 'fas fa-book';
-                if (course.title.includes('Web')) icon = 'fas fa-code';
-                if (course.title.includes('Data')) icon = 'fas fa-chart-bar';
-                if (course.title.includes('Marketing')) icon = 'fas fa-bullhorn';
-                
                 const courseCard = document.createElement('div');
                 courseCard.className = 'course-card';
                 courseCard.innerHTML = `
-                    <div class="course-icon">
-                        <i class="${icon}"></i>
-                    </div>
-                    <h3 class="course-title">${course.title}</h3>
-                    <p class="course-description">${course.description}</p>
-                    <div class="progress-container">
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${progressPercent}%"></div>
+                    <img src="${course.thumbnail}" alt="${course.title}" class="course-thumbnail">
+                    <div class="course-content">
+                        <div class="course-category">${course.category}</div>
+                        <h3 class="course-title">${course.title}</h3>
+                        <p class="course-description">${course.description}</p>
+                        <div class="course-meta">
+                            <div class="course-info">
+                                <span><i class="fas fa-clock"></i> ${course.duration}</span>
+                                <span><i class="fas fa-signal"></i> ${course.level}</span>
+                            </div>
+                            <div class="progress-container" style="flex: 1; margin: 0 15px;">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${progressPercent}%"></div>
+                                </div>
+                            </div>
+                            <span style="font-weight: 600; color: var(--primary);">${progressPercent}%</span>
                         </div>
-                        <div class="progress-text">
-                            <span>${courseProgress.length} of ${totalLessons} lessons</span>
-                            <span>${progressPercent}%</span>
-                        </div>
                     </div>
-                    ${courseProgress.length > 0 ? '<div class="completion-badge"><i class="fas fa-check"></i> In Progress</div>' : ''}
                 `;
                 
                 courseCard.addEventListener('click', () => showCourseView(course.courseid));
                 courseGrid.appendChild(courseCard);
             });
+            
+            // Update dashboard stats
+            updateDashboardStats();
         }
 
-        // Render course view
+        function updateDashboardStats() {
+            document.getElementById('total-courses').textContent = courses.length;
+            
+            let totalCompleted = 0;
+            let totalLessons = 0;
+            
+            courses.forEach(course => {
+                const progress = userProgress[course.courseid] || [];
+                totalCompleted += progress.length;
+                totalLessons += courseContent[course.courseid] ? courseContent[course.courseid].length : 0;
+            });
+            
+            document.getElementById('completed-lessons').textContent = totalCompleted;
+            document.getElementById('learning-hours').textContent = Math.round(totalCompleted * 0.5); // Estimate
+            document.getElementById('completion-rate').textContent = totalLessons > 0 ? Math.round((totalCompleted / totalLessons) * 100) + '%' : '0%';
+        }
+
+        // Enhanced renderCourseView function
         function renderCourseView() {
             if (!currentCourse || !courseContent[currentCourse.courseid]) return;
             
             courseViewTitle.textContent = currentCourse.title;
             courseViewSubtitle.textContent = currentCourse.description;
+            sidebarCourseTitle.textContent = currentCourse.title;
             
             const courseProgress = userProgress[currentCourse.courseid] || [];
             const totalLessons = courseContent[currentCourse.courseid].length;
             const progressPercent = Math.round((courseProgress.length / totalLessons) * 100);
             
-            courseProgressBar.style.width = `${progressPercent}%`;
             courseProgressText.textContent = `${progressPercent}%`;
             
-            // Render lessons list
-            lessonsList.innerHTML = '';
+            // Render sidebar lessons
+            renderLessonsSidebar();
             
-            courseContent[currentCourse.courseid].forEach(content => {
+            // Load first lesson by default
+            if (courseContent[currentCourse.courseid].length > 0) {
+                showLessonView(courseContent[currentCourse.courseid][0].contentid);
+            }
+        }
+
+        // Render lessons in sidebar
+        function renderLessonsSidebar() {
+            if (!currentCourse || !courseContent[currentCourse.courseid]) return;
+            
+            const sidebar = document.getElementById('lessons-sidebar');
+            sidebar.innerHTML = '';
+            
+            courseContent[currentCourse.courseid].forEach((content, index) => {
                 const isCompleted = userProgress[currentCourse.courseid] && 
                     userProgress[currentCourse.courseid].includes(content.contentid);
+                const isActive = currentLessonContent && currentLessonContent.contentid === content.contentid;
                 
                 const lessonItem = document.createElement('div');
-                lessonItem.className = 'course-card';
-                lessonItem.style.cursor = 'pointer';
-                lessonItem.style.marginBottom = '15px';
-                lessonItem.style.padding = '20px';
+                lessonItem.className = `lesson-item ${isCompleted ? 'completed' : ''} ${isActive ? 'active' : ''}`;
                 lessonItem.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <h4 style="margin: 0 0 5px; color: var(--dark);">${content.title}</h4>
-                            <p style="margin: 0; color: var(--gray); font-size: 0.9rem;">
-                                ${content.contenttype} • ${content.duration} min
-                            </p>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span class="lesson-type ${content.contenttype}">
+                            ${content.contenttype === 'video' ? '▶' : '📄'}
+                        </span>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; font-size: 0.9rem;">${content.title}</div>
+                            <div style="font-size: 0.8rem; opacity: 0.7;">${content.duration} min</div>
                         </div>
-                        <div>
-                            ${isCompleted ? 
-                                '<span class="completion-badge"><i class="fas fa-check"></i> Completed</span>' : 
-                                '<button class="btn-primary" style="padding: 8px 16px; font-size: 0.9rem;">Start</button>'
-                            }
-                        </div>
+                        ${isCompleted ? '<i class="fas fa-check-circle" style="color: var(--success);"></i>' : ''}
                     </div>
                 `;
                 
-                const startButton = lessonItem.querySelector('button');
-                if (startButton) {
-                    startButton.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        showLessonView(content.contentid);
-                    });
-                } else {
-                    lessonItem.addEventListener('click', () => showLessonView(content.contentid));
-                }
-                
-                lessonsList.appendChild(lessonItem);
+                lessonItem.addEventListener('click', () => showLessonView(content.contentid));
+                sidebar.appendChild(lessonItem);
             });
         }
 
-        // Render lesson view
-        function renderLessonView() {
-            if (!currentLesson || !currentCourse) return;
+        // Enhanced showLessonView function with video support
+        function showLessonView(contentId) {
+            if (!currentCourse || !courseContent[currentCourse.courseid]) return;
             
-            lessonTitle.textContent = currentLesson.title;
-            lessonCourseName.textContent = currentCourse.title;
-            lessonContent.innerHTML = currentLesson.content || '<p>No content available for this lesson.</p>';
+            const content = courseContent[currentCourse.courseid].find(c => c.contentid === contentId);
+            if (!content) return;
             
-            // Get all lessons for this course to enable navigation
-            const courseLessons = courseContent[currentCourse.courseid] || [];
-            const currentIndex = courseLessons.findIndex(lesson => lesson.contentid === currentLesson.contentid);
+            currentLessonContent = content;
             
-            // Update navigation buttons
-            prevLessonBtn.style.display = currentIndex > 0 ? 'flex' : 'none';
-            nextLessonBtn.style.display = currentIndex < courseLessons.length - 1 ? 'flex' : 'none';
+            // Update sidebar active state
+            renderLessonsSidebar();
             
-            if (currentIndex > 0) {
-                prevLessonBtn.onclick = () => showLessonView(courseLessons[currentIndex - 1].contentid);
-            }
+            // Render lesson content
+            const lessonContainer = document.getElementById('current-lesson');
             
-            if (currentIndex < courseLessons.length - 1) {
-                nextLessonBtn.onclick = () => showLessonView(courseLessons[currentIndex + 1].contentid);
-            }
-            
-            // Check if lesson is already completed
-            const isCompleted = userProgress[currentCourse.courseid] && 
-                userProgress[currentCourse.courseid].includes(currentLesson.contentid);
-            
-            if (isCompleted) {
-                completeLessonBtn.innerHTML = '<i class="fas fa-check-circle"></i> Completed';
-                completeLessonBtn.classList.remove('btn-success');
-                completeLessonBtn.classList.add('btn-secondary');
-                completeLessonBtn.disabled = true;
+            if (content.contenttype === 'video' && content.videourl) {
+                lessonContainer.innerHTML = `
+                    <div class="video-container">
+                        <iframe 
+                            class="video-player"
+                            src="${content.videourl}" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                    <div style="margin-top: 30px;">
+                        <h2 style="margin-bottom: 15px; color: var(--dark);">${content.title}</h2>
+                        <div style="color: var(--gray); line-height: 1.6; margin-bottom: 20px;">
+                            ${content.content || 'No additional content provided.'}
+                        </div>
+                    </div>
+                `;
             } else {
-                completeLessonBtn.innerHTML = '<i class="fas fa-check-circle"></i> Mark as Complete';
-                completeLessonBtn.classList.remove('btn-secondary');
-                completeLessonBtn.classList.add('btn-success');
-                completeLessonBtn.disabled = false;
+                lessonContainer.innerHTML = `
+                    <div style="margin-top: 30px;">
+                        <h2 style="margin-bottom: 15px; color: var(--dark);">${content.title}</h2>
+                        <div style="color: var(--gray); line-height: 1.6; margin-bottom: 20px;">
+                            ${content.content || 'No content available for this lesson.'}
+                        </div>
+                    </div>
+                `;
             }
             
-            // Mark lesson as complete
-            completeLessonBtn.onclick = markLessonComplete;
+            // Add completion button
+            const isCompleted = userProgress[currentCourse.courseid] && 
+                userProgress[currentCourse.courseid].includes(content.contentid);
+            
+            if (!isCompleted) {
+                const completeButton = document.createElement('button');
+                completeButton.className = 'btn btn-success';
+                completeButton.innerHTML = '<i class="fas fa-check-circle"></i> Mark as Complete';
+                completeButton.onclick = markLessonComplete;
+                lessonContainer.appendChild(completeButton);
+            } else {
+                const completedBadge = document.createElement('div');
+                completedBadge.className = 'btn btn-outline';
+                completedBadge.innerHTML = '<i class="fas fa-check-circle"></i> Lesson Completed';
+                completedBadge.style.cursor = 'default';
+                lessonContainer.appendChild(completedBadge);
+            }
+            
+            // Add resources section if available
+            if (content.resources) {
+                const resourcesSection = document.createElement('div');
+                resourcesSection.className = 'resources-section';
+                resourcesSection.innerHTML = `
+                    <h3 style="margin-bottom: 15px; color: var(--dark);">Lesson Resources</h3>
+                    <div class="resource-item">
+                        <i class="fas fa-file-pdf" style="color: var(--danger);"></i>
+                        <div>
+                            <div style="font-weight: 600;">${content.resources}</div>
+                            <div style="font-size: 0.8rem; color: var(--gray);">Downloadable resource</div>
+                        </div>
+                        <button class="btn btn-outline" style="margin-left: auto; padding: 5px 15px;">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                `;
+                lessonContainer.appendChild(resourcesSection);
+            }
         }
 
         // Mark lesson as complete
         function markLessonComplete() {
-            if (!currentLesson || !currentCourse || !currentUser) return;
+            if (!currentLessonContent || !currentCourse || !currentUser) return;
             
-            const formData = new FormData();
-            formData.append('action', 'updateProgress');
-            formData.append('userId', currentUser.userId);
-            formData.append('courseId', currentCourse.courseid);
-            formData.append('contentId', currentLesson.contentid);
-            formData.append('status', 'completed');
-            formData.append('timeSpent', currentLesson.duration || 0);
+            // Update local progress
+            if (!userProgress[currentCourse.courseid]) {
+                userProgress[currentCourse.courseid] = [];
+            }
             
-            fetch(scriptURL, { 
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.result === 'success') {
-                    // Update local progress
-                    if (!userProgress[currentCourse.courseid]) {
-                        userProgress[currentCourse.courseid] = [];
-                    }
-                    userProgress[currentCourse.courseid].push(currentLesson.contentid);
-                    
-                    // Update UI
-                    completeLessonBtn.innerHTML = '<i class="fas fa-check-circle"></i> Completed';
-                    completeLessonBtn.classList.remove('btn-success');
-                    completeLessonBtn.classList.add('btn-secondary');
-                    completeLessonBtn.disabled = true;
-                    
-                    // Show success message
-                    const responseDiv = document.createElement('div');
-                    responseDiv.className = 'response-message success';
-                    responseDiv.textContent = '✅ Lesson marked as complete!';
-                    responseDiv.style.display = 'block';
-                    lessonContent.parentNode.insertBefore(responseDiv, lessonContent.nextSibling);
-                    
-                    // Auto-hide message
-                    setTimeout(() => {
-                        responseDiv.style.display = 'none';
-                    }, 3000);
-                    
-                    // Refresh course progress
-                    renderCourseView();
-                }
-            })
-            .catch(error => {
-                console.error('Error updating progress:', error);
-                alert('Error updating progress. Please try again.');
-            });
+            if (!userProgress[currentCourse.courseid].includes(currentLessonContent.contentid)) {
+                userProgress[currentCourse.courseid].push(currentLessonContent.contentid);
+                
+                // Update UI
+                renderLessonsSidebar();
+                renderCourseView();
+                updateDashboardStats();
+                
+                // Show success message
+                const responseDiv = document.createElement('div');
+                responseDiv.className = 'response-message success';
+                responseDiv.textContent = '✅ Lesson marked as complete!';
+                responseDiv.style.display = 'block';
+                document.getElementById('current-lesson').appendChild(responseDiv);
+                
+                // Auto-hide message
+                setTimeout(() => {
+                    responseDiv.style.display = 'none';
+                }, 3000);
+            }
         }
 
         // Check if user is already logged in
