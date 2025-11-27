@@ -1,114 +1,468 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>GSheet Form Submission with Data Display</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Form & Data Viewer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
-        input, textarea, button { width: 100%; padding: 10px; margin-bottom: 10px; box-sizing: border-box; }
-        .response-message { margin-top: 15px; padding: 10px; border-radius: 4px; display: none; }
-        .success { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
-        .error { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }
-        #dataTable th, #dataTable td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        #dataTable th { background-color: #f2f2f2; }
-        #data-display-section { margin-top: 30px; }
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: var(--transition);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #e1e5ee;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: var(--transition);
+            background-color: #f8f9fa;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+            background-color: white;
+        }
+        
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 14px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        button:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button:disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-refresh {
+            background: var(--success);
+        }
+        
+        .btn-refresh:hover {
+            background: #3aa8d8;
+        }
+        
+        .response-message {
+            margin-top: 20px;
+            padding: 16px 20px;
+            border-radius: var(--border-radius);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .success {
+            background-color: rgba(76, 201, 240, 0.15);
+            color: #0c5460;
+            border-left: 4px solid var(--success);
+        }
+        
+        .error {
+            background-color: rgba(247, 37, 133, 0.1);
+            color: #721c24;
+            border-left: 4px solid var(--danger);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        th, td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #e1e5ee;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            color: var(--primary);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        
+        tr:hover {
+            background-color: rgba(67, 97, 238, 0.03);
+        }
+        
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            color: var(--gray);
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(67, 97, 238, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        
+        .timestamp {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #dee2e6;
+        }
+        
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @media (max-width: 992px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .card {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            th, td {
+                padding: 10px 12px;
+                font-size: 14px;
+            }
+        }
     </style>
 </head>
 <body>
-
-    <h2>Submit Data</h2>
-    <form id="myForm">
-        <label for="Name">Name:</label>
-        <input type="text" id="Name" name="Name" required>
-
-        <label for="Email">Email:</label>
-        <input type="email" id="Email" name="Email" required>
-
-        <label for="Message">Message:</label>
-        <textarea id="Message" name="Message" rows="4" required></textarea>
-
-        <button type="submit" id="submit-button">Submit Data</button>
-    </form>
-
-    <div id="response" class="response-message"></div>
-
-    <hr>
-
-    <div id="data-display-section">
-        <h3>Submitted Data (from Sheet)</h3>
-        <p id="loading-status">Loading data...</p>
-        <table id="dataTable" style="width:100%; border-collapse: collapse; display: none;">
-            <thead>
-                <tr>
-                    <th>Timestamp</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Message</th>
-                </tr>
-            </thead>
-            <tbody>
-                </tbody>
-        </table>
+    <div class="container">
+        <header>
+            <h1>Contact Form & Data Viewer</h1>
+            <p class="subtitle">Submit your information and view all entries from the Google Sheet in real-time</p>
+        </header>
+        
+        <div class="layout">
+            <!-- Form Section -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Submit Your Information</h2>
+                    <i class="fas fa-pen-to-square" style="color: var(--primary); font-size: 1.5rem;"></i>
+                </div>
+                
+                <form id="myForm">
+                    <div class="form-group">
+                        <label for="Name">Full Name</label>
+                        <input type="text" id="Name" name="Name" placeholder="Enter your full name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="Email">Email Address</label>
+                        <input type="email" id="Email" name="Email" placeholder="Enter your email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="Message">Your Message</label>
+                        <textarea id="Message" name="Message" rows="4" placeholder="Type your message here..." required></textarea>
+                    </div>
+                    
+                    <button type="submit" id="submit-button">
+                        <i class="fas fa-paper-plane"></i>
+                        Submit Data
+                    </button>
+                </form>
+                
+                <div id="response" class="response-message"></div>
+            </div>
+            
+            <!-- Data Display Section -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Submitted Data</h2>
+                    <div>
+                        <button class="btn-refresh" id="refresh-button">
+                            <i class="fas fa-sync-alt"></i>
+                            Refresh
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="timestamp">
+                    <i class="far fa-clock"></i>
+                    Last updated: <span id="last-updated">Never</span>
+                </div>
+                
+                <div id="loading-status" class="loading-container">
+                    <div class="spinner"></div>
+                    <p>Loading data from Google Sheets...</p>
+                </div>
+                
+                <div id="empty-state" class="empty-state" style="display: none;">
+                    <i class="fas fa-inbox"></i>
+                    <h3>No Data Yet</h3>
+                    <p>Submit the form to see your data here</p>
+                </div>
+                
+                <div id="table-container" style="display: none;">
+                    <table id="dataTable">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Message</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
         // *** YOUR DEPLOYED GOOGLE APPS SCRIPT URL ***
         const scriptURL = 'https://script.google.com/macros/s/AKfycbwAedbTghrO10YxXeW8UP8RpHrQpLanWTjilDpWhimVMHymGSqeyFw8X_o1Jj39-Jjq/exec';
         
+        // DOM Elements
         const form = document.getElementById('myForm');
         const responseDiv = document.getElementById('response');
         const submitButton = document.getElementById('submit-button');
-
+        const refreshButton = document.getElementById('refresh-button');
+        const lastUpdatedSpan = document.getElementById('last-updated');
+        
         const loadingStatus = document.getElementById('loading-status');
+        const emptyState = document.getElementById('empty-state');
+        const tableContainer = document.getElementById('table-container');
         const dataTable = document.getElementById('dataTable');
         const dataTableBody = dataTable.querySelector('tbody');
 
+        // Format timestamp for display
+        function formatTimestamp(timestamp) {
+            const now = new Date();
+            return now.toLocaleString();
+        }
+
+        // Update the last updated timestamp
+        function updateTimestamp() {
+            lastUpdatedSpan.textContent = formatTimestamp();
+        }
 
         // Function to render the data into the HTML table
         function renderTable(data) {
             dataTableBody.innerHTML = ''; // Clear existing data
 
             if (data.length === 0) {
-                loadingStatus.textContent = 'No data submitted yet.';
-                dataTable.style.display = 'none';
+                loadingStatus.style.display = 'none';
+                emptyState.style.display = 'block';
+                tableContainer.style.display = 'none';
                 return;
             }
 
             // Loop through the data array and create table rows
             data.forEach(item => {
                 const row = dataTableBody.insertRow();
-                // Assumes the keys match the column headers: Timestamp, Name, Email, Message
-                row.insertCell().textContent = item.Timestamp;
-                row.insertCell().textContent = item.Name;
-                row.insertCell().textContent = item.Email;
-                row.insertCell().textContent = item.Message;
+                
+                // Format the timestamp if it exists
+                const timestamp = item.Timestamp || 'N/A';
+                
+                // Create cells and add content
+                row.insertCell().textContent = timestamp;
+                row.insertCell().textContent = item.Name || 'N/A';
+                row.insertCell().textContent = item.Email || 'N/A';
+                
+                // Truncate long messages
+                const message = item.Message || 'N/A';
+                const truncatedMessage = message.length > 50 ? message.substring(0, 50) + '...' : message;
+                const messageCell = row.insertCell();
+                messageCell.textContent = truncatedMessage;
+                
+                // Add title attribute for full message on hover
+                if (message.length > 50) {
+                    messageCell.title = message;
+                }
             });
 
             loadingStatus.style.display = 'none';
-            dataTable.style.display = 'table';
+            emptyState.style.display = 'none';
+            tableContainer.style.display = 'block';
         }
 
         // Function to fetch the data from the Apps Script (using doGet)
         function fetchData() {
-            loadingStatus.textContent = 'Loading data...';
-            loadingStatus.style.display = 'block';
-            dataTable.style.display = 'none';
+            loadingStatus.style.display = 'flex';
+            emptyState.style.display = 'none';
+            tableContainer.style.display = 'none';
 
             // Send a GET request to the same script URL
             fetch(scriptURL, {
                 method: 'GET'
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.statusText);
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data && data.data) {
                     renderTable(data.data);
+                    updateTimestamp();
                 } else {
                     throw new Error('Invalid data structure received from Apps Script.');
                 }
             })
             .catch(error => {
                 console.error('Fetch Error:', error);
-                loadingStatus.textContent = 'Error loading data: ' + error.message;
+                loadingStatus.innerHTML = `
+                    <i class="fas fa-exclamation-triangle" style="font-size: 2rem; color: var(--danger); margin-bottom: 15px;"></i>
+                    <p>Error loading data: ${error.message}</p>
+                `;
             });
         }
 
@@ -117,7 +471,7 @@
             e.preventDefault();
             
             submitButton.disabled = true;
-            submitButton.textContent = 'Sending...';
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
             responseDiv.style.display = 'none';
             responseDiv.classList.remove('success', 'error');
 
@@ -135,7 +489,7 @@
             })
             .then(data => {
                 if (data.result === 'success') {
-                    responseDiv.textContent = '✅ Success! Data submitted to Google Sheet.';
+                    responseDiv.textContent = '✅ Success! Your data has been submitted to Google Sheet.';
                     responseDiv.classList.add('success');
                     form.reset(); 
                     // Refresh the table with the latest data
@@ -151,14 +505,34 @@
             })
             .finally(() => {
                 submitButton.disabled = false;
-                submitButton.textContent = 'Submit Data';
+                submitButton.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Data';
                 responseDiv.style.display = 'block';
+                
+                // Auto-hide success message after 5 seconds
+                if (responseDiv.classList.contains('success')) {
+                    setTimeout(() => {
+                        responseDiv.style.display = 'none';
+                    }, 5000);
+                }
             });
+        });
+
+        // Refresh button handler
+        refreshButton.addEventListener('click', function() {
+            refreshButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+            refreshButton.disabled = true;
+            
+            fetchData();
+            
+            // Re-enable the button after a short delay
+            setTimeout(() => {
+                refreshButton.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
+                refreshButton.disabled = false;
+            }, 1000);
         });
 
         // Load data when the page finishes loading
         document.addEventListener('DOMContentLoaded', fetchData);
     </script>
-
 </body>
 </html>
