@@ -1,164 +1,467 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>GSheet Form Submission with Data Display</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registry - Sign Up & Login</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Configure Tailwind for Inter font and custom colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary-blue': '#1e40af',
+                        'secondary-gray': '#f3f4f6',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
-        input, textarea, button { width: 100%; padding: 10px; margin-bottom: 10px; box-sizing: border-box; }
-        .response-message { margin-top: 15px; padding: 10px; border-radius: 4px; display: none; }
-        .success { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
-        .error { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }
-        #dataTable th, #dataTable td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        #dataTable th { background-color: #f2f2f2; }
-        #data-display-section { margin-top: 30px; }
+        /* Custom styles for better aesthetics */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .form-input {
+            @apply w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-blue focus:border-primary-blue transition duration-150 shadow-sm;
+        }
+        .btn-primary {
+            @apply w-full py-3 px-4 rounded-lg font-semibold text-white transition duration-200 shadow-lg bg-primary-blue hover:bg-blue-700 active:bg-blue-800 disabled:bg-gray-400 disabled:cursor-not-allowed;
+        }
     </style>
 </head>
-<body>
+<body class="bg-secondary-gray min-h-screen p-4 sm:p-8">
 
-    <h2>Submit Data</h2>
-    <form id="myForm">
-        <label for="Name">Name:</label>
-        <input type="text" id="Name" name="Name" required>
+    <div class="max-w-4xl mx-auto flex flex-col items-center">
+        <!-- Header -->
+        <header class="w-full mb-8">
+            <h1 class="text-4xl font-extrabold text-primary-blue border-b-4 border-blue-400 pb-3">
+                Student Registry & Portal
+            </h1>
+            <p id="auth-status" class="text-sm text-gray-600 mt-2 font-medium">
+                Status: Connecting...
+            </p>
+        </header>
 
-        <label for="Email">Email:</label>
-        <input type="email" id="Email" name="Email" required>
+        <!-- Message Box -->
+        <div id="message-box" class="w-full p-3 mb-6 rounded-lg font-medium shadow-md hidden" role="alert"></div>
 
-        <label for="Message">Message:</label>
-        <textarea id="Message" name="Message" rows="4" required></textarea>
+        <!-- Authentication and Registration Container -->
+        <div id="portal-container" class="w-full bg-white p-6 sm:p-8 rounded-xl shadow-2xl mb-10 border border-gray-100 flex flex-col md:flex-row gap-8">
+            
+            <!-- Authentication Forms (Left/Top) -->
+            <div id="auth-section" class="w-full md:w-1/2">
+                <h2 class="text-2xl font-bold text-gray-700 mb-6">User Access</h2>
+                
+                <!-- Auth Tabs -->
+                <div class="flex border-b mb-6">
+                    <button id="tab-login" class="py-2 px-4 text-center font-semibold border-b-2 border-primary-blue text-primary-blue transition duration-150">Login</button>
+                    <button id="tab-signup" class="py-2 px-4 text-center font-semibold border-b-2 border-transparent text-gray-500 hover:text-primary-blue transition duration-150">Sign Up</button>
+                </div>
 
-        <button type="submit" id="submit-button">Submit Data</button>
-    </form>
+                <!-- Login Form -->
+                <form id="login-form" class="space-y-4">
+                    <div class="space-y-1">
+                        <label for="login-email" class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="login-email" required class="form-input" placeholder="you@example.com">
+                    </div>
+                    <div class="space-y-1">
+                        <label for="login-password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="password" id="login-password" required class="form-input" placeholder="******">
+                    </div>
+                    <button type="submit" id="login-btn" class="btn-primary">
+                        Log In
+                    </button>
+                    <p class="text-xs text-gray-500 mt-4 italic text-center">Use your email and password to log in.</p>
+                </form>
 
-    <div id="response" class="response-message"></div>
+                <!-- Sign Up Form (Initially hidden) -->
+                <form id="signup-form" class="space-y-4 hidden">
+                    <div class="space-y-1">
+                        <label for="signup-email" class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="signup-email" required class="form-input" placeholder="create your email">
+                    </div>
+                    <div class="space-y-1">
+                        <label for="signup-password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="password" id="signup-password" required class="form-input" placeholder="min 6 characters">
+                    </div>
+                    <button type="submit" id="signup-btn" class="btn-primary">
+                        Create Account
+                    </button>
+                    <p class="text-xs text-gray-500 mt-4 italic text-center">Creating an account automatically logs you in.</p>
+                </form>
 
-    <hr>
+                <!-- User Profile / Logout (Initially hidden) -->
+                <div id="profile-card" class="space-y-4 p-4 border border-blue-200 bg-blue-50 rounded-lg hidden">
+                    <p class="font-bold text-lg text-primary-blue">Welcome Back!</p>
+                    <p class="text-sm text-gray-700 truncate">Logged in as: <span id="user-email" class="font-mono text-xs text-blue-800 bg-blue-100 p-1 rounded"></span></p>
+                    <button id="logout-btn" class="w-full py-2 px-4 rounded-lg font-semibold text-primary-blue bg-blue-200 hover:bg-blue-300 transition duration-200">
+                        Log Out
+                    </button>
+                </div>
+            </div>
 
-    <div id="data-display-section">
-        <h3>Submitted Data (from Sheet)</h3>
-        <p id="loading-status">Loading data...</p>
-        <table id="dataTable" style="width:100%; border-collapse: collapse; display: none;">
-            <thead>
-                <tr>
-                    <th>Timestamp</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Message</th>
-                </tr>
-            </thead>
-            <tbody>
-                </tbody>
-        </table>
+            <!-- Student Registration Form (Right/Bottom) -->
+            <div id="registration-section" class="w-full md:w-1/2 md:border-l md:pl-8 border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-700 mb-6">Register Student</h2>
+                <div id="reg-access-warning" class="p-4 bg-yellow-100 text-yellow-800 rounded-lg mb-4 text-sm font-medium">
+                    Please Log In or Sign Up to register a new student record.
+                </div>
+                
+                <form id="register-form" class="space-y-4 hidden">
+                    <div>
+                        <label for="reg-name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                        <input type="text" id="reg-name" required class="form-input" placeholder="Enter full name">
+                    </div>
+                    <div>
+                        <label for="reg-email" class="block text-sm font-medium text-gray-700 mb-1">Student Email</label>
+                        <input type="email" id="reg-email" required class="form-input" placeholder="student@university.edu">
+                    </div>
+                    <button type="submit" id="register-btn" class="btn-primary">
+                        Register Student Record
+                    </button>
+                    <p class="text-xs text-gray-500 mt-4 italic">Note: This record is visible to all users in the table below.</p>
+                </form>
+            </div>
+        </div>
+
+        <!-- Registered Students Table -->
+        <div class="w-full bg-white p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-100 mb-8">
+            <h2 class="text-2xl font-bold text-gray-700 mb-6 flex justify-between items-center">
+                Registered Students Registry
+                <span id="student-count" class="text-sm font-normal text-gray-500">Total: 0</span>
+            </h2>
+            
+            <p id="data-loading-status" class="text-center py-8 text-gray-500">Loading student data from Firestore...</p>
+
+            <div class="overflow-x-auto rounded-lg shadow-inner border border-gray-200 hidden" id="table-container">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-blue-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Name</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider hidden sm:table-cell">Email</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Registered At</th>
+                        </tr>
+                    </thead>
+                    <tbody id="students-tbody" class="bg-white divide-y divide-gray-100">
+                        <!-- Student rows will be rendered here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <footer class="mt-4 text-xs text-gray-500">
+            Data is stored in the public Firestore collection: <code>artifacts/<span id="app-id-display"></span>/public/data/students</code>.
+        </footer>
     </div>
 
-    <script>
-        // *** YOUR DEPLOYED GOOGLE APPS SCRIPT URL ***
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwAedbTghrO10YxXeW8UP8RpHrQpLanWTjilDpWhimVMHymGSqeyFw8X_o1Jj39-Jjq/exec';
+    <!-- Firebase and Application Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            signInAnonymously, 
+            signInWithCustomToken, 
+            onAuthStateChanged,
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            onSnapshot, 
+            query, 
+            serverTimestamp,
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- GLOBAL VARIABLES & CONSTANTS ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
         
-        const form = document.getElementById('myForm');
-        const responseDiv = document.getElementById('response');
-        const submitButton = document.getElementById('submit-button');
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-        const loadingStatus = document.getElementById('loading-status');
-        const dataTable = document.getElementById('dataTable');
-        const dataTableBody = dataTable.querySelector('tbody');
+        // UI Elements
+        const messageBox = document.getElementById('message-box');
+        const authStatus = document.getElementById('auth-status');
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+        const registerForm = document.getElementById('register-form');
+        const regAccessWarning = document.getElementById('reg-access-warning');
+        const profileCard = document.getElementById('profile-card');
+        const userEmailDisplay = document.getElementById('user-email');
+        const logoutBtn = document.getElementById('logout-btn');
+        const tabLogin = document.getElementById('tab-login');
+        const tabSignup = document.getElementById('tab-signup');
+        const studentsTbody = document.getElementById('students-tbody');
+        const dataLoadingStatus = document.getElementById('data-loading-status');
+        const studentCount = document.getElementById('student-count');
+        const tableContainer = document.getElementById('table-container');
+        document.getElementById('app-id-display').textContent = appId;
+        
+        let currentUserId = null;
+        let isAuthenticated = false;
 
+        // --- UI UTILITIES ---
 
-        // Function to render the data into the HTML table
-        function renderTable(data) {
-            dataTableBody.innerHTML = ''; // Clear existing data
+        function showMessage(type, text) {
+            messageBox.textContent = text;
+            messageBox.className = `w-full max-w-4xl p-3 mb-6 rounded-lg font-medium shadow-md ${type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+            messageBox.classList.remove('hidden');
+        }
 
-            if (data.length === 0) {
-                loadingStatus.textContent = 'No data submitted yet.';
-                dataTable.style.display = 'none';
+        function clearMessage() {
+            messageBox.classList.add('hidden');
+        }
+
+        function switchAuthTab(isLogin) {
+            if (isLogin) {
+                loginForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+                tabLogin.classList.add('border-primary-blue', 'text-primary-blue');
+                tabLogin.classList.remove('border-transparent', 'text-gray-500');
+                tabSignup.classList.remove('border-primary-blue', 'text-primary-blue');
+                tabSignup.classList.add('border-transparent', 'text-gray-500');
+            } else {
+                loginForm.classList.add('hidden');
+                signupForm.classList.remove('hidden');
+                tabSignup.classList.add('border-primary-blue', 'text-primary-blue');
+                tabSignup.classList.remove('border-transparent', 'text-gray-500');
+                tabLogin.classList.remove('border-primary-blue', 'text-primary-blue');
+                tabLogin.classList.add('border-transparent', 'text-gray-500');
+            }
+            clearMessage();
+        }
+
+        // --- AUTHENTICATION HANDLERS ---
+
+        /**
+         * Attempts custom token sign-in first, then anonymous sign-in if no token.
+         */
+        async function initialAuth() {
+            try {
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("Initial Auth Error:", error);
+                // Fallback to anonymous sign-in if custom token fails
+                try {
+                    await signInAnonymously(auth);
+                } catch (anonError) {
+                    console.error("Anonymous Sign-in Failed:", anonError);
+                    authStatus.innerHTML = `<span class='font-semibold text-red-600'>Status: Auth Failed.</span>`;
+                }
+            }
+        }
+
+        /**
+         * Updates the UI based on the current Firebase user state.
+         * @param {object | null} user - The current Firebase user object or null.
+         */
+        function updateUI(user) {
+            currentUserId = user ? user.uid : null;
+            isAuthenticated = user && !user.isAnonymous; // Only consider email/password users as 'authenticated' for registration access
+
+            if (isAuthenticated) {
+                // Logged in via Email/Password
+                authStatus.innerHTML = `<span class='font-semibold text-green-600'>User ID: ${currentUserId}</span>`;
+                userEmailDisplay.textContent = user.email || 'N/A';
+                
+                // Show profile/logout, hide login/signup forms
+                profileCard.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+                signupForm.classList.add('hidden');
+                tabLogin.classList.add('hidden');
+                tabSignup.classList.add('hidden');
+
+                // Show registration form
+                registerForm.classList.remove('hidden');
+                regAccessWarning.classList.add('hidden');
+            } else {
+                // Anonymous or Not Logged In
+                authStatus.innerHTML = `<span class='font-semibold text-yellow-600'>User ID (Anonymous): ${currentUserId || 'N/A'}</span>`;
+
+                // Hide profile/logout, show login/signup forms
+                profileCard.classList.add('hidden');
+                switchAuthTab(true); // Default to login tab
+                tabLogin.classList.remove('hidden');
+                tabSignup.classList.remove('hidden');
+
+                // Hide registration form, show warning
+                registerForm.classList.add('hidden');
+                regAccessWarning.classList.remove('hidden');
+            }
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            updateUI(user);
+        });
+
+        // --- FORM SUBMISSION HANDLERS ---
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearMessage();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                showMessage('success', 'Login successful!');
+            } catch (error) {
+                console.error("Login Error:", error);
+                showMessage('error', `Login failed: ${error.message}`);
+            }
+        });
+
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearMessage();
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            
+            if (password.length < 6) {
+                showMessage('error', 'Password must be at least 6 characters.');
                 return;
             }
 
-            // Loop through the data array and create table rows
-            data.forEach(item => {
-                const row = dataTableBody.insertRow();
-                // Assumes the keys match the column headers: Timestamp, Name, Email, Message
-                row.insertCell().textContent = item.Timestamp;
-                row.insertCell().textContent = item.Name;
-                row.insertCell().textContent = item.Email;
-                row.insertCell().textContent = item.Message;
-            });
-
-            loadingStatus.style.display = 'none';
-            dataTable.style.display = 'table';
-        }
-
-        // Function to fetch the data from the Apps Script (using doGet)
-        function fetchData() {
-            loadingStatus.textContent = 'Loading data...';
-            loadingStatus.style.display = 'block';
-            dataTable.style.display = 'none';
-
-            // Send a GET request to the same script URL
-            fetch(scriptURL, {
-                method: 'GET'
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data && data.data) {
-                    renderTable(data.data);
-                } else {
-                    throw new Error('Invalid data structure received from Apps Script.');
-                }
-            })
-            .catch(error => {
-                console.error('Fetch Error:', error);
-                loadingStatus.textContent = 'Error loading data: ' + error.message;
-            });
-        }
-
-        // Form submission handler (uses doPost)
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            submitButton.disabled = true;
-            submitButton.textContent = 'Sending...';
-            responseDiv.style.display = 'none';
-            responseDiv.classList.remove('success', 'error');
-
-            const formData = new FormData(form);
-            
-            fetch(scriptURL, { 
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok: ' + response.statusText);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.result === 'success') {
-                    responseDiv.textContent = '✅ Success! Data submitted to Google Sheet.';
-                    responseDiv.classList.add('success');
-                    form.reset(); 
-                    // Refresh the table with the latest data
-                    fetchData(); 
-                } else {
-                    throw new Error(data.error || 'Unknown error occurred in Apps Script.');
-                }
-            })
-            .catch(error => {
-                console.error('Submission Error:', error);
-                responseDiv.textContent = `❌ Error: ${error.message}`;
-                responseDiv.classList.add('error');
-            })
-            .finally(() => {
-                submitButton.disabled = false;
-                submitButton.textContent = 'Submit Data';
-                responseDiv.style.display = 'block';
-            });
+            try {
+                await createUserWithEmailAndPassword(auth, email, password);
+                showMessage('success', 'Account created and logged in successfully!');
+            } catch (error) {
+                console.error("Sign Up Error:", error);
+                showMessage('error', `Sign Up failed: ${error.message}`);
+            }
         });
 
-        // Load data when the page finishes loading
-        document.addEventListener('DOMContentLoaded', fetchData);
-    </script>
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                showMessage('success', 'Successfully logged out.');
+            } catch (error) {
+                console.error("Logout Error:", error);
+                showMessage('error', `Logout failed: ${error.message}`);
+            }
+        });
 
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentUserId || !isAuthenticated) {
+                showMessage('error', 'You must be logged in to register a student.');
+                return;
+            }
+            clearMessage();
+
+            const name = document.getElementById('reg-name').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            
+            if (!name || !email) {
+                showMessage('error', 'Name and Email are required.');
+                return;
+            }
+
+            try {
+                const studentsCollectionRef = collection(db, `artifacts/${appId}/public/data/students`);
+                
+                await addDoc(studentsCollectionRef, {
+                    name: name,
+                    email: email,
+                    registeredAt: serverTimestamp(),
+                    registeredBy: currentUserId, 
+                });
+
+                showMessage('success', `Successfully registered student: ${name}`);
+                document.getElementById('reg-name').value = '';
+                document.getElementById('reg-email').value = '';
+            } catch (error) {
+                console.error("Firestore Write Error:", error);
+                showMessage('error', `Registration failed: ${error.message}`);
+            }
+        });
+
+        // --- REAL-TIME DATA FETCHING & RENDERING ---
+
+        /**
+         * Helper to format the Firestore Timestamp object for display.
+         * @param {object} timestamp - Firestore Timestamp object.
+         * @returns {string} Formatted date/time string.
+         */
+        function formatTimestamp(timestamp) {
+            if (!timestamp || !timestamp.toDate) return 'N/A';
+            const date = timestamp.toDate();
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+        }
+
+        function renderStudents(students) {
+            studentsTbody.innerHTML = '';
+            studentCount.textContent = `Total: ${students.length}`;
+            dataLoadingStatus.classList.add('hidden');
+            tableContainer.classList.remove('hidden');
+
+            if (students.length === 0) {
+                dataLoadingStatus.textContent = 'No students registered yet. Be the first!';
+                dataLoadingStatus.classList.remove('hidden');
+                tableContainer.classList.add('hidden');
+                return;
+            }
+
+            // Sort by timestamp (most recent first)
+            students.sort((a, b) => (b.registeredAt?.seconds || 0) - (a.registeredAt?.seconds || 0));
+
+            students.forEach(student => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50 transition duration-150';
+                
+                row.innerHTML = `
+                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">${student.name}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">${student.email}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">${formatTimestamp(student.registeredAt)}</td>
+                `;
+                studentsTbody.appendChild(row);
+            });
+        }
+
+        // Setup real-time listener for student data
+        function setupDataListener() {
+            dataLoadingStatus.textContent = 'Loading student data from Firestore...';
+            const studentsCollectionRef = collection(db, `artifacts/${appId}/public/data/students`);
+            const studentsQuery = query(studentsCollectionRef);
+            
+            // onSnapshot listener
+            onSnapshot(studentsQuery, (snapshot) => {
+                const studentList = [];
+                snapshot.forEach((doc) => {
+                    studentList.push({ id: doc.id, ...doc.data() });
+                });
+                renderStudents(studentList);
+            }, (error) => {
+                console.error("Firestore Snapshot Error:", error);
+                dataLoadingStatus.textContent = 'Error fetching student data.';
+            });
+        }
+
+        // --- EVENT LISTENERS ---
+
+        tabLogin.addEventListener('click', () => switchAuthTab(true));
+        tabSignup.addEventListener('click', () => switchAuthTab(false));
+
+        // Start Auth and Data Fetching
+        initialAuth();
+        setupDataListener();
+
+    </script>
 </body>
 </html>
