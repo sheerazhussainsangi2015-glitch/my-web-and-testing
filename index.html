@@ -23,6 +23,7 @@
             --border-radius: 12px;
             --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             --transition: all 0.3s ease;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
         
         * {
@@ -33,7 +34,7 @@
         }
         
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--gradient);
             color: var(--dark);
             line-height: 1.6;
             min-height: 100vh;
@@ -46,47 +47,6 @@
             padding: 20px;
         }
         
-        /* Mobile-First Navigation */
-        .mobile-nav {
-            display: none;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            padding: 10px;
-            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-        }
-        
-        .mobile-nav-items {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-        }
-        
-        .mobile-nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: var(--gray);
-            font-size: 0.8rem;
-            padding: 5px;
-            border-radius: 8px;
-            transition: var(--transition);
-        }
-        
-        .mobile-nav-item.active {
-            color: var(--primary);
-            background: rgba(67, 97, 238, 0.1);
-        }
-        
-        .mobile-nav-item i {
-            font-size: 1.2rem;
-            margin-bottom: 3px;
-        }
-        
         /* Auth Styles */
         .auth-container {
             display: flex;
@@ -94,8 +54,7 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 20px;
+            background: var(--gradient);
         }
         
         .app-container {
@@ -109,7 +68,7 @@
             background: var(--card-bg);
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
-            padding: 30px;
+            padding: 40px;
             width: 100%;
             transition: var(--transition);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -183,8 +142,8 @@
         /* Course Grid */
         .course-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
             margin-top: 30px;
         }
         
@@ -195,8 +154,7 @@
             box-shadow: var(--box-shadow);
             transition: var(--transition);
             cursor: pointer;
-            display: flex;
-            flex-direction: column;
+            position: relative;
         }
         
         .course-card:hover {
@@ -204,17 +162,24 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
         
+        .course-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary);
+        }
+        
         .course-thumbnail {
             width: 100%;
-            height: 180px;
+            height: 200px;
             object-fit: cover;
         }
         
         .course-content {
-            padding: 20px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
+            padding: 25px;
         }
         
         .course-category {
@@ -229,7 +194,7 @@
         }
         
         .course-title {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 700;
             margin-bottom: 10px;
             color: var(--dark);
@@ -241,7 +206,6 @@
             margin-bottom: 15px;
             font-size: 0.95rem;
             line-height: 1.5;
-            flex-grow: 1;
         }
         
         .course-meta {
@@ -352,7 +316,7 @@
         
         /* Progress Tracking */
         .progress-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--gradient);
             color: white;
             padding: 25px;
             border-radius: var(--border-radius);
@@ -575,55 +539,7 @@
             }
             
             .card {
-                padding: 20px;
-            }
-            
-            .mobile-nav {
-                display: block;
-            }
-            
-            .app-container {
-                padding-bottom: 80px;
-            }
-            
-            .video-player {
-                height: 250px;
-            }
-            
-            .course-thumbnail {
-                height: 150px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .container {
-                padding: 10px;
-            }
-            
-            .card {
-                padding: 15px;
-            }
-            
-            .course-content {
-                padding: 15px;
-            }
-            
-            .course-meta {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-            
-            .progress-section {
-                padding: 20px;
-            }
-            
-            .stat-card {
-                padding: 15px;
-            }
-            
-            .stat-number {
-                font-size: 2rem;
+                padding: 25px;
             }
         }
         
@@ -667,6 +583,58 @@
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
+        }
+        
+        /* Modern Enhancements */
+        .floating-action {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            border-left: 4px solid var(--success);
+        }
+        
+        .notification.error {
+            border-left: 4px solid var(--danger);
+        }
+        
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
+        }
+        
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
         }
     </style>
 </head>
@@ -810,9 +778,42 @@
                     <p style="color: var(--gray); margin-bottom: 30px;">Expand your skills with our professional courses</p>
                     
                     <div class="course-grid" id="course-grid">
-                        <div class="loading-container">
-                            <div class="spinner"></div>
-                            <p>Loading courses from database...</p>
+                        <!-- Skeleton loading -->
+                        <div class="course-card">
+                            <div class="skeleton" style="height: 200px; width: 100%;"></div>
+                            <div class="course-content">
+                                <div class="skeleton" style="height: 20px; width: 80px; margin-bottom: 10px;"></div>
+                                <div class="skeleton" style="height: 24px; width: 100%; margin-bottom: 10px;"></div>
+                                <div class="skeleton" style="height: 60px; width: 100%; margin-bottom: 15px;"></div>
+                                <div class="course-meta">
+                                    <div class="skeleton" style="height: 20px; width: 120px;"></div>
+                                    <div class="skeleton" style="height: 8px; width: 100px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="course-card">
+                            <div class="skeleton" style="height: 200px; width: 100%;"></div>
+                            <div class="course-content">
+                                <div class="skeleton" style="height: 20px; width: 80px; margin-bottom: 10px;"></div>
+                                <div class="skeleton" style="height: 24px; width: 100%; margin-bottom: 10px;"></div>
+                                <div class="skeleton" style="height: 60px; width: 100%; margin-bottom: 15px;"></div>
+                                <div class="course-meta">
+                                    <div class="skeleton" style="height: 20px; width: 120px;"></div>
+                                    <div class="skeleton" style="height: 8px; width: 100px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="course-card">
+                            <div class="skeleton" style="height: 200px; width: 100%;"></div>
+                            <div class="course-content">
+                                <div class="skeleton" style="height: 20px; width: 80px; margin-bottom: 10px;"></div>
+                                <div class="skeleton" style="height: 24px; width: 100%; margin-bottom: 10px;"></div>
+                                <div class="skeleton" style="height: 60px; width: 100%; margin-bottom: 15px;"></div>
+                                <div class="course-meta">
+                                    <div class="skeleton" style="height: 20px; width: 120px;"></div>
+                                    <div class="skeleton" style="height: 8px; width: 100px;"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -858,28 +859,19 @@
                 </div>
             </div>
         </div>
-        
-        <!-- Mobile Navigation -->
-        <div class="mobile-nav">
-            <div class="mobile-nav-items">
-                <a href="#" class="mobile-nav-item active" data-view="dashboard-view">
-                    <i class="fas fa-home"></i>
-                    <span>Home</span>
-                </a>
-                <a href="#" class="mobile-nav-item" data-view="course-view">
-                    <i class="fas fa-book"></i>
-                    <span>Courses</span>
-                </a>
-                <a href="#" class="mobile-nav-item">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Progress</span>
-                </a>
-                <a href="#" class="mobile-nav-item">
-                    <i class="fas fa-user"></i>
-                    <span>Profile</span>
-                </a>
-            </div>
-        </div>
+    </div>
+
+    <!-- Floating Action Button -->
+    <div class="floating-action">
+        <button class="btn btn-primary" id="refresh-data" title="Refresh Data">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+    </div>
+
+    <!-- Notification System -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle" style="color: var(--success);"></i>
+        <span id="notification-text">Operation completed successfully</span>
     </div>
 
     <script>
@@ -909,6 +901,9 @@
         const userName = document.getElementById('user-name');
         const logoutButton = document.getElementById('logout-button');
         const courseGrid = document.getElementById('course-grid');
+        const refreshButton = document.getElementById('refresh-data');
+        const notification = document.getElementById('notification');
+        const notificationText = document.getElementById('notification-text');
         
         // Course view elements
         const backToDashboard = document.getElementById('back-to-dashboard');
@@ -919,9 +914,6 @@
         const lessonsSidebar = document.getElementById('lessons-sidebar');
         const currentLesson = document.getElementById('current-lesson');
 
-        // Mobile navigation elements
-        const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
-
         // Current state
         let currentUser = null;
         let currentCourse = null;
@@ -929,6 +921,17 @@
         let courses = [];
         let courseContent = {};
         let userProgress = {};
+
+        // Show notification
+        function showNotification(message, type = 'success') {
+            notificationText.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
 
         // Show login form
         document.getElementById('show-login').addEventListener('click', function() {
@@ -944,26 +947,6 @@
             signupCard.style.display = 'block';
             loginResponse.style.display = 'none';
             signupResponse.style.display = 'none';
-        });
-
-        // Mobile navigation handler
-        mobileNavItems.forEach(item => {
-            item.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                // Update active state
-                mobileNavItems.forEach(navItem => navItem.classList.remove('active'));
-                this.classList.add('active');
-                
-                const view = this.getAttribute('data-view');
-                if (view) {
-                    if (view === 'dashboard-view') {
-                        showDashboardView();
-                    } else if (view === 'course-view' && currentCourse) {
-                        showCourseView(currentCourse.courseid);
-                    }
-                }
-            });
         });
 
         // Login form handler
@@ -1084,6 +1067,16 @@
             localStorage.removeItem('user');
             localStorage.removeItem('userProgress');
             showAuthView();
+            showNotification('You have been logged out successfully');
+        });
+
+        // Refresh data handler
+        refreshButton.addEventListener('click', function() {
+            if (currentUser) {
+                loadCourses();
+                loadUserProgress();
+                showNotification('Data refreshed successfully');
+            }
         });
 
         // Navigation handlers
@@ -1106,6 +1099,8 @@
             
             // Show dashboard
             showDashboardView();
+            
+            showNotification(`Welcome back, ${user.fullName}!`);
         }
 
         // Show auth view
@@ -1209,15 +1204,6 @@
         function showDashboardView() {
             dashboardView.style.display = 'block';
             courseView.style.display = 'none';
-            
-            // Update mobile nav
-            mobileNavItems.forEach(item => {
-                if (item.getAttribute('data-view') === 'dashboard-view') {
-                    item.classList.add('active');
-                } else {
-                    item.classList.remove('active');
-                }
-            });
         }
 
         // Show course view
@@ -1227,15 +1213,6 @@
             
             dashboardView.style.display = 'none';
             courseView.style.display = 'block';
-            
-            // Update mobile nav
-            mobileNavItems.forEach(item => {
-                if (item.getAttribute('data-view') === 'course-view') {
-                    item.classList.add('active');
-                } else {
-                    item.classList.remove('active');
-                }
-            });
             
             // Show loading state
             lessonsSidebar.innerHTML = '<div class="loading-container"><div class="spinner"></div><p>Loading course content...</p></div>';
@@ -1493,21 +1470,12 @@
                     updateDashboardStats();
                     
                     // Show success message
-                    const responseDiv = document.createElement('div');
-                    responseDiv.className = 'response-message success';
-                    responseDiv.textContent = '✅ Lesson marked as complete!';
-                    responseDiv.style.display = 'block';
-                    document.getElementById('current-lesson').appendChild(responseDiv);
-                    
-                    // Auto-hide message
-                    setTimeout(() => {
-                        responseDiv.style.display = 'none';
-                    }, 3000);
+                    showNotification('Lesson marked as complete!');
                 }
             })
             .catch(error => {
                 console.error('Error updating progress:', error);
-                alert('Error updating progress. Please try again.');
+                showNotification('Error updating progress. Please try again.', 'error');
             });
         }
 
