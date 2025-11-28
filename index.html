@@ -46,6 +46,47 @@
             padding: 20px;
         }
         
+        /* Mobile-First Navigation */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 10px;
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        
+        .mobile-nav-items {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--gray);
+            font-size: 0.8rem;
+            padding: 5px;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+        
+        .mobile-nav-item.active {
+            color: var(--primary);
+            background: rgba(67, 97, 238, 0.1);
+        }
+        
+        .mobile-nav-item i {
+            font-size: 1.2rem;
+            margin-bottom: 3px;
+        }
+        
         /* Auth Styles */
         .auth-container {
             display: flex;
@@ -54,6 +95,7 @@
             justify-content: center;
             min-height: 100vh;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
         }
         
         .app-container {
@@ -67,7 +109,7 @@
             background: var(--card-bg);
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
-            padding: 40px;
+            padding: 30px;
             width: 100%;
             transition: var(--transition);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -141,8 +183,8 @@
         /* Course Grid */
         .course-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
             margin-top: 30px;
         }
         
@@ -153,6 +195,8 @@
             box-shadow: var(--box-shadow);
             transition: var(--transition);
             cursor: pointer;
+            display: flex;
+            flex-direction: column;
         }
         
         .course-card:hover {
@@ -162,12 +206,15 @@
         
         .course-thumbnail {
             width: 100%;
-            height: 200px;
+            height: 180px;
             object-fit: cover;
         }
         
         .course-content {
-            padding: 25px;
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
         
         .course-category {
@@ -182,7 +229,7 @@
         }
         
         .course-title {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 700;
             margin-bottom: 10px;
             color: var(--dark);
@@ -194,6 +241,7 @@
             margin-bottom: 15px;
             font-size: 0.95rem;
             line-height: 1.5;
+            flex-grow: 1;
         }
         
         .course-meta {
@@ -527,7 +575,55 @@
             }
             
             .card {
-                padding: 25px;
+                padding: 20px;
+            }
+            
+            .mobile-nav {
+                display: block;
+            }
+            
+            .app-container {
+                padding-bottom: 80px;
+            }
+            
+            .video-player {
+                height: 250px;
+            }
+            
+            .course-thumbnail {
+                height: 150px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 15px;
+            }
+            
+            .course-content {
+                padding: 15px;
+            }
+            
+            .course-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .progress-section {
+                padding: 20px;
+            }
+            
+            .stat-card {
+                padding: 15px;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
             }
         }
         
@@ -762,6 +858,28 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Mobile Navigation -->
+        <div class="mobile-nav">
+            <div class="mobile-nav-items">
+                <a href="#" class="mobile-nav-item active" data-view="dashboard-view">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="#" class="mobile-nav-item" data-view="course-view">
+                    <i class="fas fa-book"></i>
+                    <span>Courses</span>
+                </a>
+                <a href="#" class="mobile-nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Progress</span>
+                </a>
+                <a href="#" class="mobile-nav-item">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -801,6 +919,9 @@
         const lessonsSidebar = document.getElementById('lessons-sidebar');
         const currentLesson = document.getElementById('current-lesson');
 
+        // Mobile navigation elements
+        const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+
         // Current state
         let currentUser = null;
         let currentCourse = null;
@@ -823,6 +944,26 @@
             signupCard.style.display = 'block';
             loginResponse.style.display = 'none';
             signupResponse.style.display = 'none';
+        });
+
+        // Mobile navigation handler
+        mobileNavItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Update active state
+                mobileNavItems.forEach(navItem => navItem.classList.remove('active'));
+                this.classList.add('active');
+                
+                const view = this.getAttribute('data-view');
+                if (view) {
+                    if (view === 'dashboard-view') {
+                        showDashboardView();
+                    } else if (view === 'course-view' && currentCourse) {
+                        showCourseView(currentCourse.courseid);
+                    }
+                }
+            });
         });
 
         // Login form handler
@@ -1068,6 +1209,15 @@
         function showDashboardView() {
             dashboardView.style.display = 'block';
             courseView.style.display = 'none';
+            
+            // Update mobile nav
+            mobileNavItems.forEach(item => {
+                if (item.getAttribute('data-view') === 'dashboard-view') {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
         }
 
         // Show course view
@@ -1077,6 +1227,15 @@
             
             dashboardView.style.display = 'none';
             courseView.style.display = 'block';
+            
+            // Update mobile nav
+            mobileNavItems.forEach(item => {
+                if (item.getAttribute('data-view') === 'course-view') {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
             
             // Show loading state
             lessonsSidebar.innerHTML = '<div class="loading-container"><div class="spinner"></div><p>Loading course content...</p></div>';
