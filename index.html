@@ -339,7 +339,7 @@
             background: var(--success);
         }
         
-        /* Video Player */
+        /* Video Player - YouTube Style */
         .video-container {
             position: relative;
             width: 100%;
@@ -351,9 +351,28 @@
         
         .video-player {
             width: 100%;
-            height: 400px;
+            height: 500px;
             background: #000;
             border-radius: var(--border-radius);
+        }
+        
+        /* YouTube Style Layout */
+        .youtube-layout {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .video-content {
+            order: 1;
+        }
+        
+        .lesson-details {
+            order: 2;
+            margin-top: 20px;
+        }
+        
+        .course-sidebar {
+            order: 3;
         }
         
         /* Progress Tracking */
@@ -555,6 +574,42 @@
             font-size: 1.2rem;
         }
         
+        /* Side Drawer */
+        .side-drawer {
+            position: fixed;
+            top: 0;
+            right: -350px;
+            width: 350px;
+            height: 100%;
+            background: white;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 1100;
+            transition: var(--transition);
+            padding: 30px;
+            overflow-y: auto;
+        }
+        
+        .side-drawer.open {
+            right: 0;
+        }
+        
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .drawer-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+        
         /* Responsive */
         @media (max-width: 1024px) {
             .learning-container {
@@ -567,6 +622,18 @@
             
             .course-grid {
                 grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+            
+            .youtube-layout .course-sidebar {
+                order: 2;
+            }
+            
+            .youtube-layout .video-content {
+                order: 1;
+            }
+            
+            .youtube-layout .lesson-details {
+                order: 3;
             }
         }
         
@@ -622,6 +689,15 @@
                 padding: 10px 20px;
                 font-size: 0.9rem;
             }
+            
+            .side-drawer {
+                width: 300px;
+                right: -300px;
+            }
+            
+            .youtube-layout {
+                display: block;
+            }
         }
         
         @media (max-width: 480px) {
@@ -664,6 +740,11 @@
             
             .course-thumbnail {
                 height: 150px;
+            }
+            
+            .side-drawer {
+                width: 100%;
+                right: -100%;
             }
         }
         
@@ -840,6 +921,22 @@
         .mobile-view.active {
             display: block;
         }
+        
+        /* Overlay for drawer */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1050;
+            display: none;
+        }
+        
+        .overlay.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -941,10 +1038,16 @@
                         <div class="user-avatar" id="user-avatar">U</div>
                         <div>
                             <div id="user-name">User Name</div>
-                            <button class="btn btn-outline" id="logout-button" style="padding: 5px 15px; font-size: 0.8rem; margin-top: 5px;">
-                                <i class="fas fa-sign-out-alt"></i>
-                                Logout
-                            </button>
+                            <div style="display: flex; gap: 10px; margin-top: 5px;">
+                                <button class="btn btn-outline" id="settings-button" style="padding: 5px 15px; font-size: 0.8rem;">
+                                    <i class="fas fa-cog"></i>
+                                    Settings
+                                </button>
+                                <button class="btn btn-outline" id="logout-button" style="padding: 5px 15px; font-size: 0.8rem;">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    Logout
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1045,39 +1148,48 @@
             
             <!-- Course Learning View -->
             <div id="course-view" style="display: none;">
-                <div class="learning-container">
+                <div class="youtube-layout">
+                    <!-- Video Content -->
+                    <div class="video-content">
+                        <div class="video-container">
+                            <iframe 
+                                class="video-player"
+                                id="main-video-player"
+                                src="" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        
+                        <!-- Lesson Details -->
+                        <div class="lesson-details">
+                            <h1 id="course-view-title" style="margin-bottom: 10px; color: var(--dark);">Course Title</h1>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <div id="course-view-subtitle" style="color: var(--gray); font-size: 1.1rem;">Course Description</div>
+                                <div style="display: flex; gap: 10px;">
+                                    <div class="progress-container" style="background: var(--light); padding: 10px 15px; border-radius: 20px;">
+                                        <span style="font-weight: 600;">Progress: </span>
+                                        <span id="course-progress-text">0%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Lesson Content -->
+                            <div id="current-lesson">
+                                <div class="loading-container">
+                                    <div class="spinner"></div>
+                                    <p>Loading lesson content...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <!-- Course Sidebar -->
                     <div class="course-sidebar">
                         <h3 id="sidebar-course-title" style="margin-bottom: 20px; color: var(--primary);">Course Content</h3>
                         <div id="lessons-sidebar">
                             <!-- Lessons will be populated here -->
-                        </div>
-                    </div>
-                    
-                    <!-- Main Content Area -->
-                    <div class="course-main">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-                            <button class="btn btn-outline" id="back-to-dashboard">
-                                <i class="fas fa-arrow-left"></i>
-                                Back to Dashboard
-                            </button>
-                            <div style="display: flex; gap: 10px;">
-                                <div class="progress-container" style="background: var(--light); padding: 10px 15px; border-radius: 20px;">
-                                    <span style="font-weight: 600;">Progress: </span>
-                                    <span id="course-progress-text">0%</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <h1 id="course-view-title" style="margin-bottom: 10px; color: var(--dark);">Course Title</h1>
-                        <p id="course-view-subtitle" style="color: var(--gray); margin-bottom: 30px; font-size: 1.1rem;">Course Description</p>
-                        
-                        <!-- Current Lesson Content -->
-                        <div id="current-lesson">
-                            <div class="loading-container">
-                                <div class="spinner"></div>
-                                <p>Loading lesson content...</p>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -1155,14 +1267,84 @@
                             </div>
                         </div>
                     </div>
-                    <button class="btn btn-outline" style="width: 100%; margin-top: 20px;">
-                        <i class="fas fa-cog"></i>
-                        Account Settings
-                    </button>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button class="btn btn-outline" id="mobile-settings-button">
+                            <i class="fas fa-cog"></i>
+                            Account Settings
+                        </button>
+                        <button class="btn btn-outline" id="mobile-logout-button">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Logout
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Side Drawer -->
+    <div class="side-drawer" id="side-drawer">
+        <div class="drawer-header">
+            <h3>Settings & Account</h3>
+            <button class="drawer-close" id="drawer-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="user-info" style="justify-content: center; margin-bottom: 30px;">
+            <div class="user-avatar" id="drawer-user-avatar">U</div>
+            <div>
+                <div id="drawer-user-name" style="font-size: 1.2rem; font-weight: 600;">User Name</div>
+                <div style="font-size: 0.9rem; color: var(--gray);" id="drawer-user-email">user@example.com</div>
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 30px;">
+            <h4 style="margin-bottom: 15px; color: var(--dark);">Account Settings</h4>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button class="btn btn-outline" style="justify-content: flex-start;">
+                    <i class="fas fa-user-edit"></i>
+                    Edit Profile
+                </button>
+                <button class="btn btn-outline" style="justify-content: flex-start;">
+                    <i class="fas fa-lock"></i>
+                    Change Password
+                </button>
+                <button class="btn btn-outline" style="justify-content: flex-start;">
+                    <i class="fas fa-bell"></i>
+                    Notification Settings
+                </button>
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 30px;">
+            <h4 style="margin-bottom: 15px; color: var(--dark);">App Settings</h4>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button class="btn btn-outline" style="justify-content: flex-start;">
+                    <i class="fas fa-palette"></i>
+                    Theme Preferences
+                </button>
+                <button class="btn btn-outline" style="justify-content: flex-start;">
+                    <i class="fas fa-language"></i>
+                    Language
+                </button>
+                <button class="btn btn-outline" style="justify-content: flex-start;">
+                    <i class="fas fa-download"></i>
+                    Download for Offline
+                </button>
+            </div>
+        </div>
+        
+        <div>
+            <button class="btn btn-danger" style="width: 100%;" id="drawer-logout-button">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </button>
+        </div>
+    </div>
+
+    <!-- Overlay for drawer -->
+    <div class="overlay" id="overlay"></div>
 
     <!-- Mobile Navigation -->
     <div class="mobile-nav">
@@ -1232,6 +1414,9 @@
         const mobileUserAvatar = document.getElementById('mobile-user-avatar');
         const mobileUserName = document.getElementById('mobile-user-name');
         const logoutButton = document.getElementById('logout-button');
+        const mobileLogoutButton = document.getElementById('mobile-logout-button');
+        const settingsButton = document.getElementById('settings-button');
+        const mobileSettingsButton = document.getElementById('mobile-settings-button');
         const courseGrid = document.getElementById('course-grid');
         const refreshButton = document.getElementById('refresh-data');
         const notification = document.getElementById('notification');
@@ -1253,6 +1438,16 @@
         const sidebarCourseTitle = document.getElementById('sidebar-course-title');
         const lessonsSidebar = document.getElementById('lessons-sidebar');
         const currentLesson = document.getElementById('current-lesson');
+        const mainVideoPlayer = document.getElementById('main-video-player');
+        
+        // Drawer elements
+        const sideDrawer = document.getElementById('side-drawer');
+        const drawerClose = document.getElementById('drawer-close');
+        const overlay = document.getElementById('overlay');
+        const drawerUserAvatar = document.getElementById('drawer-user-avatar');
+        const drawerUserName = document.getElementById('drawer-user-name');
+        const drawerUserEmail = document.getElementById('drawer-user-email');
+        const drawerLogoutButton = document.getElementById('drawer-logout-button');
 
         // Current state
         let currentUser = null;
@@ -1287,6 +1482,12 @@
                 toggleText.textContent = 'Show Dashboard';
                 showNotification('Dashboard stats hidden');
             }
+        }
+
+        // Toggle side drawer
+        function toggleDrawer() {
+            sideDrawer.classList.toggle('open');
+            overlay.classList.toggle('active');
         }
 
         // Show login form
@@ -1419,12 +1620,24 @@
         });
 
         // Logout handler
-        logoutButton.addEventListener('click', function() {
+        function handleLogout() {
             localStorage.removeItem('user');
             localStorage.removeItem('userProgress');
             showAuthView();
             showNotification('You have been logged out successfully');
-        });
+        }
+
+        logoutButton.addEventListener('click', handleLogout);
+        mobileLogoutButton.addEventListener('click', handleLogout);
+        drawerLogoutButton.addEventListener('click', handleLogout);
+
+        // Settings button handler
+        settingsButton.addEventListener('click', toggleDrawer);
+        mobileSettingsButton.addEventListener('click', toggleDrawer);
+
+        // Drawer close handler
+        drawerClose.addEventListener('click', toggleDrawer);
+        overlay.addEventListener('click', toggleDrawer);
 
         // Refresh data handler
         refreshButton.addEventListener('click', function() {
@@ -1574,6 +1787,9 @@
             userAvatar.textContent = user.fullName.charAt(0).toUpperCase();
             mobileUserName.textContent = user.fullName;
             mobileUserAvatar.textContent = user.fullName.charAt(0).toUpperCase();
+            drawerUserName.textContent = user.fullName;
+            drawerUserEmail.textContent = user.email;
+            drawerUserAvatar.textContent = user.fullName.charAt(0).toUpperCase();
             
             // Load courses and progress
             loadCourses();
@@ -1790,7 +2006,7 @@
             });
         }
 
-        // Enhanced showLessonView function with video support
+        // Enhanced showLessonView function with YouTube-style layout
         function showLessonView(contentId) {
             if (!currentCourse || !courseContent[currentCourse.courseid]) return;
             
@@ -1802,20 +2018,13 @@
             // Update sidebar active state
             renderLessonsSidebar();
             
-            // Render lesson content
-            const lessonContainer = document.getElementById('current-lesson');
-            
+            // YouTube-style layout for videos
             if (content.contenttype === 'video' && content.videourl) {
-                lessonContainer.innerHTML = `
-                    <div class="video-container">
-                        <iframe 
-                            class="video-player"
-                            src="${content.videourl}" 
-                            frameborder="0" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                            allowfullscreen>
-                        </iframe>
-                    </div>
+                // Set video source
+                mainVideoPlayer.src = content.videourl;
+                
+                // Render lesson details below video
+                currentLesson.innerHTML = `
                     <div style="margin-top: 30px;">
                         <h2 style="margin-bottom: 15px; color: var(--dark);">${content.title}</h2>
                         <div style="color: var(--gray); line-height: 1.6; margin-bottom: 20px;">
@@ -1824,7 +2033,9 @@
                     </div>
                 `;
             } else {
-                lessonContainer.innerHTML = `
+                // For non-video content, show in the main area
+                mainVideoPlayer.style.display = 'none';
+                currentLesson.innerHTML = `
                     <div style="margin-top: 30px;">
                         <h2 style="margin-bottom: 15px; color: var(--dark);">${content.title}</h2>
                         <div style="color: var(--gray); line-height: 1.6; margin-bottom: 20px;">
@@ -1843,7 +2054,7 @@
                 completeButton.className = 'btn btn-success';
                 completeButton.innerHTML = '<i class="fas fa-check-circle"></i> Mark as Complete';
                 completeButton.onclick = markLessonComplete;
-                lessonContainer.appendChild(completeButton);
+                currentLesson.appendChild(completeButton);
                 
                 // Show mobile mark complete button
                 mobileMarkComplete.style.display = 'inline-flex';
@@ -1852,7 +2063,7 @@
                 completedBadge.className = 'btn btn-outline';
                 completedBadge.innerHTML = '<i class="fas fa-check-circle"></i> Lesson Completed';
                 completedBadge.style.cursor = 'default';
-                lessonContainer.appendChild(completedBadge);
+                currentLesson.appendChild(completedBadge);
                 
                 // Hide mobile mark complete button
                 mobileMarkComplete.style.display = 'none';
@@ -1875,7 +2086,7 @@
                         </button>
                     </div>
                 `;
-                lessonContainer.appendChild(resourcesSection);
+                currentLesson.appendChild(resourcesSection);
             }
         }
 
@@ -2008,10 +2219,7 @@
             checkAuthStatus();
             
             // Handle menu toggle for mobile
-            menuToggle.addEventListener('click', function() {
-                // For now, just show a notification
-                showNotification('Mobile menu functionality coming soon!');
-            });
+            menuToggle.addEventListener('click', toggleDrawer);
         });
     </script>
 </body>
