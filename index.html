@@ -154,9 +154,10 @@
         .professional-header {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
-            padding: 20px 0;
+            padding: 15px 0;
             margin-bottom: 30px;
             border-radius: var(--border-radius);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
         
         .header-content {
@@ -173,12 +174,75 @@
         }
         
         .logo i {
-            font-size: 2.5rem;
+            font-size: 2rem;
         }
         
         .logo-text {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 700;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 10px 20px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+        }
+        
+        .user-info:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        .user-details {
+            text-align: right;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 2px;
+        }
+        
+        .user-email {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: 10px;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
         
         /* Course Grid */
@@ -535,26 +599,6 @@
             text-decoration: underline;
         }
         
-        /* User Info */
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .user-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-        
         /* Responsive */
         @media (max-width: 1024px) {
             .learning-container {
@@ -594,6 +638,17 @@
                 text-align: center;
             }
             
+            .user-info {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+                width: 100%;
+            }
+            
+            .user-details {
+                text-align: center;
+            }
+            
             .progress-stats {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -611,11 +666,11 @@
             }
             
             .logo-text {
-                font-size: 1.5rem;
+                font-size: 1.3rem;
             }
             
             .logo i {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
             
             .btn {
@@ -646,11 +701,11 @@
             }
             
             .logo-text {
-                font-size: 1.3rem;
+                font-size: 1.2rem;
             }
             
             .logo i {
-                font-size: 1.8rem;
+                font-size: 1.5rem;
             }
             
             .btn {
@@ -664,6 +719,14 @@
             
             .course-thumbnail {
                 height: 150px;
+            }
+            
+            .professional-header {
+                padding: 12px 0;
+            }
+            
+            .header-content {
+                padding: 0 15px;
             }
         }
         
@@ -762,33 +825,6 @@
             }
         }
         
-        /* Mobile Menu Toggle */
-        .menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: white;
-            cursor: pointer;
-        }
-        
-        @media (max-width: 768px) {
-            .menu-toggle {
-                display: block;
-            }
-            
-            .user-info {
-                display: none;
-            }
-            
-            .mobile-user-info {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                margin-bottom: 20px;
-            }
-        }
-        
         /* Mobile Course Actions */
         .mobile-course-actions {
             display: none;
@@ -839,6 +875,27 @@
         
         .mobile-view.active {
             display: block;
+        }
+        
+        .profile-info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .profile-info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .profile-label {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .profile-value {
+            color: var(--gray);
         }
     </style>
 </head>
@@ -934,18 +991,16 @@
                         <i class="fas fa-graduation-cap"></i>
                         <div class="logo-text">LearnHub Pro</div>
                     </div>
-                    <button class="menu-toggle" id="menu-toggle">
-                        <i class="fas fa-bars"></i>
-                    </button>
                     <div class="user-info">
                         <div class="user-avatar" id="user-avatar">U</div>
-                        <div>
-                            <div id="user-name">User Name</div>
-                            <button class="btn btn-outline" id="logout-button" style="padding: 5px 15px; font-size: 0.8rem; margin-top: 5px;">
-                                <i class="fas fa-sign-out-alt"></i>
-                                Logout
-                            </button>
+                        <div class="user-details">
+                            <div class="user-name" id="user-name">User Name</div>
+                            <div class="user-email" id="user-email">user@example.com</div>
                         </div>
+                        <button class="logout-btn" id="logout-button">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Logout
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1135,30 +1190,31 @@
             <div id="mobile-profile-view" class="mobile-view">
                 <div class="card">
                     <h2 style="margin-bottom: 20px; color: var(--dark);">My Profile</h2>
-                    <div class="user-info" style="justify-content: center; margin-bottom: 30px;">
-                        <div class="user-avatar" id="mobile-profile-avatar">U</div>
+                    <div class="user-info" style="justify-content: center; margin-bottom: 30px; background: transparent; padding: 0;">
+                        <div class="user-avatar" id="mobile-profile-avatar" style="background: var(--primary);">U</div>
                         <div>
                             <div id="mobile-profile-name" style="font-size: 1.2rem; font-weight: 600;">User Name</div>
                             <div style="font-size: 0.9rem; color: var(--gray);" id="mobile-profile-email">user@example.com</div>
                         </div>
                     </div>
+                    
                     <div style="margin-bottom: 20px;">
                         <h3 style="margin-bottom: 15px;">Account Details</h3>
-                        <div style="background: var(--light); padding: 15px; border-radius: var(--border-radius);">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                                <span>Member since:</span>
-                                <span id="mobile-registration-date">2023</span>
+                        <div style="background: var(--light); padding: 20px; border-radius: var(--border-radius);">
+                            <div class="profile-info-item">
+                                <span class="profile-label">Member since:</span>
+                                <span class="profile-value" id="mobile-registration-date">2023</span>
                             </div>
-                            <div style="display: flex; justify-content: space-between;">
-                                <span>Last login:</span>
-                                <span id="mobile-last-login">Today</span>
+                            <div class="profile-info-item">
+                                <span class="profile-label">Last login:</span>
+                                <span class="profile-value" id="mobile-last-login">Today</span>
+                            </div>
+                            <div class="profile-info-item">
+                                <span class="profile-label">Join Year:</span>
+                                <span class="profile-value" id="mobile-join-year">2023</span>
                             </div>
                         </div>
                     </div>
-                    <button class="btn btn-outline" style="width: 100%; margin-top: 20px;">
-                        <i class="fas fa-cog"></i>
-                        Account Settings
-                    </button>
                 </div>
             </div>
         </div>
@@ -1229,6 +1285,7 @@
         // App elements
         const userAvatar = document.getElementById('user-avatar');
         const userName = document.getElementById('user-name');
+        const userEmail = document.getElementById('user-email');
         const mobileUserAvatar = document.getElementById('mobile-user-avatar');
         const mobileUserName = document.getElementById('mobile-user-name');
         const logoutButton = document.getElementById('logout-button');
@@ -1236,7 +1293,6 @@
         const refreshButton = document.getElementById('refresh-data');
         const notification = document.getElementById('notification');
         const notificationText = document.getElementById('notification-text');
-        const menuToggle = document.getElementById('menu-toggle');
         
         // Dashboard toggle
         const toggleDashboard = document.getElementById('toggle-dashboard');
@@ -1558,8 +1614,12 @@
             
             // Format dates
             const regDate = new Date(currentUser.registrationDate);
+            const lastLogin = currentUser.lastLogin ? new Date(currentUser.lastLogin) : new Date();
+            const joinYear = regDate.getFullYear();
+            
             document.getElementById('mobile-registration-date').textContent = regDate.toLocaleDateString();
-            document.getElementById('mobile-last-login').textContent = 'Today';
+            document.getElementById('mobile-last-login').textContent = lastLogin.toLocaleDateString() + ' ' + lastLogin.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            document.getElementById('mobile-join-year').textContent = joinYear;
         }
 
         // Show app view
@@ -1569,8 +1629,9 @@
             authContainer.style.display = 'none';
             appContainer.style.display = 'block';
             
-            // Update user info
+            // Update user info in header
             userName.textContent = user.fullName;
+            userEmail.textContent = user.email;
             userAvatar.textContent = user.fullName.charAt(0).toUpperCase();
             mobileUserName.textContent = user.fullName;
             mobileUserAvatar.textContent = user.fullName.charAt(0).toUpperCase();
@@ -2006,12 +2067,6 @@
         // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
             checkAuthStatus();
-            
-            // Handle menu toggle for mobile
-            menuToggle.addEventListener('click', function() {
-                // For now, just show a notification
-                showNotification('Mobile menu functionality coming soon!');
-            });
         });
     </script>
 </body>
