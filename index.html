@@ -1,345 +1,3 @@
-/**
- * Sets up the spreadsheet with required sheets and headers if they don't exist
- */
-function setupSheets() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  
-  // Create Users sheet with proper schema
-  let usersSheet = ss.getSheetByName("Users");
-  if (!usersSheet) {
-    usersSheet = ss.insertSheet("Users");
-    usersSheet.appendRow(["UserID", "Email", "Password", "FullName", "RegistrationDate", "LastLogin"]);
-    usersSheet.getRange("A1:F1").setFontWeight("bold");
-  }
-  
-  // Create Courses sheet
-  let coursesSheet = ss.getSheetByName("Courses");
-  if (!coursesSheet) {
-    coursesSheet = ss.insertSheet("Courses");
-    coursesSheet.appendRow(["CourseID", "Title", "Description", "Instructor", "CreatedDate", "Thumbnail", "Category", "Level", "Duration"]);
-    coursesSheet.getRange("A1:I1").setFontWeight("bold");
-    
-    // Add sample courses
-    const sampleCourses = [
-      ["COURSE_1", "Web Development Fundamentals", "Learn the basics of HTML, CSS and JavaScript", "John Smith", new Date(), "https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=400", "Web Development", "Beginner", "8 hours"],
-      ["COURSE_2", "JavaScript Mastery", "Advanced JavaScript concepts and modern ES6+ features", "Sarah Johnson", new Date(), "https://images.unsplash.com/photo-1579468118864-1b9ea3c0db4a?w=400", "Programming", "Intermediate", "12 hours"],
-      ["COURSE_3", "React.js Complete Guide", "Build modern web applications with React.js", "Mike Chen", new Date(), "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400", "Frontend", "Advanced", "15 hours"]
-    ];
-    
-    sampleCourses.forEach(course => {
-      coursesSheet.appendRow(course);
-    });
-  }
-  
-  // Create CourseContent sheet with video support
-  let contentSheet = ss.getSheetByName("CourseContent");
-  if (!contentSheet) {
-    contentSheet = ss.insertSheet("CourseContent");
-    contentSheet.appendRow(["ContentID", "CourseID", "Title", "ContentType", "Content", "Order", "Duration", "VideoUrl", "Thumbnail", "Resources"]);
-    contentSheet.getRange("A1:J1").setFontWeight("bold");
-    
-    // Add sample course content
-    const sampleContent = [
-      ["CONTENT_1", "COURSE_1", "Introduction to HTML", "video", "Learn the basics of HTML structure and tags", 1, 15, "https://www.youtube.com/embed/dD2EISBDjWM", "", "HTML_Cheat_Sheet.pdf"],
-      ["CONTENT_2", "COURSE_1", "CSS Fundamentals", "video", "Understanding CSS selectors and properties", 2, 20, "https://www.youtube.com/embed/1Rs2ND1ryYc", "", "CSS_Guide.pdf"],
-      ["CONTENT_3", "COURSE_1", "JavaScript Basics", "article", "Introduction to JavaScript variables and functions", 3, 25, "", "", "JS_Basics.pdf"],
-      ["CONTENT_4", "COURSE_2", "ES6 Features", "video", "Learn about let, const, arrow functions and more", 1, 30, "https://www.youtube.com/embed/NCwa_xi0Uuc", "", "ES6_Guide.pdf"],
-      ["CONTENT_5", "COURSE_3", "React Components", "video", "Understanding React components and JSX", 1, 35, "https://www.youtube.com/embed/Ke90Tje7VS0", "", "React_Components.pdf"]
-    ];
-    
-    sampleContent.forEach(content => {
-      contentSheet.appendRow(content);
-    });
-  }
-  
-  // Create UserProgress sheet
-  let progressSheet = ss.getSheetByName("UserProgress");
-  if (!progressSheet) {
-    progressSheet = ss.insertSheet("UserProgress");
-    progressSheet.appendRow(["ProgressID", "UserID", "CourseID", "ContentID", "Status", "CompletedDate", "TimeSpent", "VideoProgress"]);
-    progressSheet.getRange("A1:H1").setFontWeight("bold");
-  }
-  
-  return {
-    usersSheet: usersSheet,
-    coursesSheet: coursesSheet,
-    contentSheet: contentSheet,
-    progressSheet: progressSheet
-  };
-}
-
-/**
- * Generates a unique ID
- */
-function generateId(prefix = '') {
-  return prefix + Utilities.getUuid();
-}
-
-/**
- * Simple hash function for passwords
- */
-function hashPassword(password) {
-  return Utilities.base64Encode(Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password));
-}
-
-/**
- * Handles HTTP POST requests for various actions
- */
-function doPost(e) {
-  try {
-    const { usersSheet, coursesSheet, contentSheet, progressSheet } = setupSheets();
-    const action = e.parameter.action;
-    
-    if (action === "signup") {
-      return handleSignup(e, usersSheet);
-    } else if (action === "login") {
-      return handleLogin(e, usersSheet);
-    } else if (action === "updateProgress") {
-      return handleProgressUpdate(e, progressSheet);
-    } else if (action === "getCourses") {
-      return handleGetCourses(coursesSheet);
-    } else if (action === "getCourseContent") {
-      return handleGetCourseContent(e, contentSheet);
-    } else if (action === "getUserProgress") {
-      return handleGetUserProgress(e, progressSheet);
-    } else {
-      return createErrorResponse("Unknown action: " + action);
-    }
-  } catch (error) {
-    console.error("doPost Error:", error);
-    return createErrorResponse("Server error: " + error.message);
-  }
-}
-
-/**
- * Handles HTTP GET requests
- */
-function doGet(e) {
-  const { coursesSheet } = setupSheets();
-  return handleGetCourses(coursesSheet);
-}
-
-/**
- * Creates a standardized error response
- */
-function createErrorResponse(message) {
-  return ContentService.createTextOutput(JSON.stringify({
-    "result": "error",
-    "error": message
-  })).setMimeType(ContentService.MimeType.JSON);
-}
-
-/**
- * Creates a standardized success response
- */
-function createSuccessResponse(data = {}) {
-  return ContentService.createTextOutput(JSON.stringify({
-    "result": "success",
-    ...data
-  })).setMimeType(ContentService.MimeType.JSON);
-}
-
-/**
- * Handles user signup
- */
-function handleSignup(e, usersSheet) {
-  const fullName = e.parameter.fullName;
-  const email = e.parameter.email;
-  const password = e.parameter.password;
-  
-  if (!fullName || !email || !password) {
-    return createErrorResponse("All fields are required");
-  }
-  
-  // Check if user already exists
-  const data = usersSheet.getDataRange().getValues();
-  for (let i = 1; i < data.length; i++) {
-    if (data[i][1] === email) {
-      return createErrorResponse("User with this email already exists");
-    }
-  }
-  
-  // Add new user
-  const newRow = [
-    generateId("USER_"),  // UserID
-    email,               // Email
-    hashPassword(password), // Password (hashed)
-    fullName,            // FullName
-    new Date(),          // RegistrationDate
-    ""                   // LastLogin (empty initially)
-  ];
-  
-  usersSheet.appendRow(newRow);
-  
-  return createSuccessResponse({ message: "Account created successfully" });
-}
-
-/**
- * Handles user login - FIXED VERSION
- */
-function handleLogin(e, usersSheet) {
-  const email = e.parameter.email;
-  const password = e.parameter.password;
-  
-  if (!email || !password) {
-    return createErrorResponse("Email and password are required");
-  }
-  
-  // Check credentials
-  const userData = usersSheet.getDataRange().getValues();
-  let user = null;
-  
-  for (let i = 1; i < userData.length; i++) {
-    if (userData[i][1] === email && userData[i][2] === hashPassword(password)) {
-      user = {
-        "userId": userData[i][0],
-        "fullName": userData[i][3],
-        "email": userData[i][1],
-        "registrationDate": userData[i][4]
-      };
-      
-      // Update last login
-      usersSheet.getRange(i + 1, 6).setValue(new Date());
-      break;
-    }
-  }
-  
-  if (!user) {
-    return createErrorResponse("Invalid email or password");
-  }
-  
-  return createSuccessResponse({ user: user });
-}
-
-/**
- * Handles progress updates
- */
-function handleProgressUpdate(e, progressSheet) {
-  const userId = e.parameter.userId;
-  const courseId = e.parameter.courseId;
-  const contentId = e.parameter.contentId;
-  const status = e.parameter.status || 'completed';
-  const timeSpent = e.parameter.timeSpent || 0;
-  
-  if (!userId || !courseId || !contentId) {
-    return createErrorResponse("Missing required parameters");
-  }
-  
-  // Check if progress already exists to avoid duplicates
-  const data = progressSheet.getDataRange().getValues();
-  let progressExists = false;
-  
-  for (let i = 1; i < data.length; i++) {
-    if (data[i][1] === userId && data[i][2] === courseId && data[i][3] === contentId) {
-      progressExists = true;
-      // Update existing progress
-      progressSheet.getRange(i + 1, 5).setValue(status); // Status
-      progressSheet.getRange(i + 1, 6).setValue(new Date()); // CompletedDate
-      progressSheet.getRange(i + 1, 7).setValue(timeSpent); // TimeSpent
-      break;
-    }
-  }
-  
-  if (!progressExists) {
-    const newRow = [
-      generateId("PROG_"),  // ProgressID
-      userId,               // UserID
-      courseId,             // CourseID
-      contentId,            // ContentID
-      status,               // Status
-      new Date(),           // CompletedDate
-      timeSpent,            // TimeSpent
-      0                     // VideoProgress
-    ];
-    
-    progressSheet.appendRow(newRow);
-  }
-  
-  return createSuccessResponse({ message: "Progress updated successfully" });
-}
-
-/**
- * Gets all courses
- */
-function handleGetCourses(coursesSheet) {
-  const data = coursesSheet.getDataRange().getValues();
-  const headers = data[0];
-  const courses = [];
-  
-  for (let i = 1; i < data.length; i++) {
-    const course = {};
-    for (let j = 0; j < headers.length; j++) {
-      course[headers[j].toLowerCase()] = data[i][j];
-    }
-    courses.push(course);
-  }
-  
-  return createSuccessResponse({ courses: courses });
-}
-
-/**
- * Gets content for a specific course - FIXED VERSION
- */
-function handleGetCourseContent(e, contentSheet) {
-  const courseId = e.parameter.courseId;
-  
-  if (!courseId) {
-    return createErrorResponse("Course ID is required");
-  }
-  
-  const data = contentSheet.getDataRange().getValues();
-  const headers = data[0];
-  const content = [];
-  
-  for (let i = 1; i < data.length; i++) {
-    if (data[i][1] === courseId) {
-      const item = {};
-      for (let j = 0; j < headers.length; j++) {
-        item[headers[j].toLowerCase()] = data[i][j];
-      }
-      content.push(item);
-    }
-  }
-  
-  // Sort by order
-  content.sort((a, b) => (a.order || 0) - (b.order || 0));
-  
-  return createSuccessResponse({ content: content });
-}
-
-/**
- * Gets user progress - FIXED VERSION
- */
-function handleGetUserProgress(e, progressSheet) {
-  const userId = e.parameter.userId;
-  const courseId = e.parameter.courseId;
-  
-  if (!userId) {
-    return createErrorResponse("User ID is required");
-  }
-  
-  const data = progressSheet.getDataRange().getValues();
-  const headers = data[0];
-  const progress = [];
-  
-  for (let i = 1; i < data.length; i++) {
-    if (data[i][1] === userId && (!courseId || data[i][2] === courseId)) {
-      const item = {};
-      for (let j = 0; j < headers.length; j++) {
-        item[headers[j].toLowerCase()] = data[i][j];
-      }
-      progress.push(item);
-    }
-  }
-  
-  return createSuccessResponse({ progress: progress });
-}
-
-// Setup function to run once
-function initialSetup() {
-  setupSheets();
-}
-html:
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1605,6 +1263,15 @@ html:
         let userProgress = {};
         let isDashboardVisible = false;
 
+        // Auto-refresh function
+        function autoRefreshData() {
+            if (currentUser) {
+                loadCourses();
+                loadUserProgress();
+                showNotification('Data refreshed automatically');
+            }
+        }
+
         // Show notification
         function showNotification(message, type = 'success') {
             notificationText.textContent = message;
@@ -1698,15 +1365,23 @@ html:
             });
         });
 
-        // Signup form handler
+        // Signup form handler - ENHANCED with password validation
         signupForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
             const password = document.getElementById('signup-password').value;
             const confirmPassword = document.getElementById('signup-confirm-password').value;
             
+            // Enhanced password validation
             if (password !== confirmPassword) {
                 signupResponse.textContent = '❌ Passwords do not match.';
+                signupResponse.classList.add('error');
+                signupResponse.style.display = 'block';
+                return;
+            }
+            
+            if (password.length < 6) {
+                signupResponse.textContent = '❌ Password must be at least 6 characters long.';
                 signupResponse.classList.add('error');
                 signupResponse.style.display = 'block';
                 return;
@@ -1770,11 +1445,7 @@ html:
 
         // Refresh data handler
         refreshButton.addEventListener('click', function() {
-            if (currentUser) {
-                loadCourses();
-                loadUserProgress();
-                showNotification('Data refreshed successfully');
-            }
+            autoRefreshData();
         });
 
         // Navigation handlers
@@ -2294,7 +1965,7 @@ html:
             document.getElementById('completion-rate').textContent = totalLessons > 0 ? Math.round((totalCompleted / totalLessons) * 100) + '%' : '0%';
         }
 
-        // Mark lesson as complete
+        // Mark lesson as complete - WITH AUTO-REFRESH
         function markLessonComplete() {
             if (!currentLessonContent || !currentCourse || !currentUser) return;
             
@@ -2319,13 +1990,11 @@ html:
                     }
                     userProgress[currentCourse.courseid].push(currentLessonContent.contentid);
                     
-                    // Update UI
-                    renderLessonsSidebar();
-                    renderCourseView();
-                    updateDashboardStats();
+                    // AUTO-REFRESH HERE
+                    autoRefreshData();
                     
                     // Show success message
-                    showNotification('Lesson marked as complete!');
+                    showNotification('Lesson marked as complete! Data refreshed.');
                 }
             })
             .catch(error => {
